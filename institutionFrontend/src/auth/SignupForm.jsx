@@ -7,14 +7,15 @@ import {
     IconButton,
     InputAdornment,
     Button,
+    
   } from "@mui/material";
   import {
     Visibility,
     VisibilityOff,
- 
     Person,
     Lock,
   } from "@mui/icons-material";
+  import { Link } from "react-router-dom";
   import { useState } from "react";
   import { useForm, Controller } from "react-hook-form";
   import axios from "axios";
@@ -66,7 +67,7 @@ import GoogleSignIn from "./GoogleSignIn";
           minHeight: "100vh",
         }}
       >
-        <Paper elevation={10} sx={{ p: 5, width: "100%", maxWidth: 400 }}>
+        <Paper elevation={10} sx={{ p: 5, width: "100%", maxWidth: 400,borderRadius:3 }}>
           <Typography
             component="h4"
             variant="h4"
@@ -99,7 +100,7 @@ import GoogleSignIn from "./GoogleSignIn";
                 <TextField
                   label="Email"
                   placeholder="Enter email"
-                  
+                  autoFocus
                   fullWidth
                   variant="outlined"
                   sx={{ mb: 2 }}
@@ -219,14 +220,21 @@ import GoogleSignIn from "./GoogleSignIn";
             >
               Sign Up
             </Button>
-            <Box sx={{ display: "flex", alignItems: "center", my: 2 }}>
+            <Box sx={{ display: "flex", alignItems: "center" ,mt:1}}>
               <Box sx={{ flex: 1, height: "1px", bgcolor: "grey.400" }} />
               <Typography sx={{ mx: 1 }}>or</Typography>
               <Box sx={{ flex: 1, height: "1px", bgcolor: "grey.400" }} />
             </Box>
+            <Box sx={{display:'flex',justifyContent:'center',mt:1}}>
+                 <GoogleSignIn />
+            </Box>
            
-
-            <GoogleSignIn />
+            <Typography sx={{textAlign:'center'}}>
+                Already have an account?{" "}
+                <Button component={Link} to="/login" variant="text" sx={{textDecoration:'underline'}}   >
+                    Login
+                </Button>
+            </Typography>
           </Box>
         </Paper>
       </Container>
