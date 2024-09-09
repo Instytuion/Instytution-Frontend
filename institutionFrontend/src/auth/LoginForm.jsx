@@ -12,8 +12,8 @@ import { Visibility, VisibilityOff, Person, Lock } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
-import axios from "axios";
 import GoogleSignIn from "./GoogleSignIn";
+import LoginServices from "../services/user/LoginServices";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,18 +37,20 @@ const LoginForm = () => {
   };
 
   const onSubmit = async (data) => {
+    console.log('response data is :',data);
+    
     try {
-      await axios.post("/api/login", data);
+        const response = await LoginServices(data)
+        console.log('response is :',response);
+        
     } catch (error) {
-      if (error.response && error.response.status === 400) {
         setError("username", {
-          type: "manual",
-          message: error.response.data.error || "An error occurred",
-        });
-      } else {
-        console.error("An unexpected error occurred:", error);
-      }
+            type: "manual",
+            message: error.response.data.error || "An error occurred",
+          });
     }
+
+    
   };
 
   return (
