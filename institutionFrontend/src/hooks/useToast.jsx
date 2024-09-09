@@ -1,14 +1,11 @@
 import { useSnackbar } from "notistack";
-import { SnackbarProvider } from "notistack";
 import PropTypes from "prop-types";
 
 const useToast = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const showToast = (message, variant = "default") => {
-    console.log("====================================");
-    console.log("Message is:", message);
-    console.log("====================================");
+    console.log("From useToast Message is:", message);
 
     const variantStyles = {
       success: {
