@@ -8,7 +8,10 @@ export default {
     extend: {
       colors:{
         tealgreen: '#009688',
-      }
+        tealDark:'#00796b'
+        
+      },
+      
     },
   },
   plugins: [],
