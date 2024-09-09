@@ -78,7 +78,7 @@ const SignupForm = () => {
     } catch (error) {
         console.log('error is :',error);
         
-      showToast(error.response.data.otp || "An error occurred", "error");
+      showToast(error.response.data.otp[0] || "An error occurred", "error");
     } finally {
       setisVerifyStart(false);
     }
@@ -286,7 +286,7 @@ const SignupForm = () => {
           ) : (
             <>
               <Typography sx={{ textAlign: "center", mb: 2 }}>
-                Loading OTP...
+                Loading...
               </Typography>
               <OTPSkeleton />
             </>
