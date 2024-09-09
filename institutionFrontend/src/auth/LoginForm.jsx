@@ -9,24 +9,28 @@ import {
   Button,
 } from "@mui/material";
 import { Visibility, VisibilityOff, Person, Lock } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import GoogleSignIn from "./GoogleSignIn";
 import LoginServices from "../services/user/LoginServices";
+import useToast from "../hooks/useToast";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  const showToast = useToast();
   const {
     control,
     handleSubmit,
     formState: { errors },
     setError,
-    setFocus, // Provided by react-hook-form
+    setFocus,
   } = useForm();
 
   useEffect(() => {
-    // Automatically focus on the email field when the form loads
     setFocus("email");
   }, [setFocus]);
 
@@ -37,20 +41,26 @@ const LoginForm = () => {
   };
 
   const onSubmit = async (data) => {
-    console.log('response data is :',data);
-    
+    setData(data);
     try {
+        setIsLoading(true);
         const response = await LoginServices(data)
-        console.log('response is :',response);
+        showToast(response.message, "success");
+        navigate("/");
+        console.log('Response data upon Login :',response);
         
     } catch (error) {
-        setError("username", {
+      console.log('Response error upon Login :',error);
+      console.log('error.response.data.error is - ',error.response.data.error);
+      
+        setError("password", {
             type: "manual",
-            message: error.response.data.error || "An error occurred",
+            message: error.response.data.error || "An error occurred in Login attempt (Default Msg)",
           });
     }
-
-    
+      finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -99,7 +109,6 @@ const LoginForm = () => {
                 autoFocus
                 variant="outlined"
                 error={!!errors.email}
-                helperText={errors.email?.message}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -107,7 +116,7 @@ const LoginForm = () => {
                     </InputAdornment>
                   ),
                 }}
-                {...field} // ensures react-hook-form manages the field
+                {...field} 
               />
             )}
           />
@@ -166,7 +175,7 @@ const LoginForm = () => {
               "&:hover": { backgroundColor: "#00796b" },
             }}
           >
-            Login
+            {isLoading ? "Loading..." : "Login"}
           </Button>
 
           <Box sx={{ display: "flex", alignItems: "center", my: 1 }}>
