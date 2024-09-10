@@ -21,6 +21,8 @@ import useToast from "../hooks/useToast";
 import OTPSkeleton from "../component/Skeletons/OtpSkeleton";
 import OTP from "../component/Otp/OtpInput";
 import Spinner from "../component/Spinner/Spinner";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/AuthSlice";
 
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,6 +34,7 @@ const SignupForm = () => {
   const navigate = useNavigate();
   const { email, password } = data;
   const showToast = useToast();
+  const dispatch = useDispatch()
 
   const {
     control,
@@ -73,6 +76,24 @@ const SignupForm = () => {
       console.log(" data for sentign verify is :", otp, email);
 
       const response = await SignupServices.verifyOtp(email, password, otp);
+
+      console.log('Sign up success');
+      
+      const { access, refresh, user } = response;
+        
+        dispatch(
+          setUser({
+            email: user.email, 
+            firstName: user.first_name || '', 
+            lastName: user.last_name || '',
+            accessToken: access,
+            refreshToken: refresh,
+            profileImage: user.image || '',
+            role: user.role,
+            registerMode: user.register_mode,
+          })
+        );
+
       showToast(response.message, "success");
       navigate("/");
     } catch (error) {
