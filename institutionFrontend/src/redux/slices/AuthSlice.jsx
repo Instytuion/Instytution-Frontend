@@ -11,6 +11,7 @@ const initialState = {
     accessToken: null,
     refreshToken: null,
     role: null,
+    registerMode: null,
   };
 
 const userAuthSlice = createSlice({
@@ -28,9 +29,7 @@ const userAuthSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.role = action.payload.role;
-
-        console.log('Email at setUser', state.email);
-        
+        state.registerMode = action.payload.registerMode;
       },
     },
   });

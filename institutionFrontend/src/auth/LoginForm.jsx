@@ -50,23 +50,22 @@ const LoginForm = () => {
         const response = await LoginServices(data)
         
         const { access, refresh, user } = response;
-        console.log('user at login response is -', user);
         
         dispatch(
           setUser({
-            email: user.username, 
+            email: user.email, 
             firstName: user.first_name || '', 
             lastName: user.last_name || '',
             accessToken: access,
             refreshToken: refresh,
             profileImage: user.image || '',
             role: user.role,
+            registerMode: user.register_mode,
           })
         );
 
         showToast(response.message, "success");
         navigate("/");
-        console.log('Response data upon Login :',response);
         
     } catch (error) {
       console.log('Response error upon Login :',error);
