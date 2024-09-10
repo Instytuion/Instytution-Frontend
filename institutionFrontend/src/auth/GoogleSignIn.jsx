@@ -1,9 +1,9 @@
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import GoogleSignInServices from '../services/GoogleSignInServices';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/AuthSlice";
 import useToast from '../hooks/useToast';
+import GoogleSignInServices from '../services/user/GoogleSignInServices';
 
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;

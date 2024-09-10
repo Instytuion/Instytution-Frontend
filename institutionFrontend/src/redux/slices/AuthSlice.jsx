@@ -31,6 +31,20 @@ const userAuthSlice = createSlice({
         state.role = action.payload.role;
         state.registerMode = action.payload.registerMode;
       },
+      setRefreshToken: (state, action) => {
+        console.log('setRefreshToken reducere called');
+        
+        state.isAuthenticated = true;
+        state.accessToken = action.payload.accessToken;
+        state.refreshToken = action.payload.refreshToken;
+      },
+      logout: (state) => {
+        console.log('inside logout reducer');
+        
+        state.accessToken = null;
+        state.refreshToken = null;
+        state.isAuthenticated = false;
+    }
     },
   });
   

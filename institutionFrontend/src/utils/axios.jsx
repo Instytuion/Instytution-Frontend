@@ -1,7 +1,8 @@
 import axios from "axios";
 
+const baseUrl = import.meta.env.VITE_DOMAIN_URL || 'http://localhost:8000/';
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/",
+  baseURL: baseUrl,
 
   headers: { "Content-Type": "application/json" },
 });
