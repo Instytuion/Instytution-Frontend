@@ -1,173 +1,109 @@
-const Navbar =() =>{
-    return (
+import React, { useState } from "react";
+import {
+  AppBar,
+  Tab,
+  Tabs,
+  IconButton,
+  Toolbar,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
+import { Link } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import PersonIcon from "@mui/icons-material/Person";
+import HomeIcon from "@mui/icons-material/Home";
+import StoreIcon from "@mui/icons-material/Store";
+import InfoIcon from "@mui/icons-material/Info";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import logo1 from "../../assets/logo1.png";
+import DrawerComponent from "../Drawer/DrawerComponent";
 
-        <div>
-            navbar
-        </div>
-    )
+function Navbar() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const data = [
+    { id: 1, label: "Home", link: "/", icon: <HomeIcon /> },
+    { id: 2, label: "Courses", link: "/courses", icon: <StoreIcon /> },
+    { id: 3, label: "About Us", link: "/about", icon: <InfoIcon /> },
+    { id: 4, label: "Our store", link: "/store", icon: <StoreIcon /> },
+    { id: 5, label: "Contact Us", link: "/contact", icon: <ContactMailIcon /> },
+  ];
+
+  const [selectedTab, setSelectedTab] = useState("Home");
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  return (
+    <>
+      <AppBar position="sticky" sx={{ backgroundColor: "#00796b" }}>
+        <Toolbar>
+          <img width={130} src={logo1} alt="Company Logo" />
+
+          {!isMobile ? (
+            <>
+              <Tabs
+                textColor="inherit"
+                value={selectedTab}
+                onChange={handleChange}
+                aria-label="Navigation Tabs"
+                sx={{ marginLeft: "auto" }}
+                TabIndicatorProps={{
+                  sx: { backgroundColor: "black", height: 2 },
+                }}
+              >
+                {data.map((tab) => (
+                  <Tab
+                    key={tab.id}
+                    component={Link}
+                    to={tab.link}
+                    label={tab.label}
+                    value={tab.label}
+                    sx={{
+                      color: "black",
+                      "&.Mui-selected": {
+                        borderBottom: "2px solid black",
+                        color: "black",
+                      },
+                    }}
+                  />
+                ))}
+              </Tabs>
+              <IconButton sx={{ marginLeft: "auto" }}>
+                <NotificationsIcon />
+              </IconButton>
+              <IconButton sx={{ marginLeft: "10px" }}>
+                <PersonIcon />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <IconButton sx={{ marginLeft: "auto" }}>
+                <NotificationsIcon />
+              </IconButton>
+              <IconButton sx={{ marginLeft: "10px" }}>
+                <PersonIcon />
+              </IconButton>
+              <IconButton
+                sx={{ marginLeft: "10px" }}
+                onClick={() => setOpenDrawer(!openDrawer)}
+              >
+                <DrawerComponent
+                  openDrawer={openDrawer}
+                  setOpenDrawer={setOpenDrawer}
+                  menuItems={data}
+                  drawerWidth="300px"
+                />
+              </IconButton>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
+    </>
+  );
 }
+
 export default Navbar;
-
-
-
-// Try to add navbar , DONT MODIFY IT !!!!!!!!!!!!!!
-
-// import  { useState } from 'react';
-// import AppBar from '@mui/material/AppBar';
-// import Box from '@mui/material/Box';
-// import Toolbar from '@mui/material/Toolbar';
-// import IconButton from '@mui/material/IconButton';
-// import Typography from '@mui/material/Typography';
-// import Menu from '@mui/material/Menu';
-// import MenuIcon from '@mui/icons-material/Menu';
-// import Container from '@mui/material/Container';
-// import Avatar from '@mui/material/Avatar';
-// import Button from '@mui/material/Button';
-// import Tooltip from '@mui/material/Tooltip';
-// import MenuItem from '@mui/material/MenuItem';
-// import AdbIcon from '@mui/icons-material/Adb';
-// const pages = ['Products', 'Courses', 'About US '];
-// const settings = ['Profile', 'Account', 'Login'];
-
-// function Navbar() {
-//   const [anchorElNav, setAnchorElNav] = useState(null);
-//   const [anchorElUser, setAnchorElUser] = useState(null);
-
-//   const handleOpenNavMenu = (event) => {
-//     setAnchorElNav(event.currentTarget);
-//   };
-//   const handleOpenUserMenu = (event) => {
-//     setAnchorElUser(event.currentTarget);
-//   };
-
-//   const handleCloseNavMenu = () => {
-//     setAnchorElNav(null);
-//   };
-
-//   const handleCloseUserMenu = () => {
-//     setAnchorElUser(null);
-//   };
-
-//   return (
-//     <AppBar position="static">
-//       <Container maxWidth="xl">
-//         <Toolbar disableGutters>
-//           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-//           <Typography
-//             variant="h6"
-//             noWrap
-//             component="a"
-//             href="/"
-//             sx={{
-//               mr: 2,
-//               display: { xs: 'none', md: 'flex' },
-//               fontFamily: 'monospace',
-//               fontWeight: 700,
-//               letterSpacing: '.3rem',
-//               color: 'inherit',
-//               textDecoration: 'none',
-//             }}
-//           >
-//             InstiTution
-//           </Typography>
-
-//           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-//             <IconButton
-//               size="large"
-//               aria-label="account of current user"
-//               aria-controls="menu-appbar"
-//               aria-haspopup="true"
-//               onClick={handleOpenNavMenu}
-//               color="inherit"
-//             >
-//               <MenuIcon />
-//             </IconButton>
-//             <Menu
-//               id="menu-appbar"
-//               anchorEl={anchorElNav}
-//               anchorOrigin={{
-//                 vertical: 'bottom',
-//                 horizontal: 'left',
-//               }}
-//               keepMounted
-//               transformOrigin={{
-//                 vertical: 'top',
-//                 horizontal: 'left',
-//               }}
-//               open={Boolean(anchorElNav)}
-//               onClose={handleCloseNavMenu}
-//               sx={{ display: { xs: 'block', md: 'none' } }}
-//             >
-//               {pages.map((page) => (
-//                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-//                   <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
-//                 </MenuItem>
-//               ))}
-//             </Menu>
-//           </Box>
-//           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-//           <Typography
-//             variant="h5"
-//             noWrap
-//             component="a"
-//             href="#app-bar-with-responsive-menu"
-//             sx={{
-//               mr: 2,
-//               display: { xs: 'flex', md: 'none' },
-//               flexGrow: 1,
-//               fontFamily: 'monospace',
-//               fontWeight: 700,
-//               letterSpacing: '.2rem',
-//               color: 'inherit',
-//               textDecoration: 'none',
-//             }}
-//           >
-//             InstiTution
-//           </Typography>
-//           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-//             {pages.map((page) => (
-//               <Button
-//                 key={page}
-//                 onClick={handleCloseNavMenu}
-//                 sx={{ my: 2, color: 'white', display: 'block' }}
-//               >
-//                 {page}
-//               </Button>
-//             ))}
-//           </Box>
-//           <Box sx={{ flexGrow: 0 }}>
-//             <Tooltip title="Open settings">
-//               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-//                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-//               </IconButton>
-//             </Tooltip>
-//             <Menu
-//               sx={{ mt: '45px' }}
-//               id="menu-appbar"
-//               anchorEl={anchorElUser}
-//               anchorOrigin={{
-//                 vertical: 'top',
-//                 horizontal: 'right',
-//               }}
-//               keepMounted
-//               transformOrigin={{
-//                 vertical: 'top',
-//                 horizontal: 'right',
-//               }}
-//               open={Boolean(anchorElUser)}
-//               onClose={handleCloseUserMenu}
-//             >
-//               {settings.map((setting) => (
-//                 <MenuItem key={setting} onClick={handleCloseUserMenu}>
-//                   <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-//                 </MenuItem>
-//               ))}
-//             </Menu>
-//           </Box>
-//         </Toolbar>
-//       </Container>
-//     </AppBar>
-//   );
-// }
-
-// export default Navbar;
