@@ -12,8 +12,8 @@ const GoogleSignIn = () => {
   const handleSuccess = async (data) => {
     try{
       console.log("Google Sign-In Success:", data);
-      const token = data.credential
-      const response = await GoogleSignInServices(token)
+      const access_token = data.credential
+      const response = await GoogleSignInServices(access_token)
       
       navigate("/");
       console.log('From GoogleSignIn- response is - ', response);
