@@ -18,6 +18,8 @@ const userAuthSlice = createSlice({
     initialState,
     reducers: {
       setUser: (state, action) => {
+        console.log('setUser reducere called');
+        
         state.isAuthenticated = true;
         state.email = action.payload.email;
         state.firstName = action.payload.firstName || null;
@@ -25,7 +27,10 @@ const userAuthSlice = createSlice({
         state.profileImage = action.payload.profileImage || null;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
-        state.role = action.payload.role || false;
+        state.role = action.payload.role;
+
+        console.log('Email at setUser', state.email);
+        
       },
     },
   });
