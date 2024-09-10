@@ -15,6 +15,8 @@ import { useForm, Controller } from "react-hook-form";
 import GoogleSignIn from "./GoogleSignIn";
 import LoginServices from "../services/user/LoginServices";
 import useToast from "../hooks/useToast";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/slices/AuthSlice";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,6 +24,7 @@ const LoginForm = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const showToast = useToast();
+  const dispatch = useDispatch()
   const {
     control,
     handleSubmit,
@@ -45,9 +48,24 @@ const LoginForm = () => {
     try {
         setIsLoading(true);
         const response = await LoginServices(data)
+        
+        const { access, refresh, user } = response;
+        
+        dispatch(
+          setUser({
+            email: user.email, 
+            firstName: user.first_name || '', 
+            lastName: user.last_name || '',
+            accessToken: access,
+            refreshToken: refresh,
+            profileImage: user.image || '',
+            role: user.role,
+            registerMode: user.register_mode,
+          })
+        );
+
         showToast(response.message, "success");
         navigate("/");
-        console.log('Response data upon Login :',response);
         
     } catch (error) {
       console.log('Response error upon Login :',error);
