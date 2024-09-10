@@ -72,7 +72,7 @@ const SignupForm = () => {
 
   const handleVerifyOtp = async () => {
     try {
-      setisVerifyStart(true);
+      
       console.log(" data for sentign verify is :", otp, email);
 
       const response = await SignupServices.verifyOtp(email, password, otp);

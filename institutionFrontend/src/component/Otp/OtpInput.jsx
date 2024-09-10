@@ -95,7 +95,8 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
   const handleClick = (event, currentIndex) => {
     selectInput(currentIndex);
   };
-  const handleVerify =() =>{
+  const handleVerify =(e) =>{
+   
     if (value.length <6){
         showToast('Please Enter Valid Otp','error')
     }else{
@@ -164,7 +165,7 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
       <Button sx={{ textAlign: 'center', mb: 2,color:'white',paddingLeft:2,paddingRight:2,bgcolor:'#009688',":hover":{
         bgcolor:'#00796b',
         
-      }}} onClick={handleVerify} className='bg'>
+      }}} onClick={(e)=>handleVerify()} className='bg'>
                 Verify
         </Button>
       </Box>
