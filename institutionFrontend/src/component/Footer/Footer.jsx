@@ -27,7 +27,7 @@ const Footer = () => {
   ];
 
   return (
-    <Box sx={{ backgroundColor: '#009688', color: '#fff', py: 5 }}>
+    <Box sx={{ backgroundColor: '#00796b', color: '#fff', py: 5 }}>
       <Container maxWidth="lg">
         <Grid container spacing={5}>
           <FooterItem
