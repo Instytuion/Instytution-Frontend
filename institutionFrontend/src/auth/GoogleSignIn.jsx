@@ -1,11 +1,27 @@
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+import GoogleSignInServices from '../services/GoogleSignInServices';
+import { useNavigate } from "react-router-dom";
+
 
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const GoogleSignIn = () => {
-  const handleSuccess = (response) => {
-    console.log("Google Sign-In Success:", response);
+  const navigate = useNavigate();
+  
+  const handleSuccess = async (data) => {
+    try{
+      console.log("Google Sign-In Success:", data);
+      const token = data.credential
+      const response = await GoogleSignInServices(token)
+      
+      navigate("/");
+      console.log('From GoogleSignIn- response is - ', response);
+    }
+    catch (error) {
+      console.log('Some error while sending google token to backend', error);
+    }
+    
   };
 
   const handleFailure = (error) => {
