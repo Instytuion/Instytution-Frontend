@@ -1,5 +1,5 @@
 import { Box, duration, Grid, Typography } from "@mui/material";
-import CourseCard from "../Card/Card";
+import CommonCard from "../Card/Card";
 
 const Popularcourse = () => {
   const popularCourses = [
@@ -37,7 +37,7 @@ const Popularcourse = () => {
       <Grid container alignContent='center' spacing={2} sx={{mt:4}}>
         {popularCourses.map((course, idx) => (
           <Grid item key={idx} xs={12} sm={6} md={3} >
-            <CourseCard
+            <CommonCard
               title={course.title}
               duration={course.duration}
               price={course.price}
