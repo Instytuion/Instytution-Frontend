@@ -17,7 +17,11 @@ const CommonCard = ({ title, duration, price, image, link }) => {
         display: 'flex', 
         flexDirection: 'column', 
         margin: 'auto', 
-        cursor: 'pointer'
+        cursor: 'pointer',
+        boxShadow: 1,
+        '&:hover': {
+          boxShadow: 8,
+        },
       }}
       onClick={handleCardClick}
       >
