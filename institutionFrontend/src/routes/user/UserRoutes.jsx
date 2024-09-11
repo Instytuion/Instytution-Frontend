@@ -8,6 +8,8 @@ import PageNotFoundPage from '../../component/PageNotFound/PageNotFound';
 const Home = lazy(() => import('../../pages/user//Home'));
 const Login = lazy(() => import('../../pages/user/LoginPage'));
 const Signup = lazy(() => import('../../pages/user/SignupPage'));
+const Profile = lazy(() => import('../../pages/user/Profile'));
+
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/profile" element={<Profile />} />
         
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>
