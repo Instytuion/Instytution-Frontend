@@ -48,8 +48,10 @@ const LoginForm = () => {
     try {
         setIsLoading(true);
         const response = await LoginServices(data)
+        console.log('response at login success', response);
         
         const { access, refresh, user } = response;
+        
         
         dispatch(
           setUser({

@@ -1,21 +1,29 @@
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import GoogleSignInServices from '../services/GoogleSignInServices';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/AuthSlice";
 import useToast from '../hooks/useToast';
+import GoogleSignInServices from '../services/user/GoogleSignInServices';
+import { useState } from 'react';
+import Spinner from '../component/Spinner/Spinner';
 
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const GoogleSignIn = () => {
   const showToast = useToast()
+  const [spinnersActive, setSpinnersActive] = useState(false)
   const navigate = useNavigate();
   const dispatch = useDispatch()
   
+  if (spinnersActive){
+    return <Spinner />;
+  }
+
   const handleSuccess = async (data) => {
     try{
       console.log("Google Sign-In Success:", data);
+      setSpinnersActive(true);
       const access_token = data.credential
       const response = await GoogleSignInServices(access_token)
 
@@ -41,6 +49,9 @@ const GoogleSignIn = () => {
     catch (error) {
       console.log('Some error while sending google token to backend', error);
     }
+    finally{
+      setSpinnersActive(false);
+    }
   };
 
   const handleFailure = (error) => {
@@ -50,15 +61,15 @@ const GoogleSignIn = () => {
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-    <GoogleLogin
-      onSuccess={handleSuccess}
-      onError={handleFailure}
-      text="Sign in with Google"
-      width="300px"
-      theme="outline"
-      shape="pill"
-      
-    />
+      <GoogleLogin
+        onSuccess={handleSuccess}
+        onError={handleFailure}
+        text="Sign in with Google"
+        width="300px"
+        theme="outline"
+        shape="pill"
+        
+      />
   </GoogleOAuthProvider>
   );
 };
