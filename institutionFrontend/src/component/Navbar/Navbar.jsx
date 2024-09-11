@@ -24,7 +24,7 @@ function Navbar() {
 
   const data = [
     { id: 1, label: "Home", link: "/", icon: <HomeIcon /> },
-    { id: 2, label: "Courses", link: "/courses", icon: <StoreIcon /> },
+    { id: 2, label: "Program", link: "/programs", icon: <StoreIcon /> },
     { id: 3, label: "About Us", link: "/about", icon: <InfoIcon /> },
     { id: 4, label: "Our store", link: "/store", icon: <StoreIcon /> },
     { id: 5, label: "Contact Us", link: "/contact", icon: <ContactMailIcon /> },
@@ -35,6 +35,8 @@ function Navbar() {
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
+    console.log('newValue', newValue);
+    
   };
 
   return (
