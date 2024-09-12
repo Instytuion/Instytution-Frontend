@@ -85,9 +85,10 @@ const SignupForm = () => {
         
         dispatch(
           setUser({
-            email: user.email,
-            firstName: user.first_name || "",
-            lastName: user.last_name || "",
+            isActive: user.is_active,
+            email: user.email, 
+            firstName: user.first_name || '', 
+            lastName: user.last_name || '',
             accessToken: access,
             refreshToken: refresh,
             profileImage: user.profile_picture || "",

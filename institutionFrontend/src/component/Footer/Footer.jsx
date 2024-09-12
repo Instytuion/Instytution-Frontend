@@ -28,7 +28,7 @@ const Footer = () => {
 
   return (
     <Box sx={{ backgroundColor: '#00796b', color: '#fff', py: 5 }}>
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" sx={{textAlign:'center'}}>
         <Grid container spacing={5}>
           <FooterItem
             title="SUBSCRIBE"

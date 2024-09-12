@@ -32,6 +32,7 @@ const GoogleSignIn = () => {
         
         dispatch(
           setUser({
+            isActive: user.is_active,
             email: user.email, 
             firstName: user.first_name || '', 
             lastName: user.last_name || '',
