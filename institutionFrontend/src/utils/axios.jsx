@@ -11,7 +11,7 @@ const instance = axios.create({
 
 // Create a separate Axios instance for token refresh
 //to avoid recursive interceptor loop
-const refreshInstance = axios.create({
+export const noAuthInstance = axios.create({
   baseURL: baseUrl,
   headers: { "Content-Type": "application/json" },
 });
@@ -55,7 +55,7 @@ instance.interceptors.response.use(
 
           if (refreshToken) {
               try {
-                  const response = await refreshInstance.post('accounts/api/token/refresh/', { refresh: refreshToken });
+                  const response = await noAuthInstance.post('accounts/api/token/refresh/', { refresh: refreshToken });
                   const { access } = response.data;
                   
 
