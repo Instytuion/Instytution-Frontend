@@ -24,7 +24,7 @@ import OTPSkeleton from "../../component/Skeletons/OtpSkeleton";
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [emailEdited, setEmailEdited] = useState(false);
-  const [data, setData] = useState([]);
+  const [editedData, setEditedData] = useState([]);
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(""); // Store backend errors
@@ -56,7 +56,7 @@ const Profile = () => {
 
   const handleVerifyOtp = async () => {
     try {
-      const updatedData = {...data, otp: otp};
+      const updatedData = {...editedData, otp: otp};
 
       const response = await instance.patch(
         "accounts/user-profile/verify-update/",
@@ -75,6 +75,7 @@ const Profile = () => {
       );
       showToast("Profile updated successfully", "success");
     } catch (error) {
+      showToast(error.response.data.otp[0] || "An error occurred", "error");
       console.log(error);
     }
   };
@@ -102,7 +103,7 @@ const Profile = () => {
         setError(error.response?.data?.message || "Failed to update email.");
       } finally {
         setIsLoading(false);
-        setData(updatedData);
+        setEditedData(updatedData);
       }
       return;
     }
@@ -133,7 +134,11 @@ const Profile = () => {
   // Toggle edit mode
   const handleEditClick = () => {
     if (isEditing) {
-      reset(data);
+      reset({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+      });
     }
     setIsEditing(!isEditing);
   };
@@ -457,10 +462,10 @@ const Profile = () => {
                 Enter Your OTP
               </Typography>
               <Typography sx={{textAlign: "center", color: "text.secondary"}}>
-                OTP has been sent to your {data.email}
+                OTP has been sent to your {editedData.email}
               </Typography>
               <OTP
-                data={data.email}
+                data={editedData.email}
                 separator={<span></span>}
                 value={otp}
                 onChange={setOtp}

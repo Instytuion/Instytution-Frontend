@@ -12,7 +12,7 @@ const Signup = lazy(() => import('../../pages/user/SignupPage'));
 const ProgramPage = lazy(() => import('../../pages/user/ProgramPage'));
 const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'));
 const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
-const Profile = lazy(() => import('../../pages/user/Profile'));
+const Profile = lazy(() => import('../../pages/user/userProfile'));
 
 function App() {
   return (
