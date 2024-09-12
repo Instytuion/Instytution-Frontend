@@ -61,7 +61,7 @@ const LoginForm = () => {
             lastName: user.last_name || '',
             accessToken: access,
             refreshToken: refresh,
-            profileImage: user.image || '',
+            profileImage: user.profile_picture || '',
             role: user.role,
             registerMode: user.register_mode,
           })

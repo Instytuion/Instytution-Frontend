@@ -12,6 +12,7 @@ const Signup = lazy(() => import('../../pages/user/SignupPage'));
 const ProgramPage = lazy(() => import('../../pages/user/ProgramPage'));
 const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'));
 const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
+const Profile = lazy(() => import('../../pages/user/userProfile'));
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<SignUpLoginProtectRoutes element={Login} />} />
         <Route path="/signup" element={<SignUpLoginProtectRoutes element={Signup} />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/programs" element={<ProgramPage />} />
         <Route path={"/programs/:programName"}  element={<ProgramDetailPage />} />
         <Route path={"/courses/courseDetail/:coursemName"}  element={<CourseDetailPage />} />
