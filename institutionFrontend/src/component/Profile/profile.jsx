@@ -20,6 +20,9 @@ import OTP from "../../component/Otp/OtpInput";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SignupServices from "../../services/user/SignupServices";
 import OTPSkeleton from "../../component/Skeletons/OtpSkeleton";
+import { getInputProps, getInputLabelProps } from "../CustomeElements/FormLabelInput";
+
+
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -296,31 +299,8 @@ const Profile = () => {
                         label="First Name"
                         variant="outlined"
                         {...field}
-                        InputLabelProps={{
-                          sx: {
-                            "&.Mui-focused, &.MuiInputLabel-shrink": {
-                              fontSize: "0.8rem", // When the label is focused or shrunk
-                              transform: "translate(0.9rem, -0.6rem)", // Adjust the position when shrunk
-                            },
-                            transform: "translate(0.9rem, 0.6rem)", // Vertically center the label
-                            fontSize: "0.9rem",
-                          },
-                        }}
-                        InputProps={{
-                          readOnly: !isEditing,
-                          sx: {
-                            pointerEvents: !isEditing ? "none" : "auto",
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: !isEditing
-                                ? "transparent"
-                                : "initial",
-                            },
-                            "& .MuiInputBase-input": {
-                              padding: "10px 10px",
-                              fontSize: 13,
-                            },
-                          },
-                        }}
+                        InputLabelProps={getInputLabelProps}
+                        InputProps={getInputProps(isEditing)}
                         autoFocus={isEditing}
                         error={!!errors.firstName}
                         helperText={errors.firstName?.message}
@@ -340,31 +320,8 @@ const Profile = () => {
                         label="Last Name"
                         variant="outlined"
                         {...field}
-                        InputLabelProps={{
-                          sx: {
-                            "&.Mui-focused, &.MuiInputLabel-shrink": {
-                              fontSize: "0.8rem", // When the label is focused or shrunk
-                              transform: "translate(0.9rem, -0.6rem)", // Adjust the position when shrunk
-                            },
-                            transform: "translate(0.9rem, 0.6rem)", // Vertically center the label
-                            fontSize: "0.9rem",
-                          },
-                        }}
-                        InputProps={{
-                          readOnly: !isEditing,
-                          sx: {
-                            pointerEvents: !isEditing ? "none" : "auto",
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: !isEditing
-                                ? "transparent"
-                                : "initial",
-                            },
-                            "& .MuiInputBase-input": {
-                              padding: "10px 10px",
-                              fontSize: 13,
-                            },
-                          },
-                        }}
+                        InputLabelProps={getInputLabelProps}
+                        InputProps={getInputProps(isEditing)}
                         error={!!errors.lastName}
                         helperText={errors.lastName?.message}
                       />
@@ -389,31 +346,8 @@ const Profile = () => {
                         label="Email"
                         variant="outlined"
                         {...field}
-                        InputLabelProps={{
-                          sx: {
-                            "&.Mui-focused, &.MuiInputLabel-shrink": {
-                              fontSize: "0.8rem", // When the label is focused or shrunk
-                              transform: "translate(0.9rem, -0.6rem)", // Adjust the position when shrunk
-                            },
-                            transform: "translate(0.9rem, 0.6rem)", // Vertically center the label
-                            fontSize: "0.9rem",
-                          },
-                        }}
-                        InputProps={{
-                          readOnly: !isEditing,
-                          sx: {
-                            pointerEvents: !isEditing ? "none" : "auto",
-                            "&:hover .MuiOutlinedInput-notchedOutline": {
-                              borderColor: !isEditing
-                                ? "transparent"
-                                : "initial",
-                            },
-                            "& .MuiInputBase-input": {
-                              padding: "10px 10px",
-                              fontSize: 13,
-                            },
-                          },
-                        }}
+                        InputLabelProps={getInputLabelProps}
+                        InputProps={getInputProps(isEditing)}
                         error={!!errors.email}
                         helperText={errors.email?.message}
                       />
