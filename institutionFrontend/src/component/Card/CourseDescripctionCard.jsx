@@ -16,8 +16,8 @@ function CourseDescripctionCard({title, description}) {
           {title}
         </Typography>
         <Typography variant="body2" component="p">
-            {description}
-          </Typography>
+          {description}
+        </Typography>
       </Card>
     </>
   )
