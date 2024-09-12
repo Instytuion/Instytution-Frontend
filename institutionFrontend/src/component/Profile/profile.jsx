@@ -21,6 +21,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SignupServices from "../../services/user/SignupServices";
 import OTPSkeleton from "../../component/Skeletons/OtpSkeleton";
 import { getInputProps, getInputLabelProps } from "../CustomeElements/FormLabelInput";
+import  updateProfileWithEmail from "../../services/user/UserProfileServices"
+import updateProfileService from "../../services/user/UserProfileServices";
 
 
 
@@ -30,7 +32,7 @@ const Profile = () => {
   const [editedData, setEditedData] = useState([]);
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(""); // Store backend errors
+  const [error, setError] = useState(""); 
   const dispatch = useDispatch();
   const showToast = useToast();
 
@@ -61,19 +63,16 @@ const Profile = () => {
     try {
       const updatedData = {...editedData, otp: otp};
 
-      const response = await instance.patch(
-        "accounts/user-profile/verify-update/",
-        updatedData
-      );
+      const response = await updateProfileService.updateProfileWithEmail(updatedData)
       console.log("user profile verify -update res:", response);
       setIsEditing(false);
       setEmailEdited(false);
       dispatch(
         updateProfile({
           ...user,
-          firstName: response.data.user.first_name,
-          lastName: response.data.user.last_name,
-          email: response.data.user.email,
+          firstName: response.user.first_name,
+          lastName: response.user.last_name,
+          email: response.user.email,
         })
       );
       showToast("Profile updated successfully", "success");
@@ -113,16 +112,21 @@ const Profile = () => {
 
     if (Object.keys(updatedData).length > 0) {
       try {
-        const response = await instance.patch(
-          "/accounts/user-profile/",
-          updatedData
-        );
+        // Create FormData object and append updatedData fields
+        const formData = new FormData();
+        Object.keys(updatedData).forEach((key) => {
+          formData.append(key, updatedData[key]);
+        });
+
+        const response = await updateProfileService.updateProfileWithoutEmail(formData)
+
+        // Dispatch action and show success message
         dispatch(
           updateProfile({
             ...user,
-            firstName: response.data.first_name,
-            lastName: response.data.last_name,
-            email: response.data.email,
+            firstName: response.first_name,
+            lastName: response.last_name,
+            email: response.email,
           })
         );
         showToast("Profile updated successfully", "success");
@@ -147,29 +151,30 @@ const Profile = () => {
   };
 
   // Handle profile image change
-  const handleImageChange = (event) => {
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const formData = new FormData();
       formData.append("profile_picture", file);
 
-      instance
-        .patch("/accounts/user-profile/", formData, {
-          headers: {"Content-Type": "multipart/form-data"},
-        })
-        .then((response) => {
-          dispatch(
-            updateProfile({
-              ...user,
-              profileImage: response.data.profile_picture,
-            })
-          );
-          showToast("Profile picture updated successfully.", "success");
-        })
-        .catch((error) => {
+      try{
+
+      const response = await updateProfileService.updateProfileWithoutEmail(formData)
+          if (response && response.profile_picture) {
+            dispatch(
+              updateProfile({
+                ...user,
+                profileImage: response.profile_picture,
+              })
+            );
+            showToast("Profile picture updated successfully.", "success");
+          } else {
+            throw new Error("No profile picture URL returned from server.");
+          }
+        }catch(error){
           console.error("Profile image update failed:", error);
           setError("Failed to update profile image.");
-        });
+        };
     }
   };
 
@@ -399,14 +404,13 @@ const Profile = () => {
                 OTP has been sent to your {editedData.email}
               </Typography>
               <OTP
-                data={editedData.email}
+                data={editedData}
                 separator={<span></span>}
                 value={otp}
                 onChange={setOtp}
                 length={6}
                 onverify={handleVerifyOtp}
               />
-              {error && <Typography color="error">{error}</Typography>}
             </Box>
           </>
         )}
