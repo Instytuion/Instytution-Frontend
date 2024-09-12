@@ -58,6 +58,8 @@ const SignupForm = () => {
       setOtpSent(true);
       showToast(response.message, "success");
     } catch (error) {
+      console.log("axios error :",error);
+      
       setError("email", {
         type: "manual",
         message: error.response.data.email || "An error occurred",
@@ -83,12 +85,12 @@ const SignupForm = () => {
         
         dispatch(
           setUser({
-            email: user.email, 
-            firstName: user.first_name || '', 
-            lastName: user.last_name || '',
+            email: user.email,
+            firstName: user.first_name || "",
+            lastName: user.last_name || "",
             accessToken: access,
             refreshToken: refresh,
-            profileImage: user.image || '',
+            profileImage: user.profile_picture || "",
             role: user.role,
             registerMode: user.register_mode,
           })

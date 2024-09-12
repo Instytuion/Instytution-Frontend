@@ -139,6 +139,7 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center'}}>
       {new Array(length).fill(null).map((_, index) => (
         <React.Fragment key={index}>
+          
           <BaseInput
             slots={{
               input: InputElement,
