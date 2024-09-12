@@ -1,8 +1,8 @@
-import instance from "../../utils/axios";
+import { noAuthInstance } from "../../utils/axios";
 
 
 const GoogleSignInServices = async (token)=>{
-    const response = await instance.post('accounts/google-auth/',{access_token: token})
+    const response = await noAuthInstance.post('accounts/google-auth/',{access_token: token})
     return response.data;
         
 }

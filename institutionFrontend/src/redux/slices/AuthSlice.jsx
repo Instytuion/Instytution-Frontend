@@ -22,6 +22,7 @@ const userAuthSlice = createSlice({
         console.log('setUser reducere called');
         
         state.isAuthenticated = true;
+        state.isActive = action.payload.isActive;
         state.email = action.payload.email;
         state.firstName = action.payload.firstName || null;
         state.lastName = action.payload.lastName || null;
@@ -46,6 +47,13 @@ const userAuthSlice = createSlice({
         state.accessToken = null;
         state.refreshToken = null;
         state.isAuthenticated = false;
+        state.isActive = false;
+        state.email = null;
+        state.firstName = null;
+        state.lastName = null;
+        state.profileImage = null;
+        state.role = null;
+        state.registerMode = null;
     }
     },
   });
