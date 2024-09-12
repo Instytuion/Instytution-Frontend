@@ -2,10 +2,12 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { Input as BaseInput } from '@mui/base/Input';
 import { Box, styled } from '@mui/system';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import useToast from '../../hooks/useToast';
+import { ResentText } from '../CustomeElements/RText';
 export default function OTP({ data,separator, length, value, onChange,onverify }) {
-    console.log('values are :',data)
+
+    console.log('datas  are sent to otp compoent :',data)
     console.log('values are :',onverify ? 'und fn ':'fn illa')
 
     const showToast = useToast()
@@ -68,6 +70,8 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
     }
   };
 
+
+
   const handleChange = (event, currentIndex) => {
     const currentValue = event.target.value;
     let indexToEnter = 0;
@@ -79,6 +83,7 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
         break;
       }
     }
+
     onChange((prev) => {
       const otpArray = prev.split('');
       const lastValue = currentValue[currentValue.length - 1];
@@ -105,6 +110,14 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
     
     
   }
+
+  const handleResentOtp=()=>{
+    alert('Resent OTP is clicked')
+  }
+
+
+
+
 
   const handlePaste = (event, currentIndex) => {
     event.preventDefault();
@@ -161,6 +174,9 @@ export default function OTP({ data,separator, length, value, onChange,onverify }
         </React.Fragment>
       ))}
       </Box>
+      <ResentText onClick={handleResentOtp}>
+        Resent OTP.?
+      </ResentText>
       <Box sx={{mt:5 ,width:'full'}}>
       <Button sx={{ textAlign: 'center', mb: 2,color:'white',paddingLeft:2,paddingRight:2,bgcolor:'#009688',":hover":{
         bgcolor:'#00796b',

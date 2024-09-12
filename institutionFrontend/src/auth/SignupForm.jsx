@@ -128,7 +128,7 @@ const SignupForm = () => {
           minHeight: "40vh",
         }}
       >
-        {!otpSent ? (
+        {otpSent ? (
           !isLoading ? (
             <>
               <Typography
