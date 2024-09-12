@@ -2,6 +2,7 @@ import  { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Spinner from '../../component/Spinner/Spinner';
 import PageNotFoundPage from '../../component/PageNotFound/PageNotFound';
+import SignUpLoginProtectRoutes from '../protectedRoutes/SignUpLoginProtectRoutes';
  
 
 // Lazy load components (example)
@@ -17,8 +18,8 @@ function App() {
     <Suspense fallback={<Spinner />}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<SignUpLoginProtectRoutes element={Login} />} />
+        <Route path="/signup" element={<SignUpLoginProtectRoutes element={Signup} />} />
         <Route path="/programs" element={<ProgramPage />} />
         <Route path={"/programs/:programName"}  element={<ProgramDetailPage />} />
         <Route path={"/courses/courseDetail/:coursemName"}  element={<CourseDetailPage />} />
