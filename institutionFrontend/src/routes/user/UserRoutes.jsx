@@ -10,6 +10,7 @@ const Login = lazy(() => import('../../pages/user/LoginPage'));
 const Signup = lazy(() => import('../../pages/user/SignupPage'));
 const ProgramPage = lazy(() => import('../../pages/user/ProgramPage'));
 const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'));
+const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/programs" element={<ProgramPage />} />
         <Route path={"/programs/:programName"}  element={<ProgramDetailPage />} />
+        <Route path={"/courses/courseDetail/:coursemName"}  element={<CourseDetailPage />} />
         
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>

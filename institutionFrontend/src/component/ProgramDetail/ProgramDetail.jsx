@@ -68,7 +68,7 @@ function ProgramDetail() {
                 <CommonCard
                   title={course.title}
                   image={course.image}
-                  link={`/courseDetail/${course.title}`}
+                  link={`/courses/courseDetail/${course.title}`}
                   duration={course.duration}
                   price={course.price}
                 />
