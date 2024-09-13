@@ -15,10 +15,6 @@ const GoogleSignIn = () => {
   const [spinnersActive, setSpinnersActive] = useState(false)
   const navigate = useNavigate();
   const dispatch = useDispatch()
-  
-  if (spinnersActive){
-    return <Spinner />;
-  }
 
   const handleSuccess = async (data) => {
     try{
@@ -59,6 +55,10 @@ const GoogleSignIn = () => {
     showToast( "An error occurred while google sign in.", "error");
     console.error("Google Sign-In Error:", error);
   };
+
+  if (spinnersActive){
+    return <Spinner />
+  }
 
   return (
     <GoogleOAuthProvider clientId={clientId}>

@@ -22,8 +22,8 @@ function App() {
         <Route path="/login" element={<SignUpLoginProtectRoutes element={Login} />} />
         <Route path="/signup" element={<SignUpLoginProtectRoutes element={Signup} />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/programs" element={<ProgramPage />} />
-        <Route path={"/programs/:programName"}  element={<ProgramDetailPage />} />
+        <Route path="/courses/programs" element={<ProgramPage />} />
+        <Route path={"/courses/programs/:programName"}  element={<ProgramDetailPage />} />
         <Route path={"/courses/courseDetail/:coursemName"}  element={<CourseDetailPage />} />
         
         <Route path="*" element={<PageNotFoundPage />} />

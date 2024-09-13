@@ -1,41 +1,33 @@
-import { Box, duration, Grid, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import CommonCard from "../Card/Card";
+import { useEffect, useState } from "react";
+import FetchPrograms from "../../services/courses/FetchPrograms";
+import Spinner from "../Spinner/Spinner";
 
 const Programs = () => {
-  const programsData = [
-    {
-      title: "Programming Languages",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Web Development",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Mobile App Development",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Data Science",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Cybersecurity",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Cloud Computing",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "AI",
-      image: "link-to-image.jpg",
-    },
-    {
-      title: "Game Development",
-      image: "link-to-image.jpg",
-    },
-  ];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    const FetchData = async ()=>{
+      try{
+        const response = await FetchPrograms()
+        console.log('Fetch programs succes - ', response.data);
+        setData(response.data)
+        setLoading(false)
+      }
+      catch(error){
+        setLoading(false)
+        console.log('Error while fetching programs - ', error);
+      }
+    }
+
+    FetchData();
+  }, []);
+
+  if(loading){
+    return <Spinner />
+  };
 
   return (
     <Box sx={{paddingLeft:8,paddingRight:8 , mb:10}}>
@@ -43,12 +35,12 @@ const Programs = () => {
         Our Programs
       </Typography>
       <Grid container alignContent='center' spacing={2} sx={{mt:4}}>
-        {programsData.map((program, idx) => (
+        {data.map((program, idx) => (
           <Grid item key={idx} xs={12} sm={6} md={3} >
             <CommonCard
-              title={program.title}
+              name={program.name}
               image={program.image}
-              link={`/programs/${program.title}`}
+              link={`/courses/programs/${program.name}`}
             />
           </Grid>
         ))}
