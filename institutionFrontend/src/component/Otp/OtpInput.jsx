@@ -5,9 +5,9 @@ import { Box, styled } from "@mui/system";
 import { Button, Typography } from "@mui/material";
 import useToast from "../../hooks/useToast";
 import { ResentText } from "../CustomeElements/RText";
-import instance from "../../utils/axios";
 import ResentOtp from "../../services/user/ResentOtp";
 import { useState, useEffect } from "react";
+import OTPSkeleton from "../Skeletons/OtpSkeleton";
 
 export default function OTP({
   data,
@@ -24,6 +24,7 @@ export default function OTP({
   const inputRefs = React.useRef(new Array(length).fill(null));
   const [countdown, setCountdown] = useState(115); 
   const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -132,6 +133,7 @@ export default function OTP({
   };
 
   const handleResentOtp = async () => {
+    setIsLoading(true)
     try {
       const response = await ResentOtp(email);
       console.log("response from otp resent");
@@ -149,6 +151,8 @@ export default function OTP({
         "error"
        
       );
+    }finally{
+      setIsLoading(false)
     }
   };
 
@@ -192,64 +196,73 @@ export default function OTP({
         flexDirection: "column",
       }}
     >
-      <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-        {new Array(length).fill(null).map((_, index) => (
-          <React.Fragment key={index}>
-            <BaseInput
-              slots={{
-                input: InputElement,
-              }}
-              aria-label={`Digit ${index + 1} of OTP`}
-              slotProps={{
-                input: {
-                  ref: (ele) => {
-                    inputRefs.current[index] = ele;
-                  },
-                  onKeyDown: (event) => handleKeyDown(event, index),
-                  onChange: (event) => handleChange(event, index),
-                  onClick: (event) => handleClick(event, index),
-                  onPaste: (event) => handlePaste(event, index),
-                  value: value[index] ?? "",
-                },
-              }}
-            />
-            {index === length - 1 ? null : separator}
-          </React.Fragment>
-        ))}
-      </Box>
-      
-      <Box sx={{ mt: 5, width: "100%" }}>
-        <Button
-          sx={{
-            textAlign: "center",
-            mb: 2,
-            color: "white",
-            paddingLeft: 2,
-            paddingRight: 2,
-            bgcolor: "#009688",
-            width:'100%',
-            ":hover": {
-              bgcolor: "#00796b",
-            },
-          }}
-          onClick={(e) => handleVerify()}
-          className="bg"
-        >
-          Verify
-        </Button>
-      </Box>
-      <Button  sx={{
-        display:'flex',
-        flex:'flex'
-      }}>
-        {!isButtonVisible && (
-          <Typography fontSize={14} >Resend OTP in {countdown} second</Typography>
-        )}
+     {!isLoading  ? (
+       <>
+       
+       <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+       {new Array(length).fill(null).map((_, index) => (
+         <React.Fragment key={index}>
+           <BaseInput
+             slots={{
+               input: InputElement,
+             }}
+             aria-label={`Digit ${index + 1} of OTP`}
+             slotProps={{
+               input: {
+                 ref: (ele) => {
+                   inputRefs.current[index] = ele;
+                 },
+                 onKeyDown: (event) => handleKeyDown(event, index),
+                 onChange: (event) => handleChange(event, index),
+                 onClick: (event) => handleClick(event, index),
+                 onPaste: (event) => handlePaste(event, index),
+                 value: value[index] ?? "",
+               },
+             }}
+           />
+           {index === length - 1 ? null : separator}
+         </React.Fragment>
+       ))}
+     </Box>
+     
+     <Box sx={{ mt: 5, width: "100%" }}>
+       <Button
+         sx={{
+           textAlign: "center",
+           mb: 2,
+           color: "white",
+           paddingLeft: 2,
+           paddingRight: 2,
+           bgcolor: "#009688",
+           width:'100%',
+           ":hover": {
+             bgcolor: "#00796b",
+           },
+         }}
+         onClick={(e) => handleVerify()}
+         className="bg"
+       >
+         Verify
+       </Button>
+     </Box>
+     <Button  sx={{
+       display:'flex',
+       flex:'flex'
+     }}>
+       {!isButtonVisible && (
+         <Typography fontSize={14} >Resend OTP in {countdown} second</Typography>
+       )}
 
-        {isButtonVisible && (
-          <ResentText onClick={handleResentOtp}>Resend OTP?</ResentText>
-        )}
-      </Button>
+       {isButtonVisible && (
+         <ResentText onClick={handleResentOtp}>Resend OTP?</ResentText>
+       )}
+     </Button>
+       </>
+     ):(
+     <>
+    <OTPSkeleton/>
+     </>
+     )}
 
     </Box>
   );
@@ -314,7 +327,7 @@ const InputElement = styled("input")(
   }
 
   &:focus-visible {
-    outline: 0;
-  }
+    outline:0;
+}
 `
 );
