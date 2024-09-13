@@ -41,6 +41,12 @@ const userAuthSlice = createSlice({
         state.refreshToken = action.payload.refreshToken;
         console.log('new tokens saved to store');
       },
+      updateProfile:(state, action)=>{
+        state.email = action.payload.email;
+        state.firstName = action.payload.firstName || null;
+        state.lastName = action.payload.lastName || null;
+        state.profileImage = action.payload.profileImage || null;
+      },
       logout: (state) => {
         console.log('inside logout reducer');
 
@@ -61,6 +67,7 @@ const userAuthSlice = createSlice({
 export const { 
   setUser,
   setRefreshToken,
+  updateProfile,
   logout,
  } = userAuthSlice.actions;
 
