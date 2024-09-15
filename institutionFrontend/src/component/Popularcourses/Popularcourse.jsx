@@ -1,33 +1,34 @@
 import { Box, duration, Grid, Typography } from "@mui/material";
 import CommonCard from "../Card/Card";
+import FetchLatestCourses from "../../services/courses/FetchLatestCourses";
+import Spinner from "../Spinner/Spinner";
+import { useEffect, useState } from "react";
+
 
 const Popularcourse = () => {
-  const popularCourses = [
-    {
-      title: "Web Development",
-      duration: "4 weeks",
-      price: "Rs 60,000",
-      image: "link-to-web-development-image.jpg",
-    },
-    {
-      title: "Artificial Intelligence",
-      duration: "5 weeks",
-      price: "Rs 90,000",
-      image: "link-to-ai-course-image.jpg",
-    },
-    {
-      title: "Cloud Computing",
-      duration: "3 weeks",
-      price: "Rs 75,000",
-      image: "link-to-cloud-computing-image.jpg",
-    },
-    {
-      title: "Blockchain Technology",
-      duration: "6 weeks",
-      price: "Rs 100,000",
-      image: "link-to-blockchain-course-image.jpg",
-    },
-  ];
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    const FetchData = async ()=>{
+      try{
+        const response = await FetchLatestCourses()
+        console.log('Fetch programs succes - ', response.data);
+        setData(response.data)
+        setLoading(false)
+      }
+      catch(error){
+        setLoading(false)
+        console.log('Error while fetching latest courses - ', error);
+      }
+    }
+
+    FetchData();
+  }, []);
+  
+  if(loading){
+    return <Spinner />
+  };
 
   return (
     <Box sx={{paddingLeft:8,paddingRight:8 , mb:10}}>
@@ -35,13 +36,14 @@ const Popularcourse = () => {
         Popular Courses
       </Typography>
       <Grid container alignContent='center' spacing={2} sx={{mt:4}}>
-        {popularCourses.map((course, idx) => (
+        {data.map((course, idx) => (
           <Grid item key={idx} xs={12} sm={6} md={3} >
             <CommonCard
-              title={course.title}
+              name={course.name}
               duration={course.duration}
               price={course.price}
               image={course.image}
+              link={`/courses/courseDetail/${course.name}`}
             />
           </Grid>
         ))}
