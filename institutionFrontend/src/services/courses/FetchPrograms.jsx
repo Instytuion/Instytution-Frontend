@@ -1,8 +1,8 @@
 import React from 'react'
-import instance from '../../utils/axios'
+import { noAuthInstance } from '../../utils/axios'
 
 async function FetchPrograms() {
-  const response = await instance.get('courses/programs/')
+  const response = await noAuthInstance.get('courses/programs/')
   return response
 }
 
