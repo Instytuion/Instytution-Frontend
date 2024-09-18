@@ -2,33 +2,8 @@ import { Box, Container, Grid, Paper, Typography } from '@mui/material'
 import React from 'react'
 import SkillsDescripctionCard from '../Card/SkillsDescripctionCard'
 
-function Syllabus() {
-    const data = [
-        {
-            title: 'Week-1',
-            description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-            Dolorem tempora quasi quod quo eaque aliquid distinctio accusantium, 
-            fugiat autem odio harum ipsa et, architecto assumenda adipisci facere incidunt recusandae nemo.`
-        },
-        {
-            title: 'Week-2',
-            description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-            Dolorem tempora quasi quod quo eaque aliquid distinctio accusantium, 
-            fugiat autem odio harum ipsa et, architecto assumenda adipisci facere incidunt recusandae nemo.`
-        },
-        {
-            title: 'Week-3',
-            description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-            Dolorem tempora quasi quod quo eaque aliquid distinctio accusantium, 
-            fugiat autem odio harum ipsa et, architecto assumenda adipisci facere incidunt recusandae nemo.`
-        },
-        {
-            title: 'Week-4',
-            description: `Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-            Dolorem tempora quasi quod quo eaque aliquid distinctio accusantium, 
-            fugiat autem odio harum ipsa et, architecto assumenda adipisci facere incidunt recusandae nemo.`
-        },
-    ]
+function Syllabus({week_descriptions}) {
+    const data = week_descriptions
   return (  
     <Container>
         <Box mt={2}>
@@ -45,7 +20,7 @@ function Syllabus() {
                 <Grid item key={idx} xs={12} md={6}>
                     <Paper elevation={3} sx={{ borderRadius: 5 }}>
                         <SkillsDescripctionCard 
-                        title={item.title}
+                        title={`Week - ${item.week}`}
                         description={item.description}
                         />
                     </Paper>

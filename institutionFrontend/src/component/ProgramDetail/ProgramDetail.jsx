@@ -9,7 +9,7 @@ function ProgramDetail() {
     const {programName} = useParams();
     const decodedProgramName = programName ? decodeURIComponent(programName) : '';
     const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
   useEffect(()=>{
     const FetchData = async ()=>{

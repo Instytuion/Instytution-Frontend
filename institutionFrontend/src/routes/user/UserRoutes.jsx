@@ -24,7 +24,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/courses/programs" element={<ProgramPage />} />
         <Route path={"/courses/programs/:programName"}  element={<ProgramDetailPage />} />
-        <Route path={"/courses/courseDetail/:coursemName"}  element={<CourseDetailPage />} />
+        <Route path={"/courses/courseDetail/:courseName"}  element={<CourseDetailPage />} />
         
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>

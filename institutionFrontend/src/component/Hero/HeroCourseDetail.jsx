@@ -4,7 +4,7 @@ import bannerButtonBg from "../../assets/banner button sec bg.png"
 import outerBg from "../../assets/Banner Course Detail.png"
 
 
-function HeroCourseDetail() {
+function HeroCourseDetail({name, description, price, duration, level}) {
   return (
     <Container maxWidth={false} disableGutters
     sx={{
@@ -34,24 +34,20 @@ function HeroCourseDetail() {
                         textAlign:['center', 'center', 'left']
                     }}
                     >
-                        Course title
+                        {name}
                     </Typography>
                     <Typography variant="body1" component="p">
-                        Description: Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, excepturi. Vero similique eum, 
-                        soluta perferendis ipsa architecto cumque corrupti reprehenderit ut dicta corporis 
-                        quod minus rerum distinctio iure optio ratione. Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                        Aliquid repellat itaque animi cum iure alias accusamus laborum nostrum ullam consectetur, 
-                        illo libero fugit beatae ab repellendus dolores ducimus optio sapiente.
+                        {description}
                     </Typography>
                     <Typography variant="body2" component="p">
-                        Duration
+                        Duration: {duration}
                     </Typography>
                     <TypoBodyMt0 variant="body2" component="p"
                     >
-                        Price
+                        Price: {price}
                     </TypoBodyMt0>
                     <TypoBodyMt0 variant="body2" component="p">
-                        Level
+                        Level: {level}
                     </TypoBodyMt0>
                 </Stack>
                 <Stack sx={{
