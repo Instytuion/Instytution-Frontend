@@ -13,19 +13,36 @@ const ProgramPage = lazy(() => import('../../pages/user/ProgramPage'));
 const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'));
 const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
 const Profile = lazy(() => import('../../pages/user/userProfile'));
+const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPassword'));
 
 function App() {
   return (
     <Suspense fallback={<Spinner />}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<SignUpLoginProtectRoutes element={Login} />} />
-        <Route path="/signup" element={<SignUpLoginProtectRoutes element={Signup} />} />
+        <Route
+          path="/login"
+          element={<SignUpLoginProtectRoutes element={Login} />}
+        />
+        <Route
+          path="/signup"
+          element={<SignUpLoginProtectRoutes element={Signup} />}
+        />
+        <Route
+          path="/reset-password/:uid/"
+          element={<SignUpLoginProtectRoutes element={ConfirmResetPassword} />}
+        />
         <Route path="/profile" element={<Profile />} />
         <Route path="/courses/programs" element={<ProgramPage />} />
-        <Route path={"/courses/programs/:programName"}  element={<ProgramDetailPage />} />
-        <Route path={"/courses/courseDetail/:courseName"}  element={<CourseDetailPage />} />
-        
+        <Route
+          path={"/courses/programs/:programName"}
+          element={<ProgramDetailPage />}
+        />
+        <Route
+          path={"/courses/courseDetail/:courseName"}
+          element={<CourseDetailPage />}
+        />
+
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>
     </Suspense>

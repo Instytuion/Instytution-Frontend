@@ -6,5 +6,4 @@ const userProfile = () => {
     <Profile/>
   )
 }
-
 export default userProfile
