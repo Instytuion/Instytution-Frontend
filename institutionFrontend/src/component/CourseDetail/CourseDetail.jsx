@@ -13,7 +13,7 @@ function CourseDetail({data, courseName}) {
     <Syllabus 
     week_descriptions={data.week_descriptions}
     />
-    <UpComingBatch />
+    <UpComingBatch courseName={courseName} />
     <RelatedCourses courseName={courseName}/>
     
     </>

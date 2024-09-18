@@ -1,19 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Typography, Container, Paper } from "@mui/material";
 import UpComingBatchTable from '../Tables/UpComingBatchTable';
+import FetchCourseBatches from '../../services/courses/FetchCourseBatches';
+import Spinner from '../Spinner/Spinner';
 
-function UpComingBatch() {
-    function createData(batchId, date, time, instructor) {
-        return { batchId, date, time, instructor };
+function UpComingBatch({courseName}) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    const FetchData = async ()=>{
+      try{
+        const response = await FetchCourseBatches(courseName)
+        console.log('Fetch related courses succes - ', response.data);
+        setData(response.data)
+        setLoading(false)
       }
-      
-    const data = [
-    createData('Batch-1', '10/08/2024', '10:00 Am', 'Adam'),
-    createData('Batch-2', '10/09/2024', '10:00 Am', 'Adam'),
-    createData('Batch-3', '10/10/2024', '10:00 Am', 'Adam'),
-    createData('Batch-4', '10/11/2024', '10:00 Am', 'Adam'),
-    createData('Batch-5', '10/12/2024', '10:00 Am', 'Adam'),
-    ];
+      catch(error){
+        setLoading(false)
+        console.log('Error while fetching related courses - ', error);
+      }
+    }
+
+    FetchData();
+  }, [courseName]);
+
+  if(loading){
+    return <Spinner />
+  };
+
   return (
     <Container>
         <Box mt={2}>
