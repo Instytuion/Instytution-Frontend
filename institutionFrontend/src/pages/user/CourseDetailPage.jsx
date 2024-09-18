@@ -12,19 +12,17 @@ function CourseDetailPage() {
   const {courseName} = useParams() //this 'courseName' is url encoded.
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentCourseName, setCurrentCourseName] = useState(courseName);
-  
 
   useEffect(()=>{
     const FetchData = async ()=>{
       try{
-        const response = await FetchCourseDetail(currentCourseName)
+        const response = await FetchCourseDetail(courseName)
         console.log('Fetch courses datails success - ', response.data);
         setData(response.data)
         setLoading(false)
         window.scrollTo({
           top: 0,
-          behavior: 'smooth' // Smooth scrolling
+          behavior: 'smooth' 
         });
       }
       catch(error){
@@ -34,10 +32,6 @@ function CourseDetailPage() {
     }
 
     FetchData();
-  }, [currentCourseName]);
-
-  useEffect(() => {
-    setCurrentCourseName(courseName);
   }, [courseName]);
 
   if(loading){
@@ -55,7 +49,7 @@ function CourseDetailPage() {
       duration={data.duration}
       level={data.course_level}
       />
-      <CourseDetail data={data} courseName={currentCourseName}/>
+      <CourseDetail data={data} courseName={courseName}/>
       <Footer/>
     </>
   )
