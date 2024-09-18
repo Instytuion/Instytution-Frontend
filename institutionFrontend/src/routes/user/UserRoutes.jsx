@@ -39,7 +39,7 @@ function App() {
           element={<ProgramDetailPage />}
         />
         <Route
-          path={"/courses/courseDetail/:coursemName"}
+          path={"/courses/courseDetail/:courseName"}
           element={<CourseDetailPage />}
         />
 
