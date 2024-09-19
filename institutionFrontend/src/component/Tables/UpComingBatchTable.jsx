@@ -13,8 +13,9 @@ function UpComingBatchTable({rows}) {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Batch Id</TableCell>
-            <TableCell align="right">Date</TableCell>
+            <TableCell>Batch Name</TableCell>
+            <TableCell align="right">Start Date</TableCell>
+            <TableCell align="right">End Date</TableCell>
             <TableCell align="right">Time</TableCell>
             <TableCell align="right">Instructor</TableCell>
           </TableRow>
@@ -26,11 +27,16 @@ function UpComingBatchTable({rows}) {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.batchId}
+                {row.name}
               </TableCell>
-              <TableCell align="right">{row.date}</TableCell>
-              <TableCell align="right">{row.time}</TableCell>
-              <TableCell align="right">{row.instructor}</TableCell>
+              <TableCell align="right">{row.start_date}</TableCell>
+              <TableCell align="right">{row.end_date}</TableCell>
+              {row.time_slot === 'morning' ? (
+                <TableCell align="right">{row.time_slot} (8 - 10 Am)</TableCell>
+              ) : (
+                <TableCell align="right">{row.time_slot} (2 - 4 Pm)</TableCell>
+              )}
+              <TableCell align="right">{row.instructor_name}</TableCell>
             </TableRow>
           ))}
         </TableBody>

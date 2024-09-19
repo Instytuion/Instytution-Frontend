@@ -13,13 +13,13 @@ const Popularcourse = () => {
     const FetchData = async ()=>{
       try{
         const response = await FetchLatestCourses()
-        console.log('Fetch programs succes - ', response.data);
+        console.log('Fetch popular course succes - ', response.data);
         setData(response.data)
         setLoading(false)
       }
       catch(error){
         setLoading(false)
-        console.log('Error while fetching latest courses - ', error);
+        console.log('Error while fetching popular courses - ', error);
       }
     }
 

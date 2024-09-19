@@ -1,7 +1,7 @@
 import { Card, CardMedia, CardContent, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const FlexCard = ({ title, duration, price, image, link }) => {
+const FlexCard = ({ name, duration, price, image, link }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -25,7 +25,7 @@ const FlexCard = ({ title, duration, price, image, link }) => {
       onClick={handleCardClick}
       >
       <CardMedia>
-        <img src="https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2023/02/how-to-create-online-course.webp" alt="Course-image"  sx={{ height: 140, objectFit: 'cover' }}/>
+        <img src={image} alt={`${name}-image`}  sx={{ height: 140, objectFit: 'cover' }}/>
       </CardMedia>
       <CardContent>
         <Typography variant="h6" component="div"
@@ -33,7 +33,7 @@ const FlexCard = ({ title, duration, price, image, link }) => {
           fontSize: ['1rem', '1rem', '1.5rem'],
         }}
         >
-          {title}
+          {name}
         </Typography>
         {duration ? (
           <Typography variant="body2" component="div"

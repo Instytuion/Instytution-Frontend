@@ -1,45 +1,33 @@
 import { Box, Typography, Stack, Container } from "@mui/material";
 import FlexCard from "../Card/FlexCard";
+import { useEffect, useState } from "react";
+import FetchRelatedCourse from "../../services/courses/FetchRelatedCourse";
+import Spinner from "../Spinner/Spinner";
 
-const RelatedCourses = () => {
-  const data = [
-    {
-      title: "Machine Learning",
-      duration: "3 weeks",
-      price: "Rs 80,000",
-      image: "link-to-machine-learning-image.jpg",
-    },
-    {
-      title: "Computer Science",
-      duration: "3 weeks",
-      price: "Rs 50,000",
-      image: "link-to-computer-science-image.jpg",
-    },
-    {
-      title: "Data Science",
-      duration: "3 weeks",
-      price: "Rs 70,000",
-      image: "link-to-data-science-image.jpg",
-    },
-    {
-      title: "GitHub Actions",
-      duration: "3 weeks",
-      price: "Rs 50,000",
-      image: "link-to-github-actions-image.jpg",
-    },
-    {
-      title: "GitHub Actions",
-      duration: "3 weeks",
-      price: "Rs 50,000",
-      image: "link-to-github-actions-image.jpg",
-    },
-    {
-      title: "GitHub Actions",
-      duration: "3 weeks",
-      price: "Rs 50,000",
-      image: "link-to-github-actions-image.jpg",
-    },
-  ];
+const RelatedCourses = ({courseName}) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(()=>{
+    const FetchData = async ()=>{
+      try{
+        const response = await FetchRelatedCourse(courseName)
+        console.log('Fetch related courses succes - ', response.data);
+        setData(response.data)
+        setLoading(false)
+      }
+      catch(error){
+        setLoading(false)
+        console.log('Error while fetching related courses - ', error);
+      }
+    }
+
+    FetchData();
+  }, [courseName]);
+
+  if(loading){
+    return <Spinner />
+  };
   return (
     <Container sx={{my:2}}>
         <Typography variant="h5" component="h2" sx={{
@@ -65,11 +53,11 @@ const RelatedCourses = () => {
                 sx={{ display: "inline-block", mr: 2 }}
                 >
                     <FlexCard
-                        title={course.title}
+                        name={course.name}
                         duration={course.duration}
                         price={course.price}
                         image={course.image}
-                        link={`/courses/courseDetail/${course.title}`}
+                        link={`/courses/courseDetail/${course.name}`}
                     />
                 </Box>
             ))}
