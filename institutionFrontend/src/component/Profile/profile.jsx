@@ -13,18 +13,18 @@ import {useForm, Controller} from "react-hook-form";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import {useDispatch, useSelector} from "react-redux";
-import instance from "../../utils/axios";
 import {updateProfile} from "../../redux/slices/AuthSlice";
 import useToast from "../../hooks/useToast";
 import OTP from "../../component/Otp/OtpInput";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SignupServices from "../../services/user/SignupServices";
 import OTPSkeleton from "../../component/Skeletons/OtpSkeleton";
-import { getInputProps, getInputLabelProps } from "../CustomeElements/FormLabelInput";
-import  updateProfileWithEmail from "../../services/user/UserProfileServices"
+import {
+  getInputProps,
+  getInputLabelProps,
+} from "../CustomeElements/FormLabelInput";
 import updateProfileService from "../../services/user/UserProfileServices";
-
-
+import styles from "./styles";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,10 +32,9 @@ const Profile = () => {
   const [editedData, setEditedData] = useState([]);
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const showToast = useToast();
-
   const user = useSelector((state) => state.userAuth);
 
   const {
@@ -43,9 +42,7 @@ const Profile = () => {
     handleSubmit,
     formState: {errors},
     reset,
-    setValue,
-    setError: setFormError, // To handle form validation errors
-    watch,
+    setError: setFormError,
   } = useForm({
     defaultValues: {
       firstName: user.firstName || "",
@@ -63,7 +60,9 @@ const Profile = () => {
     try {
       const updatedData = {...editedData, otp: otp};
 
-      const response = await updateProfileService.updateProfileWithEmail(updatedData)
+      const response = await updateProfileService.updateProfileWithEmail(
+        updatedData
+      );
       console.log("user profile verify -update res:", response);
       setIsEditing(false);
       setEmailEdited(false);
@@ -118,7 +117,9 @@ const Profile = () => {
           formData.append(key, updatedData[key]);
         });
 
-        const response = await updateProfileService.updateProfileWithoutEmail(formData)
+        const response = await updateProfileService.updateProfileWithoutEmail(
+          formData
+        );
 
         // Dispatch action and show success message
         dispatch(
@@ -157,24 +158,25 @@ const Profile = () => {
       const formData = new FormData();
       formData.append("profile_picture", file);
 
-      try{
-
-      const response = await updateProfileService.updateProfileWithoutEmail(formData)
-          if (response && response.profile_picture) {
-            dispatch(
-              updateProfile({
-                ...user,
-                profileImage: response.profile_picture,
-              })
-            );
-            showToast("Profile picture updated successfully.", "success");
-          } else {
-            throw new Error("No profile picture URL returned from server.");
-          }
-        }catch(error){
-          console.error("Profile image update failed:", error);
-          setError("Failed to update profile image.");
-        };
+      try {
+        const response = await updateProfileService.updateProfileWithoutEmail(
+          formData
+        );
+        if (response && response.profile_picture) {
+          dispatch(
+            updateProfile({
+              ...user,
+              profileImage: response.profile_picture,
+            })
+          );
+          showToast("Profile picture updated successfully.", "success");
+        } else {
+          throw new Error("No profile picture URL returned from server.");
+        }
+      } catch (error) {
+        console.error("Profile image update failed:", error);
+        setError("Failed to update profile image.");
+      }
     }
   };
 
@@ -183,107 +185,33 @@ const Profile = () => {
       component="img"
       src={user.profileImage}
       alt="Profile"
-      sx={{
-        width: 120,
-        height: 120,
-        borderRadius: "50%",
-        objectFit: "cover",
-      }}
+      sx={styles.profileImg}
     />
   ) : (
-    <Box
-      sx={{
-        width: "auto",
-        height: 120,
-        borderRadius: "50%",
-        bgcolor: "gray",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "white",
-        fontSize: 36,
-      }}
-    >
-      {getInitials(user.email)}
-    </Box>
+    <Box sx={styles.profileImgAlt}>{getInitials(user.email)}</Box>
   );
 
   return (
     <>
-      <Container
-        disableGutters
-        sx={{
-          boxShadow: 3,
-          minHeight: "80vh",
-          mt: 3,
-          borderRadius: 3,
-          maxWidth: {xs: "90%", sm: "600px"},
-        }}
-      >
+      <Container disableGutters sx={styles.container}>
         {!emailEdited ? (
           !isLoading ? (
             <>
               {/* Profile Picture Section */}
-              <Box
-                position="relative"
-                sx={{
-                  height: "27.33vh",
-                  borderRadius: "10px 10px 0px 0px",
-                  background: "linear-gradient(135deg, #009688, #004d40)",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: 121,
-                    height: 121,
-                    borderRadius: "50%",
-                    border: "2px solid white",
-                    position: "absolute",
-                    bottom: -60,
-                    left: {xs: "50%"},
-                    transform: {xs: "translateX(-50%)"},
-                  }}
-                >
-                  {profileImage}
-                </Box>
+              <Box sx={styles.parentOne}>
+                <Box sx={styles.profileImageContainer}>{profileImage}</Box>
 
                 {/* Add Photo Icon */}
-                <IconButton
-                  component="label"
-                  sx={{
-                    position: "absolute",
-                    bottom: -65,
-                    left: {xs: "55%"},
-                    transform: {xs: "translateX(-60%)"},
-                    bgcolor: "grey",
-                    opacity: "59%",
-                    p: 1,
-                    ":hover": {backgroundColor: "#009688", color: "white"},
-                  }}
-                >
+                <IconButton component="label" sx={styles.addPhotoIcon}>
                   <AddAPhotoIcon fontSize="small" sx={{color: "white"}} />
                   <input type="file" hidden onChange={handleImageChange} />
                 </IconButton>
               </Box>
 
               {/* Input Fields Section */}
-              <Box
-                sx={{
-                  p: 3,
-                  mt: 7,
-                  maxWidth: "600px",
-                  margin: "0 auto",
-                  textAlign: "center",
-                }}
-              >
+              <Box sx={styles.parentTwo}>
                 <Stack spacing={2} sx={{paddingTop: 5}}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
+                  <Box sx={styles.titleContainer}>
                     <Typography variant="h6" gutterBottom>
                       User Information
                     </Typography>
@@ -382,15 +310,7 @@ const Profile = () => {
           )
         ) : (
           <>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                position: "relative",
-                paddingTop: 2,
-              }}
-            >
+            <Box sx={styles.otpContainer}>
               <IconButton
                 sx={{position: "absolute", left: 10, top: 10}}
                 onClick={() => setEmailEdited(false)}
