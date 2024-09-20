@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Box, useTheme, useMediaQuery } from "@mui/material";
+import {
+  TextField,
+  Box,
+  useTheme,
+  useMediaQuery,
+  Typography,
+  Button,
+} from "@mui/material";
 
-const CustomDataTable = ({ rows, columns }) => {
+const CustomDataTable = ({ rows, columns, title,buttonText }) => {
   const [search, setSearch] = useState("");
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
@@ -14,7 +21,32 @@ const CustomDataTable = ({ rows, columns }) => {
   );
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: "77vw" , }}>
+      <Box sx={{
+        display:'flex',
+        justifyContent:"space-between",
+       
+      }}>
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontWeight: "bold",
+            color: theme.palette.text.primary,
+            marginBottom: 2,
+          }}
+        >
+          {title}
+        </Typography>
+        {buttonText ? (<Button sx={{
+           color:"white",
+           height:0,
+           p:3,
+           backgroundColor:theme.palette.text.tealgreen,
+        }}>
+          {`Add New+`}
+        </Button>):null}
+        
+      </Box>
       <TextField
         label="Search"
         variant="outlined"
@@ -22,8 +54,7 @@ const CustomDataTable = ({ rows, columns }) => {
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-
-      <Box sx={{ height: 'calc(100vh - 180px)' }}>
+      <Box>
         <Box sx={{ overflow: "auto" }}>
           <DataGrid
             rows={filteredRows}
@@ -32,13 +63,18 @@ const CustomDataTable = ({ rows, columns }) => {
             rowsPerPageOptions={[5]}
             disableSelectionOnClick
             sortingOrder={["asc", "desc"]}
-            checkboxSelection
             sx={{
-              width: isLargeScreen ? 'calc(81.3vw)' : 'calc(100vw - 50px)',
+              height: "calc(100vh - 27vh)",
+                width: isLargeScreen ? "100%" : "100vw",
+              "& .MuiDataGrid-virtualScroller":{
+                overflow:"hidden"
+              },
+              
               "& .MuiDataGrid-cell": {
                 whiteSpace: "nowrap",
-                overflow: "hidden",
+                overflow: "visible",
                 textOverflow: "ellipsis",
+                
               },
               "& .MuiDataGrid-row.Mui-selected": {
                 backgroundColor:

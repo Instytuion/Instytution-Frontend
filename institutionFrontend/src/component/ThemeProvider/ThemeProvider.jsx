@@ -30,7 +30,7 @@ const ThemeProvider = ({ children }) => {
           }
         : {
             primary: {
-              main: '#1F1A24', // Dark color for dark mode
+              main: '#131b2f', // Dark color for dark mode
             },
             secondary: {
               main: '#f48fb1', // Light pink for dark mode
@@ -42,6 +42,7 @@ const ThemeProvider = ({ children }) => {
             text: {
               primary: '#ffffff', // White text
               secondary: '#b0b0b0', // Light gray text
+              tealgreen :'#009688' // Lght Skyblue
             },
           }),
     },

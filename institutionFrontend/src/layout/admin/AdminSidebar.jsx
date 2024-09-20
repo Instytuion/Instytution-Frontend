@@ -13,7 +13,7 @@ const AdminSidebar = () => {
     { 
       label: "Dashboard", 
       icon: <DashboardIcon />, 
-      path: "dashboard",
+      path: "/admin/dashboard",
     },
     {
       label: "Users",
@@ -32,7 +32,7 @@ const AdminSidebar = () => {
         { label: "User Reports", icon: <UserIcon />, path: "/admin/user" },
         { label: "Course Reports", icon: <CourseIcon />, path: "/admin/course" },
         { label: "Shop Reports", icon: <ShopIcon />, path: "/admin/shop" },
-        { label: "Instructor Reports", icon: <PersonIcon />, path: "/admin/instructor" },
+        { label: "Instructor Reports", icon: <PersonIcon />, path: "/admin/instructorr" },
       ],
     },
   ];

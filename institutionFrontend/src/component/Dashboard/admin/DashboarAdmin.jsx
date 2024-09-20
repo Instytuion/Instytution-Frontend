@@ -10,10 +10,10 @@ const DashboardSummary = () => {
     console.log("Hello");
     
   const summaryData = [
-    { title: 'Total Students', count: 1200, icon: PeopleIcon, color: '#1976d2' },
-    { title: 'Total Courses', count: 50, icon: SchoolIcon, color: '#dc004e' },
-    { title: 'Total Instructors', count: 30, icon: ClassIcon, color: '#4caf50' },
-    { title: 'Dashboard Overview', count: 1, icon: DashboardIcon, color: '#ff9800' },
+    { title: 'Total Students', count: 1200, icon: PeopleIcon,  },
+    { title: 'Total Courses', count: 50, icon: SchoolIcon,   },
+    { title: 'Total Instructors', count: 30, icon: ClassIcon,  },
+    { title: 'Dashboard Overview', count: 1, icon: DashboardIcon,  },
   ];
 
   return (
@@ -30,7 +30,7 @@ const DashboardSummary = () => {
           title={data.title}
           count={data.count}
           icon={data.icon}
-          color={data.color}
+        
         />
       ))}
     </div>
