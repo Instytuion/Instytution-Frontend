@@ -9,18 +9,22 @@ import {
   useMediaQuery,
   Menu,
   MenuItem,
+  Paper,
+  BottomNavigation,
+  BottomNavigationAction,
 } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import PersonIcon from "@mui/icons-material/Person";
 import HomeIcon from "@mui/icons-material/Home";
 import StoreIcon from "@mui/icons-material/Store";
 import InfoIcon from "@mui/icons-material/Info";
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import GroupsIcon from '@mui/icons-material/Groups';
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import logo1 from "../../assets/logo1.png";
 import login from "../../assets/login_32px.png"
 import dummyProfilePic from "../../assets/profile-picture.jpg"
-import DrawerComponent from "../Drawer/DrawerComponent";
 import { useDispatch, useSelector } from "react-redux";
 import useToast from "../../hooks/useToast";
 import { logout } from "../../redux/slices/AuthSlice";
@@ -31,7 +35,7 @@ function Navbar() {
   const location = useLocation(); 
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedTab, setSelectedTab] = useState(null);
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [bottomNavVAlue, setbottomNavVAlue] = useState(0)
   const navigate = useNavigate();
   const showToast = useToast();
   const dispatch = useDispatch();
@@ -41,6 +45,10 @@ function Navbar() {
     const currentTab = data.find((tab) => tab.link === location.pathname);
     if (currentTab) {
       setSelectedTab(currentTab.label);
+    }
+    const currentBottomTab = bottomNavData.find((tab) => tab.link === location.pathname);
+    if (currentBottomTab) {
+      setbottomNavVAlue(currentBottomTab.id);
     }
   }, [location.pathname]); 
 
@@ -68,7 +76,13 @@ function Navbar() {
     { id: 4, label: "Our store", link: "/store", icon: <StoreIcon /> },
     { id: 5, label: "Contact Us", link: "/contact", icon: <ContactMailIcon /> },
   ];
-
+  const bottomNavData = [
+    { id: 0, label: "Home", link: "/", icon: <HomeIcon /> },
+    { id: 1, label: "Program", link: "/courses/programs", icon: <OndemandVideoIcon /> },
+    { id: 2, label: "Store", link: "/store", icon: <ShoppingBagIcon /> },
+    { id: 3, label: "About Us", link: "/about", icon: <GroupsIcon /> },
+    { id: 4, label: "Contact", link: "/contact", icon: <ContactMailIcon /> },
+  ]
 
   return (
     <>
@@ -206,6 +220,38 @@ function Navbar() {
           )}
         </Toolbar>
       </AppBar>
+
+      {isMobile ? (
+        <Paper sx={{ 
+          position: 'fixed', 
+          bottom: 0, 
+          left: 0, 
+          right: 0,
+          backgroundColor: '#00796b'
+          }} elevation={2}>
+          <BottomNavigation
+            showLabels
+            value={bottomNavVAlue}
+            onChange={(event, newValue) => {
+              setbottomNavVAlue(newValue);
+            }}
+            sx={{backgroundColor: '#00796b'}}
+          >
+            {bottomNavData.map((tab)=>(
+              <BottomNavigationAction
+              key={tab.id}
+              label={tab.label} 
+              icon={tab.icon}
+              component={Link}
+              to={tab.link}
+              sx={{ color: '#d4d4d4', '&.Mui-selected': { color: 'white' } }} 
+              />
+            ))}
+          </BottomNavigation>
+        </Paper>
+      ):(
+        null
+      )}
     </>
   );
 }
