@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie"; // To handle cookies
 
-const baseUrl = "http://localhost:8000/";
+const baseUrl = import.meta.env.VITE_DOMAIN_URL || "http://localhost:8000/";
 
 // Axios instance for regular API calls
 const instance = axios.create({
@@ -68,10 +68,13 @@ const refreshTokenIfNeeded = async () => {
 // Request interceptor to refresh token if needed before sending any request
 instance.interceptors.request.use(
   async (config) => {
-    console.log("Inside request interceptor");
+    console.log("inside req interceptor");
+    const state = store.getState();
+    const token = state.userAuth.accessToken;
 
-    // Check if the token needs to be refreshed before sending the request
-    await refreshTokenIfNeeded();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
     return config;
   },
@@ -83,11 +86,49 @@ instance.interceptors.request.use(
 // Response interceptor for handling errors like 401 (optional)
 instance.interceptors.response.use(
   (response) => {
-    // If the response is successful, return it.
+    console.log("inside success response  interceptor");
     return response;
   },
   async (error) => {
-    // Optionally handle any specific errors, but we are handling token refresh in request interceptor
+    console.log("inside error response  interceptor");
+    const originalRequest = error.config;
+
+    if (
+      (error.response.status === 401 || error.response.status === 403) &&
+      !originalRequest._retry
+    ) {
+      console.log("inside retry with refresh token");
+      originalRequest._retry = true;
+
+      const state = store.getState();
+      const refreshToken = state.userAuth.refreshToken;
+
+      if (refreshToken) {
+        try {
+          const response = await noAuthInstance.post(
+            "accounts/api/token/refresh/",
+            { refresh: refreshToken }
+          );
+          const { access } = response.data;
+
+          store.dispatch(
+            setRefreshToken({ accessToken: access, refreshToken: refreshToken })
+          );
+          instance.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${access}`;
+          originalRequest.headers["Authorization"] = `Bearer ${access}`;
+
+          return axios(originalRequest);
+        } catch (error) {
+          store.dispatch(logout());
+          return Promise.reject(error);
+        }
+      } else {
+        store.dispatch(logout());
+      }
+    }
+
     return Promise.reject(error);
   }
 );
