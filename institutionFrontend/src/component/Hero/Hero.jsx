@@ -5,7 +5,7 @@ const Hero = () => {
   return (
     <Container sx={{ marginTop: 10 }}>
       <Grid container spacing={4} alignItems="center">
-        <Grid item sx={12} md={6}>
+        <Grid item  md={6}>
           <Typography variant="h4" component="h1">
             The more that you read, the more things you will know, the more that
             you learn, the more places you’ll go.

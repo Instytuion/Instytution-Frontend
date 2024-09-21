@@ -31,6 +31,7 @@ import {useDispatch} from "react-redux";
 import {setUser} from "../redux/slices/AuthSlice";
 import resetPassword from "../services/user/ResetPasswordService";
 import Spinner from "../component/Spinner/Spinner";
+import { setExpiryTime } from "../utils/axios";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -95,6 +96,7 @@ const LoginForm = () => {
       setIsLoading(true);
       const response = await LoginServices(data);
       console.log("response at login success", response);
+      setExpiryTime()
 
       const {access, refresh, user} = response;
 
@@ -104,8 +106,8 @@ const LoginForm = () => {
           email: user.email,
           firstName: user.first_name || "",
           lastName: user.last_name || "",
-          accessToken: access,
-          refreshToken: refresh,
+          // accessToken: access,
+          // refreshToken: refresh,
           profileImage: user.profile_picture || "",
           role: user.role,
           registerMode: user.register_mode,
