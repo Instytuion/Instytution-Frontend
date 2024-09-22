@@ -48,6 +48,7 @@ function CourseDetailPage() {
       price={data.price}
       duration={data.duration}
       level={data.course_level}
+      courseName={courseName}
       />
       <CourseDetail data={data} courseName={courseName}/>
       <Footer/>

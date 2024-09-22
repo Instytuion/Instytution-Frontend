@@ -2,9 +2,11 @@ import { Button, Container, Stack, Typography } from "@mui/material"
 import { TypoBodyMt0 } from "../CustomeElements/CourseDetailPageElements";
 import bannerButtonBg from "../../assets/banner button sec bg.png"
 import outerBg from "../../assets/Banner Course Detail.png"
+import { useNavigate } from "react-router-dom";
 
 
-function HeroCourseDetail({name, description, price, duration, level}) {
+function HeroCourseDetail({name, description, price, duration, level, courseName}) {
+    const navigate = useNavigate()
   return (
     <Container maxWidth={false} disableGutters
     sx={{
@@ -62,19 +64,20 @@ function HeroCourseDetail({name, description, price, duration, level}) {
                     backgroundRepeat: 'no-repeat',
                 }}>
                     <Button variant="outlined" size='small'
-                     sx={{
-                        color: 'white', 
-                        border: 0,
-                        '@media (min-width: 900px)': {
-                        fontSize: '1rem', 
-                        border: 1,
-                        borderColor: 'white', 
-                        '&:hover': {
+                        onClick={()=> navigate(`/courses/enrollCourse/${courseName}`)}
+                        sx={{
+                            color: 'white', 
+                            border: 0,
+                            '@media (min-width: 900px)': {
+                            fontSize: '1rem', 
+                            border: 1,
                             borderColor: 'white', 
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                        },
-                        },
-                    }}
+                            '&:hover': {
+                                borderColor: 'white', 
+                                backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            },
+                            },
+                        }}
                     >
                         Enroll Now
                     </Button>

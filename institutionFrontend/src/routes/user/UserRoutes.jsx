@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import Spinner from '../../component/Spinner/Spinner';
 import PageNotFoundPage from '../../component/PageNotFound/PageNotFound';
 import SignUpLoginProtectRoutes from '../protectedRoutes/SignUpLoginProtectRoutes';
+import IsAuthenticatedRoutes from '../protectedRoutes/IsAuthenticatedRoutes';
  
 
 // Lazy load components (example)
@@ -14,6 +15,7 @@ const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'
 const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
 const Profile = lazy(() => import('../../pages/user/userProfile'));
 const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPassword'));
+const EnrollPage = lazy(() => import('../../pages/user/EnrollPage'));
 
 function App() {
   return (
@@ -41,6 +43,10 @@ function App() {
         <Route
           path={"/courses/courseDetail/:courseName"}
           element={<CourseDetailPage />}
+        />
+        <Route
+          path={"/courses/enrollCourse/:courseName"}
+          element={<IsAuthenticatedRoutes element={EnrollPage} />}
         />
 
         <Route path="*" element={<PageNotFoundPage />} />
