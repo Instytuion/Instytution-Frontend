@@ -23,6 +23,7 @@ import OTP from "../component/Otp/OtpInput";
 import Spinner from "../component/Spinner/Spinner";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/AuthSlice";
+import { setExpiryTime } from "../utils/axios";
 
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -78,8 +79,9 @@ const SignupForm = () => {
       console.log(" data for sentign verify is :", otp, email);
 
       const response = await SignupServices.verifyOtp(email, password, otp);
-
-      console.log('Sign up success');
+      setExpiryTime()
+      
+      console.log('Sign up success',response);
       
       const { access, refresh, user } = response;
         

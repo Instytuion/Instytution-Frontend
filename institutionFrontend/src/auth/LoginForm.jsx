@@ -106,7 +106,7 @@ const LoginForm = () => {
           email: user.email,
           firstName: user.first_name || "",
           lastName: user.last_name || "",
-          // accessToken: access,
+          accessToken: access,
           // refreshToken: refresh,
           profileImage: user.profile_picture || "",
           role: user.role,
