@@ -9,7 +9,7 @@ const initialState = {
     lastName: null,
     profileImage: null,
     accessToken: null,
-    refreshToken: null,
+    // refreshToken: null,
     role: null,
     registerMode: null,
   };
@@ -28,17 +28,16 @@ const userAuthSlice = createSlice({
         state.lastName = action.payload.lastName || null;
         state.profileImage = action.payload.profileImage || null;
         state.accessToken = action.payload.accessToken;
-        state.refreshToken = action.payload.refreshToken;
+        // state.refreshToken = action.payload.refreshToken;
         state.role = action.payload.role;
         state.registerMode = action.payload.registerMode;
         
       },
-      setRefreshToken: (state, action) => {
+      setAccessToken: (state, action) => {
         console.log('setRefreshToken reducere called');
         
         state.isAuthenticated = true;
         state.accessToken = action.payload.accessToken;
-        state.refreshToken = action.payload.refreshToken;
         console.log('new tokens saved to store');
       },
       updateProfile:(state, action)=>{
@@ -51,7 +50,7 @@ const userAuthSlice = createSlice({
         console.log('inside logout reducer');
 
         state.accessToken = null;
-        state.refreshToken = null;
+        // state.refreshToken = null;
         state.isAuthenticated = false;
         state.isActive = false;
         state.email = null;
@@ -64,11 +63,6 @@ const userAuthSlice = createSlice({
     },
   });
   
-export const { 
-  setUser,
-  setRefreshToken,
-  updateProfile,
-  logout,
- } = userAuthSlice.actions;
+export const {setUser, setAccessToken, updateProfile, logout} = userAuthSlice.actions;
 
 export default userAuthSlice.reducer;

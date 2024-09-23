@@ -28,6 +28,7 @@ import dummyProfilePic from "../../assets/profile-picture.jpg"
 import { useDispatch, useSelector } from "react-redux";
 import useToast from "../../hooks/useToast";
 import { logout } from "../../redux/slices/AuthSlice";
+import { logoutUser } from "../../utils/axios";
 
 function Navbar() {
   const theme = useTheme();
@@ -61,6 +62,7 @@ function Navbar() {
   };
 
   const handleLogout = () => {
+    logoutUser()
     setAnchorEl(null);
     dispatch(logout());
     showToast("Successfully Logged Out", "success");

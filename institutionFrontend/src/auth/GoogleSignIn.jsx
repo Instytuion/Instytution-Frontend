@@ -6,6 +6,7 @@ import useToast from '../hooks/useToast';
 import GoogleSignInServices from '../services/user/GoogleSignInServices';
 import { useState } from 'react';
 import Spinner from '../component/Spinner/Spinner';
+import { setExpiryTime } from '../utils/axios';
 
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -22,6 +23,8 @@ const GoogleSignIn = () => {
       setSpinnersActive(true);
       const access_token = data.credential
       const response = await GoogleSignInServices(access_token)
+      setExpiryTime();
+
 
       const { access, refresh, user } = response;
       
@@ -33,7 +36,7 @@ const GoogleSignIn = () => {
             firstName: user.first_name || '', 
             lastName: user.last_name || '',
             accessToken: access,
-            refreshToken: refresh,
+            // refreshToken: refresh,
             profileImage: user.profile_picture || '',
             role: user.role,
             registerMode: user.register_mode,

@@ -25,6 +25,8 @@ import {
 } from "../CustomeElements/FormLabelInput";
 import updateProfileService from "../../services/user/UserProfileServices";
 import styles from "./styles";
+import { getInitials } from "../../utils/utilityFunctions";
+
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -50,11 +52,6 @@ const Profile = () => {
       email: user.email || "",
     },
   });
-
-  const getInitials = (email) => {
-    if (!email) return "";
-    return email.charAt(0).toUpperCase();
-  };
 
   const handleVerifyOtp = async () => {
     try {
