@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Box, Typography, Button, Fade, Backdrop } from "@mui/material";
+import { useTheme } from  "@mui/material";
 
 const UserCrudModal = ({
   open,
@@ -9,6 +10,7 @@ const UserCrudModal = ({
   handleSubmit,
   submitText = "Submit",
 }) => {
+  const theme = useTheme()
   return (
     <Modal
       open={open}
@@ -31,13 +33,15 @@ const UserCrudModal = ({
             p: 4,
           }}
         >
-          <Typography variant="h6" component="h2" mb={2}>
+          <Typography variant="h6" component="h2" mb={2} sx={{
+            color:theme.palette.text.primary
+          }} >
             {title}
           </Typography>
-          {children} {/* You can pass form elements or any content here */}
+          {children}
           <Button
             onClick={handleSubmit}
-            sx={{ mt: 2, color: "white", backgroundColor: "teal" }}
+            sx={{ mt: 2, color: "white", backgroundColor: "teal",width:'100%' }}
           >
             {submitText}
           </Button>

@@ -1,8 +1,47 @@
 import React, { useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Box, Typography, Button, useTheme, useMediaQuery } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Typography,
+  Button,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import { CreateUsersByRole } from "../../services/admin/UsersCreation";
 import UserCrudModal from "../Modals/UserCrudModal";
+import useToast from "../../hooks/useToast";
+
+const StyledTextField = (props) => {
+  const theme = useTheme();
+  return (
+    <TextField
+      {...props}
+      sx={{
+        "& .MuiInputBase-root": {
+          color: theme.palette.text.primary,
+        },
+        "& .MuiOutlinedInput-notchedOutline": {
+          borderColor: theme.palette.text.primary,
+        },
+        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+          {
+            borderColor: theme.palette.text.primary,
+          },
+        "& .MuiInputLabel-root": {
+          color: theme.palette.text.primary,
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+          color: theme.palette.text.primary,
+        },
+        "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+          borderColor: theme.palette.text.primary,
+        },
+        ...props.sx,
+      }}
+    />
+  );
+};
 
 const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
   const [search, setSearch] = useState("");
@@ -12,8 +51,11 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
     password: "",
     first_name: "",
     last_name: "",
-    role: "",
+    role: title === "Course Admin" ? "course_admin" : "shop_admin",
   });
+  const showToast = useToast();
+
+  const [error, setError] = useState("");
 
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
@@ -29,20 +71,26 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
   const handleFormSubmit = async () => {
     try {
       const response = await CreateUsersByRole(newUser);
-      console.log('====================================');
-      console.log('response from create new user from admin side :',response);
-      console.log('====================================');
-      setNewUsers(pre=> [...pre, response.user]);
-      handleCloseModal()
+      console.log("Response from creating user:", response);
+      setNewUsers((prev) => [...prev, response.user]);
+      setError("");
+      showToast(response.message, "success");
+      handleCloseModal();
     } catch (error) {
       console.log("Error creating user:", error);
+      setError({
+        email: error.response.data.email || "",
+        password: error.response.data.password || "",
+      });
     }
   };
 
   const filteredRows = search
     ? rows.filter((row) =>
-        Object.values(row).some((value) =>
-          value.toString().toLowerCase().includes(search.toLowerCase())
+        Object.values(row).some(
+          (value) =>
+            value !== null &&
+            value.toString().toLowerCase().includes(search.toLowerCase())
         )
       )
     : rows;
@@ -80,7 +128,7 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Box sx={{ overflow: "auto" }}>
+      <Box sx={{ overflow: "auto", height: "calc(100vh - 27vh)" }}>
         <DataGrid
           rows={filteredRows}
           columns={columns}
@@ -88,15 +136,46 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
           sortingOrder={["asc", "desc"]}
+          // sx={{
+          //   height: "100%",
+          //   width: "100vw",
+          //   "& .MuiDataGrid-virtualScroller": {
+          //     overflow: "auto",
+          //   },
+          //   "& .MuiDataGrid-cell": {
+          //     whiteSpace: "nowrap",
+          //     overflow: "visible",
+          //     textOverflow: "ellipsis",
+          //   },
+          // }}
           sx={{
             height: "calc(100vh - 27vh)",
-            
-            width:"100vw",
-           
+            width: isLargeScreen ? "100vw" : "100vw",
+            "& .MuiDataGrid-virtualScroller": {
+              overflow: "hidden",
+            },
             "& .MuiDataGrid-cell": {
               whiteSpace: "nowrap",
               overflow: "visible",
               textOverflow: "ellipsis",
+            },
+            "& .MuiDataGrid-row.Mui-selected": {
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.16)"
+                  : "rgba(25, 118, 210, 0.08)",
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255, 255, 255, 0.24)"
+                    : "rgba(25, 118, 210, 0.16)",
+              },
+            },
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor:
+                theme.palette.mode === "dark"
+                  ? "rgba(255, 255, 255, 0.08)"
+                  : "rgba(25, 118, 210, 0.04)",
             },
           }}
         />
@@ -104,19 +183,21 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
 
       <UserCrudModal
         open={openModal}
-        handleClose={handleCloseModal}
-        title="Add New Sub-admin"
+        handleClose={() => setOpenModal(false)}
+        title={`Add New ${title}`}
         handleSubmit={handleFormSubmit}
       >
-        <TextField
+        <StyledTextField
           fullWidth
           margin="normal"
           label="Email"
           name="email"
           value={newUser.email}
           onChange={handleInputChange}
+          error={!!error.email} // Highlight the field in red if there's an error
+          helperText={error.email} // Show the error message below the field
         />
-        <TextField
+        <StyledTextField
           fullWidth
           margin="normal"
           label="Password"
@@ -124,8 +205,10 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
           type="password"
           value={newUser.password}
           onChange={handleInputChange}
+          error={!!error.password} // Only show error if there's a message
+          helperText={error.password}
         />
-        <TextField
+        <StyledTextField
           fullWidth
           margin="normal"
           label="First Name"
@@ -133,20 +216,12 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
           value={newUser.first_name}
           onChange={handleInputChange}
         />
-        <TextField
+        <StyledTextField
           fullWidth
           margin="normal"
           label="Last Name"
           name="last_name"
           value={newUser.last_name}
-          onChange={handleInputChange}
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Role"
-          name="role"
-          value={newUser.role}
           onChange={handleInputChange}
         />
       </UserCrudModal>
