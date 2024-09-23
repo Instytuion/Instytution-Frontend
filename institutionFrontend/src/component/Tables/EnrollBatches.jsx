@@ -34,6 +34,11 @@ function EnrollBatches({rows}) {
                 <TableCell align="right">End Date</TableCell>
                 <TableCell align="right">Time</TableCell>
                 <TableCell align="right">Instructor</TableCell>
+                <TableCell align="right">
+                    Student Count
+                    <br />
+                    <Typography variant="body2" color="red">(Maximum 9)</Typography>
+                </TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
@@ -45,6 +50,7 @@ function EnrollBatches({rows}) {
                     <TableCell>
                         <Radio
                         checked={selectedRowId === row.id}
+                        disabled={row.student_count >= 9}
                         onChange={() => handleRadioChange(row.id)}
                         value={row.id}
                         name="enroll-radio-buttons"
@@ -68,6 +74,7 @@ function EnrollBatches({rows}) {
                         <TableCell align="right">{row.time_slot} (2 - 4 Pm)</TableCell>
                     )}
                     <TableCell align="right">{row.instructor_name}</TableCell>
+                    <TableCell align="right">{row.student_count} / 9</TableCell>
                 </TableRow>
             ))}
             </TableBody>
