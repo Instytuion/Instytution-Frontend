@@ -26,6 +26,7 @@ const ThemeProvider = ({ children }) => {
             text: {
               primary: '#000000', // Black text
               secondary: '#333333', // Dark gray text
+              tealgreen :'#009688'
             },
           }
         : {
