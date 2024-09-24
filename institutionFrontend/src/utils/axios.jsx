@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import {store} from "../redux/stores/store";
 import {setAccessToken, logout} from "../redux/slices/AuthSlice";
 import logoutService from "../services/user/LogoutService";
+import { Navigate } from "react-router-dom";
 
 const baseUrl = "http://localhost:8000/";
 
@@ -48,15 +49,12 @@ export const logoutUser = async () => {
     console.log('error while user logout api',error)
   }
   Cookies.remove("expiryTime", {path: "/"});
-
   store.dispatch(logout()); // Dispatch logout to Redux
-  window.location.href = "/";
 };
 
 // Function to refresh the token if needed
 const refreshToken = async () => {
   try {
-    // Call the refresh token API
     const response = await noAuthInstance.post("accounts/api/token/refresh/");
     console.log("response refresh success", response.data);
 
@@ -68,14 +66,14 @@ const refreshToken = async () => {
     } else {
       console.log("refresh failed no access token");
     }
-
     // Set a new expiry time for the access token
     setExpiryTime();
 
     return newAccessToken;
   } catch (error) {
     console.log("Token refresh failed, logging out...,", error);
-    logoutUser(); // Clear tokens and log out
+    logoutUser(); 
+    window.location.href = "/ded5fr6bt7gyh8juiokpl[sd;klosadf";
     return null;
   }
 };
