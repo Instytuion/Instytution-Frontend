@@ -2,14 +2,16 @@ import React from 'react'
 import Navbar from '../../component/Navbar/Navbar'
 import EnrollSection from '../../component/EnrollSection/EnrollSection'
 import Footer from '../../component/Footer/Footer'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 function EnrollPage() {
-  const {courseName} = useParams()
+  const {courseName} = useParams();
+  const location = useLocation();
+  const { price } = location.state || {};
   return (
     <>
       <Navbar />
-      <EnrollSection courseName={courseName} />
+      <EnrollSection courseName={courseName} price={price} />
       <Footer />
     </>
   )
