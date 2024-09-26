@@ -6,7 +6,7 @@ import FetchCourseBatches from '../../services/courses/FetchCourseBatches';
 import EnrollPaymentRadio from '../Radios/EnrollPaymentRadio';
 import EnrollBatchContext from '../../Context/enrollBatchContext';
 
-function EnrollSection({courseName}) {
+function EnrollSection({courseName, price}) {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedRowId, setSelectedRowId] = useState(null);
@@ -49,7 +49,7 @@ function EnrollSection({courseName}) {
             }}>
             <EnrollBatchContext.Provider value={{selectedRowId, setSelectedRowId}}>
                 <EnrollBatches rows={data}/>
-                <EnrollPaymentRadio />
+                <EnrollPaymentRadio price={price} />
             </EnrollBatchContext.Provider>
         </Paper>
     </Container>

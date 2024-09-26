@@ -1,9 +1,10 @@
 import  { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Spinner from '../../component/Spinner/Spinner';
-import PageNotFoundPage from '../../component/PageNotFound/PageNotFound';
+import PageNotFoundPage from '../../component/ErrorPages/PageNotFound';
 import SignUpLoginProtectRoutes from '../protectedRoutes/SignUpLoginProtectRoutes';
 import IsAuthenticatedRoutes from '../protectedRoutes/IsAuthenticatedRoutes';
+import SessionExpired from '../../component/ErrorPages/SessionExpired';
  
 
 // Lazy load components (example)
@@ -50,6 +51,8 @@ function App() {
         />
 
         <Route path="*" element={<PageNotFoundPage />} />
+        <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />
+
       </Routes>
     </Suspense>
   );
