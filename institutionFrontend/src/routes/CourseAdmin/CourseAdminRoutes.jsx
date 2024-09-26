@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Spinner from "../../component/Spinner/Spinner";
-import PageNotFoundPage from "../../component/PageNotFound/PageNotFound";
+import PageNotFoundPage from "../../component/ErrorPages/PageNotFound";
 
 import Layout from "../../layout/AdminLayout/AdminLayout";
 import CourseAdminSidebar from "../../layout/CourseAdmin/CourseAdminSidebar";
