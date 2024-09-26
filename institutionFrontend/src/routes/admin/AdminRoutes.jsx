@@ -10,6 +10,7 @@ import Instructore from "../../pages/admin/Instructor";
 // Lazy load components (example)
 const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
 const Users = lazy(() => import("../../pages/admin/Users"));
+const CreateCourse = lazy(() => import("../../pages/admin/CourseForm"));
 
 function AdminRoute() {
   return (
@@ -24,6 +25,7 @@ function AdminRoute() {
           <Route path="course-admin" element={<CourseAdmin />} />
           <Route path="shop-admin" element={<ShopeAdmin />} />
           <Route path="instructor" element={<Instructore />} />
+          <Route path="create-course" element={<CreateCourse />} />
 
 
 
