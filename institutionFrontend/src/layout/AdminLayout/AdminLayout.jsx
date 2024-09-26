@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Box, IconButton, useTheme, useMediaQuery } from "@mui/material";
-import AdminSidebar from "../admin/AdminSidebar";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, useTheme, useMediaQuery } from "@mui/material";
 
-const AdminLayout = () => {
+const Layout = ({ SidebarComponent }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [openSidebar, setOpenSidebar] = useState(false);
 
   return (
-    <Box sx={{ display: "flex", height: "100vh"}}>
+    <Box sx={{ display: "flex", height: "100vh" }}>
       <Box
         sx={{
           display: isMobile ? "none" : "block",
-         
           bgcolor: "background.paper",
           borderRight: 1,
           borderColor: "divider",
         }}
       >
-        <AdminSidebar />
+        <SidebarComponent />
       </Box>
       <Box
         sx={{
@@ -37,7 +33,7 @@ const AdminLayout = () => {
           zIndex: 1200,
         }}
       >
-        <AdminSidebar />
+        <SidebarComponent />
       </Box>
 
       <Box
@@ -48,9 +44,9 @@ const AdminLayout = () => {
           bgcolor: "background.default",
           display: "flex",
           flexDirection: "column",
-          ml: isMobile  ? "0px" : "238px",
+          ml: isMobile ? "0px" : "238px",
           transition: "margin 0.3s",
-
+          height:'fit-content'
         }}
       >
         <Outlet />
@@ -59,74 +55,4 @@ const AdminLayout = () => {
   );
 };
 
-export default AdminLayout;
-
-
-
-
-// import React, { useState } from "react";
-// import { Outlet } from "react-router-dom";
-// import { Box, IconButton, useTheme, useMediaQuery } from "@mui/material";
-// import AdminSidebar from "../admin/AdminSidebar";
-// import MenuIcon from "@mui/icons-material/Menu";
-// import CloseIcon from "@mui/icons-material/Close";
-
-// const AdminLayout = () => {
-//   const theme = useTheme();
-//   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-//   const [openSidebar, setOpenSidebar] = useState(false);
-
-//   const toggleSidebar = () => setOpenSidebar(!openSidebar);
-
-//   return (
-//     <Box
-//       sx={{
-//         display: "grid",
-//         gridTemplateColumns: isMobile ? (openSidebar ? "240px 1fr" : "0 1fr") : " 1fr",
-//         height: "100vh",
-//         width: "100%",
-//       }}
-//     >
-//       {/* Sidebar for Desktop and Mobile */}
-//       <Box
-//         sx={{
-//           display: isMobile ? (openSidebar ? "block" : "none") : "block",
-//           bgcolor: "background.paper",
-//           borderRight: 1,
-//           borderColor: "divider",
-//           position: isMobile ? "absolute" : "relative",
-//           top: 0,
-//           left: 0,
-//           height: "100%",
-//           zIndex: 1200,
-//           transition: "transform 0.3s",
-//           transform: isMobile && openSidebar ? "translateX(0)" : "translateX(-240px)",
-//         }}
-//       >
-//         <IconButton
-//           onClick={toggleSidebar}
-//           sx={{ position: "absolute", top: 10, right: 10, display: isMobile ? "block" : "none" }}
-//         >
-//           {openSidebar ? <CloseIcon /> : <MenuIcon />}
-//         </IconButton>
-//         <AdminSidebar />
-//       </Box>
-
-//       {/* Main Content */}
-//       <Box
-//         component="main"
-//         sx={{
-//           gridColumn: "2 / 3",
-//           p: 3,
-//           bgcolor: "background.default",
-//           display: "flex",
-//           flexDirection: "column",
-//         }}
-//       >
-//         <Outlet />
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default AdminLayout;
+export default Layout;

@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/lib/integration/react";
 import Spinner from "./component/Spinner/Spinner";
 import AdminRoute from "./routes/admin/AdminRoutes";
 import ThemeProvider from "./component/ThemeProvider/ThemeProvider";
+import CourseAdminRoutes from "./routes/CourseAdmin/CourseAdminRoutes";
 const App = () => {
   return (
     <Provider store={store}>
@@ -20,6 +21,7 @@ const App = () => {
               <Routes>
                 <Route path="/*" element={<UserRoutes />} />
                 <Route path="admin/*" element={<AdminRoute />} />
+                <Route path="course-admin/*" element={<CourseAdminRoutes />} />
               </Routes>
             </Router>
           </SnackbarProvider>

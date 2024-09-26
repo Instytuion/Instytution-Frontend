@@ -18,7 +18,8 @@ const CommonCard = ({ name, duration, price, image, link }) => {
         flexDirection: 'column', 
         margin: 'auto', 
         cursor: 'pointer',
-        boxShadow: 1,
+        boxShadow: 2,
+        borderRadius:4,
         '&:hover': {
           boxShadow: 8,
         },

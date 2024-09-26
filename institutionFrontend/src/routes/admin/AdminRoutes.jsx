@@ -6,8 +6,10 @@ import AdminLayout from "../../layout/AdminLayout/AdminLayout";
 import CourseAdmin from "../../pages/admin/CourseAdmin";
 import ShopeAdmin from "../../pages/admin/ShopeAdmin";
 import Instructore from "../../pages/admin/Instructor";
+import AdminSidebar from "../../layout/admin/AdminSidebar";
+import Layout from "../../layout/AdminLayout/AdminLayout";
 
-// Lazy load components (example)
+
 const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
 const Users = lazy(() => import("../../pages/admin/Users"));
 
@@ -15,7 +17,7 @@ function AdminRoute() {
   return (
     <Suspense fallback={<Spinner />}>
       <Routes>
-        <Route path="/" element={<AdminLayout />}>
+        <Route path="/"  element={<Layout SidebarComponent={AdminSidebar} />}>
 
 
 

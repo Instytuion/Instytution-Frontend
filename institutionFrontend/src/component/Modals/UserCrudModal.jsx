@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Box, Typography, Button, Fade, Backdrop } from "@mui/material";
+import { Modal, Box, Typography, Button, Fade, Backdrop,CircularProgress } from "@mui/material";
 import { useTheme } from  "@mui/material";
 
 const UserCrudModal = ({
@@ -9,6 +9,7 @@ const UserCrudModal = ({
   children,
   handleSubmit,
   submitText = "Submit",
+  isLoading
 }) => {
   const theme = useTheme()
   return (
@@ -39,12 +40,16 @@ const UserCrudModal = ({
             {title}
           </Typography>
           {children}
+          
           <Button
             onClick={handleSubmit}
+            disabled={isLoading}
             sx={{ mt: 2, color: "white", backgroundColor: "teal",width:'100%' }}
           >
-            {submitText}
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : submitText}
           </Button>
+         
+
         </Box>
       </Fade>
     </Modal>
