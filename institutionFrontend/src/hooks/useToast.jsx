@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const useToast = () => {
   const { enqueueSnackbar } = useSnackbar();
 
-  const showToast = (message, variant = "default") => {
+  const showToast = (message, variant = "default",duration=2000) => {
     console.log("From useToast Message is:", message);
 
     const variantStyles = {
@@ -26,12 +26,14 @@ const useToast = () => {
         vertical: "top",
         horizontal: "center",
       },
+      autoHideDuration: duration,
     });
   };
 
   useToast.propTypes = {
     message: PropTypes.string.isRequired,
     variant: PropTypes.string.isRequired,
+    duration:PropTypes.number,
   };
 
   return showToast;
