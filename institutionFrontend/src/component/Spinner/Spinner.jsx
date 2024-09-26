@@ -1,15 +1,31 @@
+import { Box, useTheme } from "@mui/material";
+import loader from "../../assets/Spinner.gif";
 
-
-import loader from "../../assets/Spinner.gif"
 const Spinner = () => {
+  const theme = useTheme();
+  
   return (
-    <div className="fixed inset-0 z-50 flex justify-center items-center bg-white ">
-      <img
-        className="w-16 h-16 md:w-24 md:h-24 lg:w-72 lg:h-72"
+    <Box
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 50,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: theme.palette.mode === 'light' ? theme.palette.background.default : theme.palette.background.paper,
+      }}
+    >
+      <Box
+        component="img"
         src={loader}
         alt="Loading..."
+        sx={{
+          width: { xs: 64, md: 96, lg: 288 }, 
+          height: { xs: 64, md: 96, lg: 288 }, 
+        }}
       />
-    </div>
+    </Box>
   );
 };
 

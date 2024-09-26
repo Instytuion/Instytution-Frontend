@@ -5,10 +5,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import SchoolIcon from '@mui/icons-material/School';
 import ClassIcon from '@mui/icons-material/Class';
+import { Box } from '@mui/material';
 
 const DashboardSummary = () => {
     console.log("Hello");
     
+  // In here write a axios file for fetcheing summary details about couser,shope and admin page with taking props
+
   const summaryData = [
     { title: 'Total Students', count: 1200, icon: PeopleIcon,  },
     { title: 'Total Courses', count: 50, icon: SchoolIcon,   },
@@ -17,8 +20,8 @@ const DashboardSummary = () => {
   ];
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         display: 'flex',
         justifyContent:'space-between',
         marginBottom: '16px',
@@ -33,7 +36,7 @@ const DashboardSummary = () => {
         
         />
       ))}
-    </div>
+    </Box>
   );
 };
 

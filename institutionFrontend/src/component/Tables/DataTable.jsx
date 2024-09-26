@@ -1,16 +1,254 @@
-import React, { useState } from "react";
+// import React, { useState } from "react";
+// import { DataGrid } from "@mui/x-data-grid";
+// import {
+//   TextField,
+//   Box,
+//   Typography,
+//   Button,
+//   useTheme,
+//   useMediaQuery,
+// } from "@mui/material";
+// import { CreateUsersByRole } from "../../services/admin/UsersCreation";
+// import UserCrudModal from "../Modals/UserCrudModal";
+// import useToast from "../../hooks/useToast";
+
+// const StyledTextField = (props) => {
+//   const theme = useTheme();
+//   return (
+//     <TextField
+//       {...props}
+//       sx={{
+//         "& .MuiInputBase-root": {
+//           color: theme.palette.text.primary,
+//         },
+//         "& .MuiOutlinedInput-notchedOutline": {
+//           borderColor: theme.palette.text.primary,
+//         },
+//         "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+//           {
+//             borderColor: theme.palette.text.primary,
+//           },
+//         "& .MuiInputLabel-root": {
+//           color: theme.palette.text.primary,
+//         },
+//         "& .MuiInputLabel-root.Mui-focused": {
+//           color: theme.palette.text.primary,
+//         },
+//         "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
+//           borderColor: theme.palette.text.primary,
+//         },
+//         ...props.sx,
+//       }}
+//     />
+//   );
+// };
+
+// const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
+//   console.log('rtitile is :',title)
+//   const [search, setSearch] = useState("");
+//   const [openModal, setOpenModal] = useState(false);
+//   const [newUser, setNewUser] = useState({
+//     email: "",
+//     password: "",
+//     first_name: "",
+//     last_name: "",
+//     role: title === "Course Admin" ? "course_admin" :title === "Instructors" ? "instructor": "shop_admin",
+//   });
+//   const showToast = useToast();
+
+//   const [error, setError] = useState("");
+
+//   const theme = useTheme();
+//   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+
+//   const handleOpenModal = () => setOpenModal(true);
+//   const handleCloseModal = () => setOpenModal(false);
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setNewUser((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleFormSubmit = async () => {
+//     try {
+//       const response = await CreateUsersByRole(newUser);
+//       console.log("Response from creating user:", response);
+//       setNewUsers((prev) => [...prev, response.user]);
+//       setError("");
+//       showToast(response.message, "success");
+//       handleCloseModal();
+//     } catch (error) {
+//       console.log("Error creating user:", error);
+//       setError({
+//         email: error.response.data.email || "",
+//         password: error.response.data.password || "",
+//       });
+//     }
+//   };
+
+//   const filteredRows = search
+//     ? rows.filter((row) =>
+//         Object.values(row).some(
+//           (value) =>
+//             value !== null &&
+//             value.toString().toLowerCase().includes(search.toLowerCase())
+//         )
+//       )
+//     : rows;
+
+//   return (
+//     <Box sx={{ width: "77vw" }}>
+//       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+//         <Typography
+//           sx={{
+//             fontSize: 20,
+//             fontWeight: "bold",
+//             color: theme.palette.text.primary,
+//             marginBottom: 2,
+//           }}
+//         >
+//           {title}
+//         </Typography>
+//         {buttonText ? (
+//           <Button
+//             onClick={handleOpenModal}
+//             sx={{
+//               color: "white",
+//               p: 3,
+//               height:0,
+//               backgroundColor: theme.palette.customColors.tealgreen,
+//             }}
+//           >
+//             Add New
+//           </Button>
+//         ) : null}
+//       </Box>
+//       <TextField
+//         label="Search"
+//         variant="outlined"
+//         fullWidth
+//         margin="normal"
+//         onChange={(e) => setSearch(e.target.value)}
+//       />
+//       <Box sx={{ overflow: "auto", }}>
+//         <DataGrid
+//           rows={filteredRows}
+//           columns={columns}
+//           pageSize={5}
+//           rowsPerPageOptions={[5]}
+//           disableSelectionOnClick
+//           sortingOrder={["asc", "desc"]}
+//           // sx={{
+//           //   height: "100%",
+//           //   width: "100vw",
+//           //   "& .MuiDataGrid-virtualScroller": {
+//           //     overflow: "auto",
+//           //   },
+//           //   "& .MuiDataGrid-cell": {
+//           //     whiteSpace: "nowrap",
+//           //     overflow: "visible",
+//           //     textOverflow: "ellipsis",
+//           //   },
+//           // }}
+//           sx={{
+//             height: "calc(100vh - 24.7vh)",
+//             width:"100vw",
+//             "& .MuiDataGrid-virtualScroller": {
+//               overflowY: "auto",
+//               overflowX: "hidden",
+//             },
+//             "& .MuiDataGrid-cell": {
+//               whiteSpace: "nowrap",
+//               overflow: "visible",
+//               textOverflow: "ellipsis",
+//             },
+//             "& .MuiDataGrid-row.Mui-selected": {
+//               backgroundColor:
+//                 theme.palette.mode === "dark"
+//                   ? "rgba(255, 255, 255, 0.16)"
+//                   : "rgba(25, 118, 210, 0.08)",
+//               "&:hover": {
+//                 backgroundColor:
+//                   theme.palette.mode === "dark"
+//                     ? "rgba(255, 255, 255, 0.24)"
+//                     : "rgba(25, 118, 210, 0.16)",
+//               },
+//             },
+//             "& .MuiDataGrid-row:hover": {
+//               backgroundColor:
+//                 theme.palette.mode === "dark"
+//                   ? "rgba(255, 255, 255, 0.08)"
+//                   : "rgba(25, 118, 210, 0.04)",
+//             },
+//           }}
+//         />
+//       </Box>
+
+//       <UserCrudModal
+//         open={openModal}
+//         handleClose={() => setOpenModal(false)}
+//         title={`Add New ${title}`}
+//         handleSubmit={handleFormSubmit}
+//       >
+//         <StyledTextField
+//           fullWidth
+//           margin="normal"
+//           label="Email"
+//           name="email"
+//           value={newUser.email}
+//           onChange={handleInputChange}
+//           error={!!error.email} // Highlight the field in red if there's an error
+//           helperText={error.email} // Show the error message below the field
+//         />
+//         <StyledTextField
+//           fullWidth
+//           margin="normal"
+//           label="Password"
+//           name="password"
+//           type="password"
+//           value={newUser.password}
+//           onChange={handleInputChange}
+//           error={!!error.password} // Only show error if there's a message
+//           helperText={error.password}
+//         />
+//         <StyledTextField
+//           fullWidth
+//           margin="normal"
+//           label="First Name"
+//           name="first_name"
+//           value={newUser.first_name}
+//           onChange={handleInputChange}
+//         />
+//         <StyledTextField
+//           fullWidth
+//           margin="normal"
+//           label="Last Name"
+//           name="last_name"
+//           value={newUser.last_name}
+//           onChange={handleInputChange}
+//         />
+//       </UserCrudModal>
+//     </Box>
+//   );
+// };
+
+// export default CustomDataTable;
+
+
+
+
+
+
+import React, { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
-import {
-  TextField,
-  Box,
-  Typography,
-  Button,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { TextField, Box, Typography, Button } from "@mui/material";
 import { CreateUsersByRole } from "../../services/admin/UsersCreation";
 import UserCrudModal from "../Modals/UserCrudModal";
 import useToast from "../../hooks/useToast";
+import { ColumnsHeading } from "./TableColumns";
+import LitsUsersByRole from "../../services/admin/UsersLIst";
+import CustomPagination from "./CustomePagination";
+import { useTheme } from "@emotion/react";
 
 const StyledTextField = (props) => {
   const theme = useTheme();
@@ -18,19 +256,13 @@ const StyledTextField = (props) => {
     <TextField
       {...props}
       sx={{
-        "& .MuiInputBase-root": {
-          color: theme.palette.text.primary,
-        },
+        "& .MuiInputBase-root": { color: theme.palette.text.primary },
         "& .MuiOutlinedInput-notchedOutline": {
           borderColor: theme.palette.text.primary,
         },
         "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-          {
-            borderColor: theme.palette.text.primary,
-          },
-        "& .MuiInputLabel-root": {
-          color: theme.palette.text.primary,
-        },
+          { borderColor: theme.palette.text.primary },
+        "& .MuiInputLabel-root": { color: theme.palette.text.primary },
         "& .MuiInputLabel-root.Mui-focused": {
           color: theme.palette.text.primary,
         },
@@ -43,7 +275,13 @@ const StyledTextField = (props) => {
   );
 };
 
-const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
+const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
+  const role =
+    title === "Course Admin"
+      ? "course_admin"
+      : title === "Instructors"
+      ? "instructor"
+      : "user";
   const [search, setSearch] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -51,14 +289,39 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
     password: "",
     first_name: "",
     last_name: "",
-    role: title === "Course Admin" ? "course_admin" : "shop_admin",
+    role,
   });
   const showToast = useToast();
-
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [rowCount, setRowCount] = useState(0);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const theme = useTheme()
 
-  const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+
+
+  const fetchUsers = async () => {
+    try {
+      const response = await LitsUsersByRole(role, page, pageSize, search);
+      const usersWithRowNumber = response.results.map((user, index) => ({
+        ...user,
+        rowNumber: (page - 1) * 20 + index + 1,
+      }));
+      setRows(usersWithRowNumber);
+      setRowCount(response.count);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchUsers();
+    
+  }, [page, pageSize, search, role]);
+
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -70,21 +333,22 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
 
   const handleFormSubmit = async () => {
     try {
+      setLoading(true)
       const response = await CreateUsersByRole(newUser);
-      console.log("Response from creating user:", response);
-      setNewUsers((prev) => [...prev, response.user]);
+      setNewUser({ email: "", password: "", first_name: "", last_name: "", role });
       setError("");
       showToast(response.message, "success");
       handleCloseModal();
+      fetchUsers();
     } catch (error) {
-      console.log("Error creating user:", error);
       setError({
-        email: error.response.data.email || "",
-        password: error.response.data.password || "",
+        email: error.response?.data?.email || "",
+        password: error.response?.data?.password || "",
       });
+    }finally{
+      setLoading(false)
     }
   };
-
   const filteredRows = search
     ? rows.filter((row) =>
         Object.values(row).some(
@@ -94,32 +358,20 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
         )
       )
     : rows;
-
   return (
-    <Box sx={{ width: "77vw" }}>
+    <Box sx={{ width: "77vw", }}>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography
-          sx={{
-            fontSize: 20,
-            fontWeight: "bold",
-            color: theme.palette.text.primary,
-            marginBottom: 2,
-          }}
-        >
+        <Typography sx={{ fontSize: 20, fontWeight: "bold", marginBottom: 2,color:theme.palette.text.primary }}>
           {title}
         </Typography>
-        {buttonText ? (
+        {buttonText && (
           <Button
             onClick={handleOpenModal}
-            sx={{
-              color: "white",
-              p: 3,
-              backgroundColor: theme.palette.text.tealgreen,
-            }}
+            sx={{ color: "white", p: 2.8,height:0, backgroundColor: theme.palette.customColors }}
           >
             Add New
           </Button>
-        ) : null}
+        )}
       </Box>
       <TextField
         label="Search"
@@ -128,64 +380,57 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Box sx={{ overflow: "auto", height: "calc(100vh - 27vh)" }}>
+      <Box sx={{ overflow: "auto" }}>
         <DataGrid
           rows={filteredRows}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-          sortingOrder={["asc", "desc"]}
-          // sx={{
-          //   height: "100%",
-          //   width: "100vw",
-          //   "& .MuiDataGrid-virtualScroller": {
-          //     overflow: "auto",
-          //   },
-          //   "& .MuiDataGrid-cell": {
-          //     whiteSpace: "nowrap",
-          //     overflow: "visible",
-          //     textOverflow: "ellipsis",
+          columns={ColumnsHeading(setRows)}
+          // rowCount={rowCount}
+          // pagination
+          // paginationMode="server"
+          // pageSize={pageSize}
+          // page={page - 1}
+          // onPageChange={(newPage) => setPage(newPage + 1)}
+          // onPageSizeChange={(newPageSize) => {
+          //     setPageSize(newPageSize);
+          //     setPage(1);
+          // }}
+          // components={{
+          //     Pagination: CustomTablePagination // If you have a custom pagination component
+          // }}
+          // initialState={{
+          //   pagination: {
+          //     paginationModel: {
+          //       pageSize: 10,
+          //     },
           //   },
           // }}
           sx={{
-            height: "calc(100vh - 27vh)",
-            width: isLargeScreen ? "100vw" : "100vw",
+            height: "68.58vh",
+            width:"100vw",
             "& .MuiDataGrid-virtualScroller": {
-              overflow: "hidden",
+              overflowY: "auto",
+              overflowX: "auto",
             },
-            "& .MuiDataGrid-cell": {
-              whiteSpace: "nowrap",
-              overflow: "visible",
-              textOverflow: "ellipsis",
-            },
-            "& .MuiDataGrid-row.Mui-selected": {
-              backgroundColor:
-                theme.palette.mode === "dark"
-                  ? "rgba(255, 255, 255, 0.16)"
-                  : "rgba(25, 118, 210, 0.08)",
-              "&:hover": {
-                backgroundColor:
-                  theme.palette.mode === "dark"
-                    ? "rgba(255, 255, 255, 0.24)"
-                    : "rgba(25, 118, 210, 0.16)",
-              },
-            },
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor:
-                theme.palette.mode === "dark"
-                  ? "rgba(255, 255, 255, 0.08)"
-                  : "rgba(25, 118, 210, 0.04)",
-            },
+            "& .MuiDataGrid-footerContainer":{
+              display:'none'
+            }
           }}
+          
         />
       </Box>
-
+      <CustomPagination
+        page={page}
+        pageSize={pageSize}
+        rowCount={rowCount}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
       <UserCrudModal
         open={openModal}
-        handleClose={() => setOpenModal(false)}
+        handleClose={handleCloseModal}
         title={`Add New ${title}`}
         handleSubmit={handleFormSubmit}
+        isLoading={loading}
       >
         <StyledTextField
           fullWidth
@@ -194,8 +439,8 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
           name="email"
           value={newUser.email}
           onChange={handleInputChange}
-          error={!!error.email} // Highlight the field in red if there's an error
-          helperText={error.email} // Show the error message below the field
+          error={!!error.email}
+          helperText={error.email}
         />
         <StyledTextField
           fullWidth
@@ -205,7 +450,7 @@ const CustomDataTable = ({ rows, columns, title, buttonText, setNewUsers }) => {
           type="password"
           value={newUser.password}
           onChange={handleInputChange}
-          error={!!error.password} // Only show error if there's a message
+          error={!!error.password}
           helperText={error.password}
         />
         <StyledTextField

@@ -64,7 +64,9 @@ function HeroCourseDetail({name, description, price, duration, level, courseName
                     backgroundRepeat: 'no-repeat',
                 }}>
                     <Button variant="outlined" size='small'
-                        onClick={()=> navigate(`/courses/enrollCourse/${courseName}`)}
+                        onClick={()=> navigate(`/courses/enrollCourse/${courseName}`, {
+                            state: {price}
+                        })}
                         sx={{
                             color: 'white', 
                             border: 0,
