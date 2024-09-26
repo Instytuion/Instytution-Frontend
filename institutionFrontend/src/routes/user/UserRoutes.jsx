@@ -17,6 +17,7 @@ const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'))
 const Profile = lazy(() => import('../../pages/user/userProfile'));
 const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPassword'));
 const EnrollPage = lazy(() => import('../../pages/user/EnrollPage'));
+const MyCourses = lazy(() => import('../../pages/user/MyCourses'));
 
 function App() {
   return (
@@ -48,6 +49,10 @@ function App() {
         <Route
           path={"/courses/enrollCourse/:courseName"}
           element={<IsAuthenticatedRoutes element={EnrollPage} />}
+        />
+        <Route
+          path={"/courses/myCourses"}
+          element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
 
         <Route path="*" element={<PageNotFoundPage />} />

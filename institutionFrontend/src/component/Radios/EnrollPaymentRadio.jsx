@@ -5,12 +5,16 @@ import { CreateRazorpayOrder } from '../../services/payments/CreateRazorpayOrder
 import Spinner from '../Spinner/Spinner';
 import useRazorpay from "react-razorpay";
 import { VerifyRazorpay } from '../../services/payments/VerifyRazorpay';
+import useToast from '../../hooks/useToast';
+import { useNavigate } from 'react-router-dom';
 
 function EnrollPaymentForm({price}) {
     const [loading, setLoading] = useState(false);
     const [selectedPayRadio, setSelectedPayRadio] = useState(null);
     const {selectedRowId} = useContext(EnrollBatchContext);
     const [Razorpay] = useRazorpay();
+    const showToast = useToast();
+    const navigate = useNavigate();
 
     const handleRadioChange = (event) => {
         setSelectedPayRadio(event.target.value);
@@ -21,7 +25,8 @@ function EnrollPaymentForm({price}) {
         setLoading(true)
         const data = {
                 amount:price,
-                currency:"INR"
+                currency:"INR",
+                batch_id: selectedRowId,
             }
         const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID
 
@@ -29,6 +34,12 @@ function EnrollPaymentForm({price}) {
             const response = await CreateRazorpayOrder(data)
             console.log('success response data from rz pay order creation - ', response.data);
             setLoading(false)
+
+            if (response.data.enrolled_already){
+                showToast(response.data.message, "error", 8000);
+                return
+            }
+
             const {amount, currency, id} = response.data
 
             const options = {
@@ -47,9 +58,12 @@ function EnrollPaymentForm({price}) {
                         signature : response.razorpay_signature,
                         amount : amount,
                     }
+                    setLoading(true) 
                     const payment_verify_response = await VerifyRazorpay(data)
+                    setLoading(false) 
                     console.log('payment_verify_response success.');
-                    
+                    showToast("Successfully enrolled.", "success", 3000);
+                    navigate("/courses/myCourses")
                 },
                 prefill: {
                   name: "Test Name",
