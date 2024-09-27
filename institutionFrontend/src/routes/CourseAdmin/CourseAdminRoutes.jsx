@@ -8,6 +8,7 @@ import CourseAdminSidebar from "../../layout/CourseAdmin/CourseAdminSidebar";
 import Instructors from "../../pages/CourseAdmin/Instructors";
 import ProgramCourses from "../../pages/CourseAdmin/Courses";
 import CourseAdminPrograms from "../../pages/CourseAdmin/Programmes";
+import LessonsPage from "../../pages/CourseAdmin/LessonsPage";
 
 const Dashboard = lazy(() => import("../../pages/CourseAdmin/Dashboard"));
 
@@ -23,6 +24,7 @@ function CourseAdminRoutes() {
           <Route path="programs" element={<CourseAdminPrograms />} />
           <Route path="programs/:programName" element={<ProgramCourses />} />
           <Route path="instructor" element={<Instructors />} />
+          <Route path="lessons/:courseName" element={<LessonsPage />} />
         </Route>
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>
