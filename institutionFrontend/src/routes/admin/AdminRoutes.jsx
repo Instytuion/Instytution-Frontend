@@ -12,6 +12,7 @@ import Layout from "../../layout/AdminLayout/AdminLayout";
 
 const Dashboard = lazy(() => import("../../pages/admin/Dashboard"));
 const Users = lazy(() => import("../../pages/admin/Users"));
+const CreateCourse = lazy(() => import("../../pages/CourseAdmin/CourseForm"));
 
 function AdminRoute() {
   return (
@@ -26,6 +27,7 @@ function AdminRoute() {
           <Route path="course-admin" element={<CourseAdmin />} />
           <Route path="shop-admin" element={<ShopeAdmin />} />
           <Route path="instructor" element={<Instructore />} />
+          
 
 
 

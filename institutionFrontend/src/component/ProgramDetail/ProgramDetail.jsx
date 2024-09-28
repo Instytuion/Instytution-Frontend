@@ -1,18 +1,19 @@
-import { Box, Button, duration, Grid, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {Box, Button, duration, Grid, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
-import { useTheme } from "@emotion/react";
+import {useTheme} from "@emotion/react";
 
-function ProgramDetail({ fetchCourses, linkPrefix, buttonText }) {
+function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
   console.log("fetch fn adn link is :", linkPrefix);
   const theme = useTheme();
 
-  const { programName } = useParams();
+  const {programName} = useParams();
   const decodedProgramName = programName ? decodeURIComponent(programName) : "";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const FetchData = async () => {
@@ -35,7 +36,7 @@ function ProgramDetail({ fetchCourses, linkPrefix, buttonText }) {
   }
 
   return (
-    <Box sx={{ paddingLeft: 8, paddingRight: 8, mb: 10 }}>
+    <Box sx={{paddingLeft: 8, paddingRight: 8, mb: 10}}>
       <Box
         sx={{
           display: "flex",
@@ -56,6 +57,11 @@ function ProgramDetail({ fetchCourses, linkPrefix, buttonText }) {
         </Typography>
         {buttonText ? (
           <Button
+            onClick={() =>
+              navigate("/course-admin/course-form", {
+                state: {programName: programName},
+              })
+            }
             sx={{
               bgcolor: "teal",
               color: "white",
@@ -66,9 +72,9 @@ function ProgramDetail({ fetchCourses, linkPrefix, buttonText }) {
         ) : null}
       </Box>
 
-      <Grid container alignContent="center" spacing={2} sx={{ mt: 4 }}>
+      <Grid container alignContent="center" spacing={2} sx={{mt: 4}}>
         {data.map((course, idx) => (
-          <Grid item key={idx} xs={12} sm={6} md={3}>
+          <Grid item key={idx} xs={12} sm={6} md={4}>
             <CommonCard
               name={course.name}
               image={course.image}
