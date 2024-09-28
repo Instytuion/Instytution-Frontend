@@ -23,7 +23,7 @@ function CourseAdminRoutes() {
           <Route path="programs" element={<CourseAdminPrograms />} />
           <Route path="programs/:programName" element={<ProgramCourses />} />
           <Route path="instructor" element={<Instructors />} />
-          <Route path="create-course" element={<CourseForm />} />
+          <Route path="course-form" element={<CourseForm />} />
         </Route>
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>

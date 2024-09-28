@@ -1,52 +1,170 @@
-import { Card, CardMedia, CardContent, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Stack,
+  IconButton,
+  Box,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import {useLocation, useNavigate} from "react-router-dom";
+import {useTheme} from "@emotion/react";
+import Tooltip from "@mui/material/Tooltip";
 
-const CommonCard = ({ name, duration, price, image, link }) => {
+
+const CommonCard = ({name, duration, price, image, link}) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const theme = useTheme();
+
+  const pathParts = location.pathname.split("/");
+  const isInProgramsWithContent = pathParts.length > 3 && pathParts[2] === "programs";
+  console.log(isInProgramsWithContent)
+
+  const isCourseAdmin = location.pathname.includes('/course-admin')
+
+  
 
   const handleCardClick = () => {
-    if (link) {
+    if (isCourseAdmin && isInProgramsWithContent) {
+      navigate("/course-admin/course-form", {
+        state: {mode: "edit", courseName: name},
+      });
+    } else if (link) {
       navigate(link);
     }
   };
 
   return (
-    <Card sx={{ 
-        maxWidth: 345, 
-        height: '100%',
-        display: 'flex', 
-        flexDirection: 'column', 
-        margin: 'auto', 
-        cursor: 'pointer',
-        boxShadow: 2,
-        borderRadius:4,
-        '&:hover': {
-          boxShadow: 8,
+    <Card
+      sx={{
+        maxWidth: 345,
+        display: "flex",
+        flexDirection: "column",
+        margin: "auto",
+        cursor: "pointer",
+        borderRadius: 2,
+        transition: "box-shadow 0.5s ease",
+        "&:hover": {
+          boxShadow: theme.palette.shadow,
         },
       }}
       onClick={handleCardClick}
+    >
+      {/* Image Section */}
+      <CardMedia
+        component="img"
+        height="160"
+        image={image}
+        alt={`${name}-image`}
+        sx={{
+          width: "100%", // Ensure image takes full width
+          objectFit: "cover",
+        }}
+      />
+
+      {/* Content and Actions Section */}
+      <CardContent
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexGrow: 1,
+          flexDirection: "row", // Content and icons in one row
+        }}
       >
-      <CardMedia>
-        <img src={image} alt={`${name}-image`}  sx={{ height: 140, objectFit: 'cover' }}/>
-      </CardMedia>
-      <CardContent>
-        <Typography variant="h6" component="div"
-        sx={{ minHeight: 70 }}
-        >
-          {name}
-        </Typography>
-        {duration ? (
-          <Typography variant="body2" component="div">
-            Duration :{duration}
+        {/* Course Details */}
+        <Box sx={{flex: 1}}>
+          <Typography
+            variant="body1"
+            component="div"
+            sx={{
+              display: "-webkit-box",
+              WebkitLineClamp: 1,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              fontWeight: "bold",
+              mb: 1,
+            }}
+          >
+            {name}
           </Typography>
-        ):''}
-        {price ? (
-          <Typography variant="body2" component="div">
-            Price: {price}
-          </Typography>
-        ):''}
+          {duration && (
+            <Typography variant="body2" component="div">
+              Duration: {duration}
+            </Typography>
+          )}
+          {price && (
+            <Typography variant="body2" component="div">
+              Price: {price}
+            </Typography>
+          )}
+        </Box>
+
+        {/* Admin Icons */}
+        {isInProgramsWithContent && isCourseAdmin && (
+          <Stack
+            spacing={1}
+            alignItems="flex-end"
+            justifyContent="flex-start"
+            sx={{ml: 2}}
+          >
+            <Tooltip title="Edit Course" arrow>
+              <IconButton
+                aria-label="edit"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/course-admin/course-form", {
+                    state: {mode: "edit", courseName: name},
+                  });
+                }}
+                sx={{
+                  padding: 0,
+                  "& .MuiSvgIcon-root": {fontSize: 20},
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="View Batches" arrow>
+              <IconButton
+                aria-label="view batches"
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+                sx={{
+                  padding: 0,
+                  "& .MuiSvgIcon-root": {fontSize: 20},
+                }}
+              >
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="View Lessons" arrow>
+              <IconButton
+                aria-label="view lessons"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/course-admin/lessons/${name}`);
+                }}
+                sx={{
+                  padding: 0,
+                  "& .MuiSvgIcon-root": {fontSize: 20},
+                }}
+              >
+                <AddCircleIcon />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        )}
       </CardContent>
     </Card>
   );
 };
+
 export default CommonCard;

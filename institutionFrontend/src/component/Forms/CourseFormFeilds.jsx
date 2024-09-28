@@ -1,25 +1,38 @@
-import {useEffect} from "react";
-import {Grid, Typography} from "@mui/material";
+import {useEffect, useState} from "react";
+import { Avatar, Box, Grid, Stack, Typography} from "@mui/material";
 import {Controller} from "react-hook-form";
 import {CustomFormField} from "./CustomForm";
 
 const CourseFormFields = ({
   control,
   errors,
-  programs,
   mode,
-  course_data,
+  courseData,
   setValue,
 }) => {
-  // Use effect to set default values when editing
+
+  const [thumbnail , setThumbnail] = useState('')
+
   useEffect(() => {
-    if (mode === "edit" && course_data) {
-      // Iterate over the course_data keys and set values in the form
-      Object.keys(course_data).forEach((key) => {
-        setValue(key, course_data[key]);
+    if (mode === "edit" && courseData) {
+      Object.keys(courseData).forEach((key) => {
+        setValue(key, courseData[key]);
       });
+      if (courseData.image){
+        setThumbnail(courseData.image)
+      }
     }
-  }, [mode, course_data, setValue]);
+    
+  }, [mode, courseData, setValue]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imagePreview = URL.createObjectURL(file);
+      setThumbnail(imagePreview); // Set thumbnail to preview the selected image
+    }
+  };
+
 
   return (
     <Grid container spacing={3}>
@@ -44,32 +57,12 @@ const CourseFormFields = ({
         />
       </Grid>
 
-      {/* <Grid item xs={12}>
-        
-        <Controller
-          name="program"
-          control={control}
-          defaultValue={mode === "edit" ? course_data.program : ""}
-          render={({field}) => (
-            <CustomFormField
-              {...field}
-              label="Program"
-              options={programs.map((program) => ({
-                value: program.name,
-                label: program.name,
-              }))}
-              error={errors.program}
-              helperText={errors.program ? errors.program.message : ""}
-            />
-          )}
-        />
-      </Grid> */}
-
       <Grid item xs={12}>
         <CustomFormField
           name="course_level"
           control={control}
           label="Course Level"
+          isSelect={true}
           options={[
             {value: "beginner", label: "Beginner"},
             {value: "intermediate", label: "Intermediate"},
@@ -134,19 +127,48 @@ const CourseFormFields = ({
           rules={{required: mode === "create" ? "Image is required" : false}}
           render={({field, fieldState}) => (
             <>
-              <Typography>Image</Typography>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => field.onChange(e.target.files[0])}
-              />
-              {fieldState.error && (
-                <Typography color="error">
-                  {fieldState.error.message}
-                </Typography>
-              )}
-              {mode === "edit" && course_data?.image && (
-                <Typography>Current image: {course_data.image}</Typography>
+              <Typography mb={1}>Image</Typography>
+              <Stack justifyContent={"space-between"} direction={"row"}>
+                <Box>
+                  {thumbnail ? (
+                    <Avatar
+                      src={thumbnail}
+                      alt="Course Thumbnail"
+                      sx={{width: 120, height: 120, borderRadius: 2}}
+                      variant="square"
+                    />
+                  ) : (
+                    <Avatar
+                      sx={{
+                        width: 120,
+                        height: 120,
+                        bgcolor: "grey.300",
+                        borderRadius: 2,
+                      }}
+                      variant="square"
+                    >
+                      <Typography>Image preview</Typography>
+                    </Avatar>
+                  )}
+                </Box>
+                <input
+                  className="mt-24"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    field.onChange(e.target.files[0]);
+                    handleImageChange(e);
+                  }}
+                />
+                {fieldState.error && (
+                  <Typography color="error">
+                    {fieldState.error.message}
+                  </Typography>
+                )}
+              </Stack>
+
+              {mode === "edit" && courseData?.image && (
+                <Typography>Current image: {courseData.image}</Typography>
               )}
             </>
           )}

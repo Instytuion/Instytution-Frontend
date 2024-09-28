@@ -57,7 +57,11 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
         </Typography>
         {buttonText ? (
           <Button
-            onClick={() => navigate("/course-admin/create-course")}
+            onClick={() =>
+              navigate("/course-admin/course-form", {
+                state: {programName: programName},
+              })
+            }
             sx={{
               bgcolor: "teal",
               color: "white",
@@ -70,7 +74,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
 
       <Grid container alignContent="center" spacing={2} sx={{mt: 4}}>
         {data.map((course, idx) => (
-          <Grid item key={idx} xs={12} sm={6} md={3}>
+          <Grid item key={idx} xs={12} sm={6} md={4}>
             <CommonCard
               name={course.name}
               image={course.image}
