@@ -1,12 +1,14 @@
 import { Box, Button, Typography, IconButton } from "@mui/material";
 import { useFieldArray } from "react-hook-form";
 import ClearIcon from '@mui/icons-material/Clear';
+import { useState } from "react";
 
-function AddPdfForLesson({ control, lessonIndex, register, errors }) {
+function AddPdfForLesson({ control, lessonIndex, setValue, pdfErrors, setPdfErrors, newPdfErrors }) {
   const { fields: pdfFields, append: appendPdf, remove: removePdf } = useFieldArray({
     control,
     name: `lessons.${lessonIndex}.pdfs`
   });
+  const [fileError, setFileError] = useState("");
 
   const handleAddPdf = () => {
     appendPdf({ pdf: null });
@@ -19,26 +21,35 @@ function AddPdfForLesson({ control, lessonIndex, register, errors }) {
             <Box key={pdfItem.id} sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
             <input
                 type="file"
-                accept=".pdf"
-                {...register(`lessons.${lessonIndex}.pdfs.${pdfIndex}.pdf`, { 
-                    required: 'PDF file is required',
-                    validate: {
-                        fileType: (value) => {
-                            if (!value || value.length === 0) return true;
-                            return value[0]?.type === 'application/pdf' || 'Only PDF files are allowed';
-                        },
-                        size: (value) => {
-                          if (!value || value.length === 0) return true;
-                          return value[0]?.size <= 5 * 1024 * 1024 || 'file size more than 5 MB not allowed';
-                        },
-                    },
-                })}
+                accept="application/pdf"
+                onChange={(e) => {
+                  const file = e.target.files;
+  
+                  if (file.length > 0) {
+                    newPdfErrors[`lesson_${lessonIndex}_pdf_${pdfIndex}`] = '';
+                    setPdfErrors(newPdfErrors)
+                    const selectedFile = file[0];
+                    if (!selectedFile.type.startsWith('application/pdf')) {
+                      setFileError('Only PDF files are allowed');
+                      return;
+                    }
+                    if (selectedFile.size > 5 * 1024 * 1024) {
+                      setFileError('File size more than 5 MB is not allowed');
+                      return;
+                    }
+                    setFileError("");
+                    setValue(`lessons.${lessonIndex}.pdfs.${pdfIndex}.pdf`, file);
+                  }
+                  else{
+                    setFileError('Select a file or remove this file input.');
+                    return;
+                  }
+                }}
                 style={{ display: 'block', marginBottom: '8px', flexGrow: 1 }}
             />
-            {errors?.lessons?.[lessonIndex]?.pdfs?.[pdfIndex]?.pdf && (
-                <span style={{ color: 'red', marginLeft: '8px' }}>
-                {errors?.lessons?.[lessonIndex]?.pdfs?.[pdfIndex]?.pdf?.message}
-                </span>
+            {fileError && <span style={{ color: 'red' }}>{fileError}</span>}
+            {pdfErrors[`lesson_${lessonIndex}_pdf_${pdfIndex}`] && (
+              <span style={{ color: 'red' }}>{pdfErrors[`lesson_${lessonIndex}_pdf_${pdfIndex}`]}</span>
             )}
             <IconButton
                 color="error"

@@ -1,12 +1,14 @@
 import { Box, Button, Typography, IconButton } from "@mui/material";
 import { useFieldArray } from "react-hook-form";
 import ClearIcon from '@mui/icons-material/Clear';
+import { useState } from "react";
 
-function AddVideoForLesson({ control, lessonIndex, register, errors }) {
+function AddVideoForLesson({ control, lessonIndex, setValue, videoErrors, setVideoErrors, newVideoErrors }) {
   const { fields: videoFields, append: appendvideo, remove: removevideo } = useFieldArray({
     control,
     name: `lessons.${lessonIndex}.videos`
   });
+  const [fileError, setFileError] = useState("");
 
   const handleAddVideo = () => {
     appendvideo({ video: null });
@@ -20,25 +22,34 @@ function AddVideoForLesson({ control, lessonIndex, register, errors }) {
             <input
                 type="file"
                 accept="video/*"
-                {...register(`lessons.${lessonIndex}.videos.${videoIndex}.video`, { 
-                    required: 'Video is required',
-                    validate: {
-                        fileType: (value) => {
-                            if (!value || value.length === 0) return true;
-                            return value[0]?.type.startsWith('video/') || 'Only video files are allowed';
-                        },
-                        size: (value) => {
-                          if (!value || value.length === 0) return true;
-                          return value[0]?.size <= 15 * 1024 * 1024 || 'file size more than 15 MB not allowed';
-                        },
-                    },
-                })}
+                onChange={(e) => {
+                  const file = e.target.files;
+  
+                  if (file.length > 0) {
+                    newVideoErrors[`lesson_${lessonIndex}_video_${videoIndex}`] = '';
+                    setVideoErrors(newVideoErrors)
+                    const selectedFile = file[0];
+                    if (!selectedFile.type.startsWith('video/')) {
+                      setFileError('Only video files are allowed');
+                      return;
+                    }
+                    if (selectedFile.size > 15 * 1024 * 1024) {
+                      setFileError('File size more than 15 MB is not allowed');
+                      return;
+                    }
+                    setFileError("");
+                    setValue(`lessons.${lessonIndex}.videos.${videoIndex}.video`, file);
+                  }
+                  else{
+                    setFileError('Select a file or remove this file input.');
+                    return;
+                  }
+                }}
                 style={{ display: 'block', marginBottom: '8px', flexGrow: 1 }}
             />
-            {errors?.lessons?.[lessonIndex]?.videos?.[videoIndex]?.video && (
-                <span style={{ color: 'red', marginLeft: '8px' }}>
-                {errors?.lessons?.[lessonIndex]?.videos?.[videoIndex]?.video?.message}
-                </span>
+            {fileError && <span style={{ color: 'red' }}>{fileError}</span>}
+            {videoErrors[`lesson_${lessonIndex}_video_${videoIndex}`] && (
+              <span style={{ color: 'red' }}>{videoErrors[`lesson_${lessonIndex}_video_${videoIndex}`]}</span>
             )}
             <IconButton
                 color="error"
