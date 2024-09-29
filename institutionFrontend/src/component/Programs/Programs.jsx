@@ -1,9 +1,11 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import CommonCard from "../Card/Card";
 import { useEffect, useState } from "react";
-
 import Spinner from "../Spinner/Spinner";
 import { useTheme } from "@emotion/react";
+
+
+
 
 const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
   console.log(
@@ -16,6 +18,7 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
+  
 
   useEffect(() => {
     const FetchData = async () => {
@@ -38,11 +41,13 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
   }
 
   return (
-    <Box sx={{ paddingLeft: 8, paddingRight: 8, mb: 10 }}>
-      <Box sx={{
-        display:'flex',
-        justifyContent:'space-between'
-      }}>
+    <Box sx={{paddingLeft: 8, paddingRight: 8, mb: 10}}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
         <Typography
           variant="h5"
           component="h2"
@@ -55,16 +60,18 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
         >
           Our Programs
         </Typography>
-        {buttonText ? <Button
-          sx={{
-            bgcolor:'teal',
-            color:'white'
-          }}
-        >
-          {buttonText}
-        </Button> : null}
+        {buttonText ? (
+          <Button
+            sx={{
+              bgcolor: "teal",
+              color: "white",
+            }}
+          >
+            {buttonText}
+          </Button>
+        ) : null}
       </Box>
-      <Grid container alignContent="center" spacing={2} sx={{ mt: 4 }}>
+      <Grid container alignContent="center" spacing={2} sx={{mt: 4}}>
         {data.map((program, idx) => (
           <Grid item key={idx} xs={12} sm={6} md={3}>
             <CommonCard
