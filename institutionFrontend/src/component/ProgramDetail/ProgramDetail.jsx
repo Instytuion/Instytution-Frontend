@@ -1,7 +1,7 @@
 import {Box, Button, duration, Grid, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
 import {useTheme} from "@emotion/react";
 
@@ -14,6 +14,9 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location  = useLocation()
+
+  const isCourseAdmin = location.pathname.includes("/course-admin");
 
   useEffect(() => {
     const FetchData = async () => {
@@ -74,7 +77,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
 
       <Grid container alignContent="center" spacing={2} sx={{mt: 4}}>
         {data.map((course, idx) => (
-          <Grid item key={idx} xs={12} sm={6} md={4}>
+          <Grid item key={idx} xs={12} sm={6} md={isCourseAdmin?4:3}>
             <CommonCard
               name={course.name}
               image={course.image}
