@@ -1,33 +1,27 @@
+import React, {useEffect, useState} from "react";
+import ProgramFormFields from "../../component/Forms/ProgramFormFeilds";
+import {Container, Button, CircularProgress, Stack} from "@mui/material";
 import {useForm} from "react-hook-form";
-import CourseFormFields from "../../component/Forms/CourseFormFeilds";
-import {Container, Button, Stack, CircularProgress} from "@mui/material";
 import {useTheme} from "@emotion/react";
+import programFormServices from "../../services/courseAdmin/ProgramFormServices";
 import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
-import FetchCourseDetails from "../../services/courseAdmin/FetchCourseDetails";
-import CourseFormServices from "../../services/courseAdmin/CourseFormServices";
 import useToast from "../../hooks/useToast";
 import Tooltip from "@mui/material/Tooltip";
 
-const CourseForm = () => {
-  const [courseData, setCourseData] = useState(null);
+const ProgramForm = () => {
+  const [programData, setProgramData] = useState();
   const [loading, setLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const theme = useTheme();
   const location = useLocation();
-  const showToast = useToast();
   const navigate = useNavigate();
+  const showToast = useToast();
+  
+  console.log("programData:", programData);
 
-  const {mode = "create", courseName, programName} = location.state || {};
-  console.log(
-    "mode:",
-    mode,
-    "courseName:",
-    courseName,
-    "programName:",
-    programName
-  );
-  console.log(courseData);
+  const {mode = "create", programName} = location.state || {};
+
+  console.log("mode:", mode, "programName:", programName);
 
   const {
     control,
@@ -39,79 +33,65 @@ const CourseForm = () => {
   } = useForm();
 
   useEffect(() => {
-    if (mode === "edit" && courseName) {
-      const fetchCourseData = async () => {
-        setLoading(true);
-        try {
-          const response = await FetchCourseDetails(courseName);
-          setCourseData(response);
-        } catch (error) {
-          console.error("Error fetching course data:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchCourseData();
+    if (mode === "edit") {
+      fetchprogram();
     }
-  }, [mode, courseName]);
+  }, []);
 
-  
   useEffect(() => {
-    if (mode === "edit" && courseData) {
+    if (mode === "edit" && programData) {
       const subscription = watch((value) => {
         const isChanged = Object.keys(value).some(
-          (key) => value[key] !== courseData[key]
+          (key) => value[key] !== programData[key]
         );
         setHasChanges(isChanged);
       });
       return () => subscription.unsubscribe();
     }
-  }, [watch, courseData, mode]);
+  }, [watch, programData, mode]);
 
-
-  // submitting datas to backend dynamically for edit and update
+  const fetchprogram = async () => {
+    try {
+      setLoading(true);
+      const response = await programFormServices.getProgram(programName);
+      setProgramData(response);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (data) => {
-    console.log("submitting data", data);
     const formData = new FormData();
-
     try {
       setLoading(true);
       if (mode === "create") {
         Object.keys(data).forEach((key) => {
           formData.append(key, data[key]);
         });
-
-        if (programName) {
-          formData.append("program", programName);
-        }
-
-        await CourseFormServices.CreateCourse(formData);
-        console.log("Course created successfully");
-        showToast(`New course (${data.name}) created succussfully`, "success");
-        navigate(`/course-admin/programs/${programName}`);
+        await programFormServices.createProgram(formData);
+        console.log("Program created successfully");
+        showToast(`New Program (${data.name}) created succussfully`, "success");
+        navigate(`/course-admin/programs`);
       } else if (mode === "edit") {
         Object.keys(data).forEach((key) => {
-          if (data[key] !== courseData[key]) {
+          if (data[key] !== programData[key]) {
             formData.append(key, data[key]);
           }
         });
 
-        const response = await CourseFormServices.UpdateCourse(
-          formData,
-          courseData.name
-        );
+        await programFormServices.updateCourse(formData, programData.name);
         console.log("Course created successfully");
         showToast(`course (${data.name}) updated succussfully`, "success");
-        navigate(`/course-admin/programs/${response.program}`);
+        navigate(`/course-admin/programs`);
       }
     } catch (error) {
       console.log(error);
       if (error?.response?.data?.name) {
         setError("name", {
           type: "manual",
-          message: error.response.data.name[0], // Access the first message
+          message: error.response.data.name[0],
         });
         showToast(`Error: ${error.response.data.name[0]}`, "error");
       } else {
@@ -128,11 +108,11 @@ const CourseForm = () => {
   return (
     <Container maxWidth={"md"}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <CourseFormFields
+        <ProgramFormFields
           control={control}
           errors={errors}
           mode={mode}
-          courseData={courseData}
+          programData={programData}
           setValue={setValue}
         />
         <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
@@ -144,7 +124,7 @@ const CourseForm = () => {
               <Button
                 type="submit"
                 sx={{
-                  color: "white !important",
+                  color: "white",
                   bgcolor:
                     mode === "edit" && !hasChanges
                       ? "grey.200"
@@ -176,4 +156,4 @@ const CourseForm = () => {
   );
 };
 
-export default CourseForm;
+export default ProgramForm;

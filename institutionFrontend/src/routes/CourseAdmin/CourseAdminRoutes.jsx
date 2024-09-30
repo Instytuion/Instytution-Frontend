@@ -8,6 +8,7 @@ import Instructors from "../../pages/CourseAdmin/Instructors";
 import ProgramCourses from "../../pages/CourseAdmin/Courses";
 import CourseAdminPrograms from "../../pages/CourseAdmin/Programmes";
 import CourseForm from "../../pages/CourseAdmin/CourseForm"
+import ProgramForm from "../../pages/CourseAdmin/ProgramForm";
 
 const Dashboard = lazy(() => import("../../pages/CourseAdmin/Dashboard"));
 
@@ -24,6 +25,7 @@ function CourseAdminRoutes() {
           <Route path="programs/:programName" element={<ProgramCourses />} />
           <Route path="instructor" element={<Instructors />} />
           <Route path="course-form" element={<CourseForm />} />
+          <Route path="program-form" element={<ProgramForm />} />
         </Route>
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>
