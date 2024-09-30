@@ -69,9 +69,6 @@ const CourseForm = () => {
     }
   }, [watch, courseData, mode]);
 
-
-  // submitting datas to backend dynamically for edit and update
-
   const onSubmit = async (data) => {
     console.log("submitting data", data);
     const formData = new FormData();
@@ -136,6 +133,7 @@ const CourseForm = () => {
           setValue={setValue}
         />
         <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
+
           <Tooltip
             title={mode === "edit" && !hasChanges ? "No changes made" : ""}
             arrow
@@ -170,6 +168,7 @@ const CourseForm = () => {
           >
             Cancel
           </Button>
+          
         </Stack>
       </form>
     </Container>
