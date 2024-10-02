@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Box, TextField, Button, IconButton, Tooltip, Typography, Grid, List, ListItem, Stack } from '@mui/material';
+import { Paper, Box, TextField, Button, IconButton, Tooltip, Typography, Grid, Stack } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { useForm } from 'react-hook-form';
 import UpdateLesson from '../../services/courseAdmin/UpdateLesson';
 import Spinner from '../Spinner/Spinner';
@@ -9,6 +10,7 @@ import DisplayImageForLesson from '../DisplayImageForLesson/DisplayImageForLesso
 import DisplayPdfForLesson from '../DisplayPdfForLesson/DisplayPdfForLesson';
 import DisplayVideoForLesson from '../DisplayVideoForLesson/DisplayVideoForLesson';
 import useToast from '../../hooks/useToast';
+import UploadImageModal from '../UploadImageModal/UploadImageModal';
 
 
 const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
@@ -17,6 +19,7 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [lessonData, setLessonData] = useState(lessonItem);
     const [disableSave, setDisableSave] = useState(true)
+    const [openModal, setOpenModal] = useState(false);
     const showToast = useToast();
     const [selectedFiles, setSelectedFiles] = useState(
         {
@@ -75,6 +78,11 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
             setIsLoading(false)
         }
     }
+
+    const handleModalOpen = () => setOpenModal(true);
+    const handleModalClose = () => setOpenModal(false);
+
+
 
     const handleCancel = ()=>{
         reset({
@@ -194,7 +202,17 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                             {/* Display Images */}
                             {selectedFiles.images.length > 0 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
-                                    <Typography variant="subtitle1">Images:</Typography>
+                                    <Typography variant="subtitle1">
+                                        Images:
+                                        <Tooltip title="Add Image" arrow>
+                                            <IconButton  
+                                            color="primary"
+                                            onClick={handleModalOpen}
+                                            >
+                                                <AddCircleOutlineIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Typography>
                                     <Grid container spacing={1}>
                                         {selectedFiles.images.map((img, index) => (
                                             <Grid item key={index} xs={12} sm={12} md={6} sx={{my:2}}>
@@ -295,6 +313,13 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                     )}
                 </form>
             </Box>
+             {/*  Modal component */}
+             <UploadImageModal
+                open={openModal}
+                onClose={handleModalClose}
+                lessonId={lessonData.id}
+                setLessonData={setLessonData}
+            />
         </Paper>
     );
 };
