@@ -128,7 +128,11 @@ const CourseFormFields = ({
           render={({field, fieldState}) => (
             <>
               <Typography mb={1}>Image</Typography>
-              <Stack justifyContent={"space-between"} direction={"row"}>
+              <Stack
+                justifyContent={"space-between"}
+                direction={{xs: "column", md: "row"}}
+                gap={{xs: 2, md: 0}}
+              >
                 <Box>
                   {thumbnail ? (
                     <Avatar
@@ -152,7 +156,6 @@ const CourseFormFields = ({
                   )}
                 </Box>
                 <input
-                  className="mt-24"
                   type="file"
                   accept="image/*"
                   onChange={(e) => {
@@ -161,15 +164,11 @@ const CourseFormFields = ({
                   }}
                 />
                 {fieldState.error && (
-                  <Typography color="error">
+                  <Typography variant="caption" color="error">
                     {fieldState.error.message}
                   </Typography>
                 )}
               </Stack>
-
-              {mode === "edit" && courseData?.image && (
-                <Typography>Current image: {courseData.image}</Typography>
-              )}
             </>
           )}
         />

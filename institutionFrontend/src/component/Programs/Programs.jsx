@@ -1,13 +1,11 @@
-import { Box, Button, Grid, Typography } from "@mui/material";
+import {Box, Button, Grid, Typography} from "@mui/material";
 import CommonCard from "../Card/Card";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Spinner from "../Spinner/Spinner";
-import { useTheme } from "@emotion/react";
+import {useTheme} from "@emotion/react";
+import {useLocation, useNavigate} from "react-router-dom";
 
-
-
-
-const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
+const Programs = ({fetchProgrammes, linkPrefix, buttonText}) => {
   console.log(
     "function for program is :",
     fetchProgrammes,
@@ -18,7 +16,10 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
-  
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isCourseAdmin = location.pathname.includes("/course-admin");
 
   useEffect(() => {
     const FetchData = async () => {
@@ -62,6 +63,7 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
         </Typography>
         {buttonText ? (
           <Button
+            onClick={() => navigate("/course-admin/program-form")}
             sx={{
               bgcolor: "teal",
               color: "white",
@@ -73,7 +75,7 @@ const Programs = ({ fetchProgrammes, linkPrefix, buttonText }) => {
       </Box>
       <Grid container alignContent="center" spacing={2} sx={{mt: 4}}>
         {data.map((program, idx) => (
-          <Grid item key={idx} xs={12} sm={6} md={3}>
+          <Grid item key={idx} xs={12} sm={6} md={isCourseAdmin?4:3}>
             <CommonCard
               name={program.name}
               image={program.image}

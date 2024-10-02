@@ -9,6 +9,7 @@ import ProgramCourses from "../../pages/CourseAdmin/Courses";
 import CourseAdminPrograms from "../../pages/CourseAdmin/Programmes";
 import CourseForm from "../../pages/CourseAdmin/CourseForm"
 import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
+import ProgramForm from "../../pages/CourseAdmin/ProgramForm";
 
 const Dashboard = lazy(() => import("../../pages/CourseAdmin/Dashboard"));
 const AddLessonsPage = lazy(() => import("../../pages/CourseAdmin/AddLessonsPage"));
@@ -29,6 +30,7 @@ function CourseAdminRoutes() {
           <Route path="addLessons/:courseName" element={  <IsAuthenticatedRoutes element={AddLessonsPage} />} />
           <Route path="course-form" element={<CourseForm />} />
           <Route path="lessons/:courseName" element={  <IsAuthenticatedRoutes element={LessonsPage} />} />
+          <Route path="program-form" element={<ProgramForm />} />
         </Route>
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>

@@ -14,22 +14,21 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useTheme} from "@emotion/react";
 import Tooltip from "@mui/material/Tooltip";
 
-
 const CommonCard = ({name, duration, price, image, link}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
 
   const pathParts = location.pathname.split("/");
-  const isInProgramsWithContent = pathParts.length > 3 && pathParts[2] === "programs";
-  console.log(isInProgramsWithContent)
+  const isInCourses = pathParts.length == 4 && pathParts[2] === "programs";
+  const isInPrograms = pathParts.length == 3 && pathParts[2] === "programs";
 
-  const isCourseAdmin = location.pathname.includes('/course-admin')
+  console.log(isInPrograms, isInCourses);
 
-  
+  const isCourseAdmin = location.pathname.includes("/course-admin");
 
   const handleCardClick = () => {
-    if (isCourseAdmin && isInProgramsWithContent) {
+    if (isCourseAdmin && isInCourses) {
       navigate("/course-admin/course-form", {
         state: {mode: "edit", courseName: name},
       });
@@ -57,12 +56,12 @@ const CommonCard = ({name, duration, price, image, link}) => {
       {/* Image Section */}
       <CardMedia
         component="img"
-        height="160"
         image={image}
         alt={`${name}-image`}
         sx={{
           width: "100%", // Ensure image takes full width
           objectFit: "cover",
+          height:[ "15rem"]
         }}
       />
 
@@ -104,8 +103,36 @@ const CommonCard = ({name, duration, price, image, link}) => {
           )}
         </Box>
 
-        {/* Admin Icons */}
-        {isInProgramsWithContent && isCourseAdmin && (
+        {/* Program Card Icons */}
+        {isCourseAdmin && isInPrograms && (
+          <Stack
+            spacing={1}
+            alignItems="flex-end"
+            justifyContent="flex-start"
+            sx={{ml: 2}}
+          >
+            <Tooltip title="Edit Course" arrow>
+              <IconButton
+                aria-label="edit"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate("/course-admin/program-form", {
+                    state: {mode: "edit", programName: name},
+                  });
+                }}
+                sx={{
+                  padding: 0,
+                  "& .MuiSvgIcon-root": {fontSize: 20},
+                }}
+              >
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        )}
+
+        {/* course Card Icons */}
+        {isInCourses && isCourseAdmin && (
           <Stack
             spacing={1}
             alignItems="flex-end"
