@@ -1,11 +1,16 @@
-import { Button } from "@mui/material"
+import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react";
+import Spinner from "../Spinner/Spinner";
+import DeleteLessonVideo from "../../services/courseAdmin/DeleteLessonVideo";
+import useToast from "../../hooks/useToast";
 
 
 function DisplayVideoForLesson(
-    {index, video, setSelectedFiles, isEditing, lessonData, setAnyChange}
+    {index, video, setSelectedFiles, isEditing, lessonData, setAnyChange, setLessonData}
 ) {
     const [fileError, setFileError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const showToast = useToast();
 
     useEffect(()=>{
         setFileError("")
@@ -46,7 +51,36 @@ function DisplayVideoForLesson(
             }
             setFileError("")            
         }
+    };
+
+    const deleteVideo = async (id)=>{
+        try{
+            setIsLoading(true)
+            const response = await DeleteLessonVideo(id);
+            console.log("delete lesson video success - ", response);
+            setLessonData((prev) => {
+                return {...prev, videos: prev.videos.filter((video) => video.id !== id)}
+            });
+            showToast("Video deleted successfully", "success", 3000)
+        }
+        catch(error){
+            console.log("some error while deleting lesson video- ", error);
+        }
+        finally{
+            setIsLoading(false)
+        }
     }
+
+    const handleDeleteVideo = (id)=>{
+        if(window.confirm("Are you sure you want to delete this image?")){            
+            deleteVideo(id);
+        }
+    };
+
+    if(isLoading){
+        return <Spinner />
+    }
+
     return (
         <>
         {!isEditing ? (
@@ -67,28 +101,38 @@ function DisplayVideoForLesson(
         ) : (
             <>
                 {/* Show the current file link */}
-                <a
-                    href={video.video}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                >
-                    <Button 
-                    variant="text"
-                    color="primary"
-                    sx={{ textDecoration: 'underline' }}
+                <Box>
+                    <a
+                        href={video.video}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
                     >
-                        Open Video  {index + 1}
-                    </Button>
-                </a>
+                        <Button 
+                        variant="text"
+                        color="primary"
+                        sx={{ textDecoration: 'underline' }}
+                        >
+                            Open Video  {index + 1}
+                        </Button>
+                    </a>
 
-                {/* File input to upload new video */}
-                <input
-                    type="file"
-                    accept="video/*"
-                    onChange={(e) => {handleVideoChange(e, index, video.id)}}
-                />
-                {fileError && <> <br/> <span style={{ color: 'red' }}>{fileError}</span></>}
+                    {/* File input to upload new video */}
+                    <input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => {handleVideoChange(e, index, video.id)}}
+                    />
+                    {fileError && <> <br/> <span style={{ color: 'red' }}>{fileError}</span></>}
+                </Box>
+                <Box>
+                    <Button variant="outlined" color="error"
+                    sx={{ml:2}}
+                    onClick={()=> handleDeleteVideo(video.id)}
+                    >
+                        Delete
+                    </Button>
+                </Box>
             </>
         )}
         </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Box, TextField, Button, IconButton, Tooltip, Typography, Grid, List, ListItem } from '@mui/material';
+import { Paper, Box, TextField, Button, IconButton, Tooltip, Typography, Grid, List, ListItem, Stack } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import EditIcon from '@mui/icons-material/Edit';
 import { useForm } from 'react-hook-form';
@@ -207,6 +207,7 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                                                 lessonData={lessonData}
                                                 anyChange={anyChange}
                                                 setAnyChange={setAnyChange}
+                                                setLessonData={setLessonData}
                                                 />
                                             </Grid>
                                         ))}
@@ -218,22 +219,24 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                             {selectedFiles.pdfs.length > 0 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
                                     <Typography variant="subtitle1">PDFs:</Typography>
-                                    <List>
-                                        {selectedFiles.pdfs.map((pdf, index) => (
-                                            <ListItem key={index}>
-                                                <DisplayPdfForLesson 
-                                                index={index}
-                                                pdf={pdf}
-                                                setSelectedFiles={setSelectedFiles}
-                                                isEditing={isEditing}
-                                                setDisableSave={setDisableSave}
-                                                lessonData={lessonData}
-                                                anyChange={anyChange}
-                                                setAnyChange={setAnyChange}
-                                                />
-                                            </ListItem>
-                                        ))}
-                                    </List>
+                                    {selectedFiles.pdfs.map((pdf, index) => (
+                                        <Stack key={index} direction={"row"}
+                                        justifyContent="space-between"
+                                        sx={{mb:2}}
+                                        >
+                                            <DisplayPdfForLesson 
+                                            index={index}
+                                            pdf={pdf}
+                                            setSelectedFiles={setSelectedFiles}
+                                            isEditing={isEditing}
+                                            setDisableSave={setDisableSave}
+                                            lessonData={lessonData}
+                                            anyChange={anyChange}
+                                            setAnyChange={setAnyChange}
+                                            setLessonData={setLessonData}
+                                            />
+                                        </Stack>
+                                    ))}
                                 </Grid>
                             )}
 
@@ -241,9 +244,11 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                             {selectedFiles.videos.length > 0 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
                                     <Typography variant="subtitle1">Videos:</Typography>
-                                    <List>
                                         {selectedFiles.videos.map((video, index) => (
-                                            <ListItem key={index}>
+                                            <Stack key={index} direction={"row"}
+                                            justifyContent="space-between"
+                                            sx={{mb:2}}
+                                            >
                                                 <DisplayVideoForLesson 
                                                 index={index}
                                                 video={video}
@@ -253,10 +258,10 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                                                 lessonData={lessonData}
                                                 anyChange={anyChange}
                                                 setAnyChange={setAnyChange}
+                                                setLessonData={setLessonData}
                                                 />
-                                            </ListItem>
+                                            </Stack>
                                         ))}
-                                    </List>
                                 </Grid>
                             )}
                         </Grid>
