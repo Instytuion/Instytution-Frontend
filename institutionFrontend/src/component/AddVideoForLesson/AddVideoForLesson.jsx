@@ -33,8 +33,8 @@ function AddVideoForLesson({ control, lessonIndex, setValue, videoErrors, setVid
                       setFileError('Only video files are allowed');
                       return;
                     }
-                    if (selectedFile.size > 15 * 1024 * 1024) {
-                      setFileError('File size more than 15 MB is not allowed');
+                    if (selectedFile.size > 10 * 1024 * 1024) {
+                      setFileError('File size more than 10 MB is not allowed');
                       return;
                     }
                     setFileError("");
