@@ -70,23 +70,3 @@ function AddImageForLesson({ control, lessonIndex, setValue, imageErrors, setIma
 }
 
 export default AddImageForLesson;
-
-
-{/* <input
-                type="file"
-                accept="image/*"
-                {...register(`lessons.${lessonIndex}.images.${imgIndex}.image`, { 
-                    required: 'Image is required',
-                    validate: {
-                        fileType: (value) => {
-                            if (!value || value.length === 0) return true;
-                            return value[0]?.type.startsWith('image/') || 'Only image files are allowed';
-                        },
-                        size: (value) => {
-                          if (!value || value.length === 0) return true;
-                          return value[0]?.size <= 5 * 1024 * 1024 || 'file size more than 5 MB not allowed';
-                        },
-                    },
-                })}
-                style={{ display: 'block', marginBottom: '8px', flexGrow: 1 }}
-            /> */}

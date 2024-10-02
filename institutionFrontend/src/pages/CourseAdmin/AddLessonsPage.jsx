@@ -104,8 +104,8 @@ function AddLessonsPage() {
       const response = await PostCourseLessons(courseName, formData);
       console.log('Response:', response);
       setLoading(false);
+      navigate(`/course-admin/lessons/${courseName}`);
       showToast("Lessons successfully submitted", "success", 3000)
-      navigate("/course-admin/dashboard")
       reset({
         lessons: [
           {
@@ -120,6 +120,7 @@ function AddLessonsPage() {
     } catch (error) {
       console.log("Some error while posting add lessons data- ", error);
       setLoading(false);
+      showToast(error.response.data.message, "error", 3000)
     }
     finally{
       setLoading(false);
@@ -144,88 +145,84 @@ function AddLessonsPage() {
 
   return (
     <>
-      <Container>
-        <Box sx={{ width: ["100%", "100%", "75%"], mx: 'auto', p: 4 }}>
-          <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>
-            Course Lesson Page
-          </Typography>
-          <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-            {lessonFields.map((lessonItem, lessonIndex) => (
-              <Paper key={lessonItem.id}>
-                <Box  p={2} 
-                sx={{ my: 3,}}
-                >
-                  <Button
-                    color="error"
-                    onClick={() => removeLesson(lessonIndex)}
-                    sx={{ mb: 2 }}
-                    endIcon={<ClearIcon />}
-                  >
-                    Remove This Lesson
-                  </Button>
-                  <TextField
-                    fullWidth
-                    label={`Lesson-Name`}
-                    {...register(`lessons.${lessonIndex}.lessonName`, { required: 'Lesson Name is required' })}
-                    error={!!errors?.lessons?.[lessonIndex]?.lessonName}
-                    helperText={errors?.lessons?.[lessonIndex]?.lessonName?.message}
-                    sx={{ mb: 2 }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Week"
-                    type="number"
-                    {...register(`lessons.${lessonIndex}.week`, { 
-                      required: 'Week number is required', 
-                      valueAsNumber: true,
-                      validate: value => Number.isInteger(value) || 'Only integer values are allowed'
-                    })}
-                    error={!!errors?.lessons?.[lessonIndex]?.week}
-                    helperText={errors?.lessons?.[lessonIndex]?.week?.message}
-                    inputProps={{ step: 1, min: 1 }}
-                    sx={{ mb: 2 }}
-                  />
-                  <TextField
-                    fullWidth
-                    label={`Lesson-${lessonIndex + 1} Description`}
-                    multiline
-                    rows={4}
-                    {...register(`lessons.${lessonIndex}.lessonDescription`, { required: 'Description is required' })}
-                    error={!!errors?.lessons?.[lessonIndex]?.lessonDescription}
-                    helperText={errors?.lessons?.[lessonIndex]?.lessonDescription?.message}
-                    sx={{ mb: 2 }}
-                  />
-                  <AddImageForLesson  control={control} lessonIndex={lessonIndex} 
-                  setValue={setValue} imageErrors={imageErrors} setImageErrors={setImageErrors} newImageErrors={newImageErrors} />
-                  <AddPdfForLesson control={control} lessonIndex={lessonIndex} 
-                  setValue={setValue} pdfErrors={pdfErrors} setPdfErrors={setPdfErrors} newPdfErrors={newPdfErrors} />
-                  <AddVideoForLesson control={control} lessonIndex={lessonIndex} 
-                  setValue={setValue} videoErrors={videoErrors} setVideoErrors={setVideoErrors} newVideoErrors={newVideoErrors} />
-                </Box>
-              </Paper>
-            ))}
+      <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>
+        Add New Lesson
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        {lessonFields.map((lessonItem, lessonIndex) => (
+          <Paper key={lessonItem.id}>
+            <Box  p={2} 
+            sx={{ my: 3,}}
+            >
+              <Button
+                color="error"
+                onClick={() => removeLesson(lessonIndex)}
+                sx={{ mb: 2 }}
+                endIcon={<ClearIcon />}
+              >
+                Remove This Lesson
+              </Button>
+              <TextField
+                fullWidth
+                label={`Lesson-Name`}
+                {...register(`lessons.${lessonIndex}.lessonName`, { required: 'Lesson Name is required' })}
+                error={!!errors?.lessons?.[lessonIndex]?.lessonName}
+                helperText={errors?.lessons?.[lessonIndex]?.lessonName?.message}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label="Week"
+                type="number"
+                {...register(`lessons.${lessonIndex}.week`, { 
+                  required: 'Week number is required', 
+                  valueAsNumber: true,
+                  validate: value => Number.isInteger(value) || 'Only integer values are allowed'
+                })}
+                error={!!errors?.lessons?.[lessonIndex]?.week}
+                helperText={errors?.lessons?.[lessonIndex]?.week?.message}
+                inputProps={{ step: 1, min: 1 }}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                fullWidth
+                label={`Lesson-Description`}
+                multiline
+                rows={4}
+                {...register(`lessons.${lessonIndex}.lessonDescription`, { required: 'Description is required' })}
+                error={!!errors?.lessons?.[lessonIndex]?.lessonDescription}
+                helperText={errors?.lessons?.[lessonIndex]?.lessonDescription?.message}
+                sx={{ mb: 2 }}
+              />
+              <AddImageForLesson  control={control} lessonIndex={lessonIndex} 
+              setValue={setValue} imageErrors={imageErrors} setImageErrors={setImageErrors} newImageErrors={newImageErrors} />
+              <AddPdfForLesson control={control} lessonIndex={lessonIndex} 
+              setValue={setValue} pdfErrors={pdfErrors} setPdfErrors={setPdfErrors} newPdfErrors={newPdfErrors} />
+              <AddVideoForLesson control={control} lessonIndex={lessonIndex} 
+              setValue={setValue} videoErrors={videoErrors} setVideoErrors={setVideoErrors} newVideoErrors={newVideoErrors} />
+            </Box>
+          </Paper>
+        ))}
 
-            <Button
-              variant="outlined"
-              color="primary"
-              fullWidth
-              sx={{ mt: 3 }}
-              onClick={handleAddLesson}
-            >
-              Add New Lesson
-            </Button>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 3 }}
-            >
-              Submit
-            </Button>
-          </Box>
-        </Box>
-      </Container>
+        <Button
+          variant="outlined"
+          color="primary"
+          fullWidth
+          sx={{ mt: 3 }}
+          onClick={handleAddLesson}
+        >
+          Add New Lesson
+        </Button>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 3 }}
+        >
+          Submit
+        </Button>
+      </Box>
     </>
   );
 }
