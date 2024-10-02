@@ -1,11 +1,16 @@
-import { Box } from "@mui/material"
+import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react";
+import useToast from "../../hooks/useToast";
+import DeleteLessonImage from "../../services/courseAdmin/DeleteLessonImage";
+import Spinner from "../Spinner/Spinner";
 
 
 function DisplayImageForLesson(
-    {index, img, setSelectedFiles, isEditing, lessonData, setAnyChange}
+    {index, img, setSelectedFiles, isEditing, lessonData, setAnyChange, setLessonData}
 ) {
     const [fileError, setFileError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const showToast = useToast();
 
     useEffect(()=>{
         setFileError("")
@@ -48,31 +53,78 @@ function DisplayImageForLesson(
         }
     }
 
+    const deleteImage = async (id)=>{
+        try{
+            setIsLoading(true)
+            const response = await DeleteLessonImage(id);
+            console.log("delete lesson image success - ", response);
+            setLessonData((prev) => {
+                return {...prev, images: prev.images.filter((image) => image.id !== id)}
+            });
+            showToast("Image deleted successfully", "success", 3000)
+        }
+        catch(error){
+            console.log("some error while deleting lesson image- ", error);
+        }
+        finally{
+            setIsLoading(false)
+        }
+    }
+
+    const handleDeleteImage = (id)=>{
+        if(window.confirm("Are you sure you want to delete this image?")){            
+            deleteImage(id);
+        }
+    };
+
+    if(isLoading){
+        return <Spinner />
+    }
+
     return (
         <>
         {!isEditing ? (
                 <>
+                <Box sx={{width:["100%", "100%", "60%"]}}>
                     <img
                         src={img.image}
                         alt={`Lesson-Image ${index + 1}`}
-                        style={{ width: '100%', borderRadius: '4px' }}
+                        style={{ width: '100%', borderRadius: '20px' }}
                     />
+                </Box>
                 </>
             ) : (
                 <Box>
                     {/* Show the current image */}
-                    <img
-                        src={img.image}
-                        alt={`Lesson-Image ${index + 1}`}
-                        sx={{ width: '100%', borderRadius: '4px' }}
-                    />
+                    <Box sx={{width:["100%", "100%", "60%"], mb:2}}>
+                        <img
+                            src={img.image}
+                            alt={`Lesson-Image ${index + 1}`}
+                            style={{ width: '100%', borderRadius: '20px' }}
+                        />
+                    </Box>
 
                     {/* File input to upload new image */}
-                    <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {handleImageChange(e, index, img.id)}}
-                    />
+                    <Box>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id={`image-input-${index}`}
+                            style={{ display: 'none' }}
+                            onChange={(e) => {handleImageChange(e, index, img.id)}}
+                        />
+                        <label htmlFor={`image-input-${index}`}>
+                            <Button variant="outlined" component="span">
+                                Change Image
+                            </Button>
+                        </label>
+                        <Button variant="outlined" color="error"
+                        sx={{ml:2}}
+                        onClick={()=> handleDeleteImage(img.id)}
+                        >
+                            Delete
+                        </Button>
+                    </Box>
                     {fileError && <> <br/> <span style={{ color: 'red' }}>{fileError}</span></>}
                 </Box>
             )}

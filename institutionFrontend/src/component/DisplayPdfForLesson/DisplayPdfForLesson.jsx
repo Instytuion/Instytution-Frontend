@@ -1,10 +1,15 @@
-import { Button } from "@mui/material"
+import { Box, Button } from "@mui/material"
 import { useEffect, useState } from "react";
+import Spinner from "../Spinner/Spinner";
+import DeleteLessonPdf from "../../services/courseAdmin/DeleteLessonPdf";
+import useToast from "../../hooks/useToast";
 
 function DisplayPdfForLesson(
-    {index, pdf, setSelectedFiles, isEditing, lessonData, setAnyChange}
+    {index, pdf, setSelectedFiles, isEditing, lessonData, setAnyChange, setLessonData}
 ) {
     const [fileError, setFileError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const showToast = useToast();
 
     useEffect(()=>{
         setFileError("")
@@ -45,7 +50,37 @@ function DisplayPdfForLesson(
             }
             setFileError("")
         }
+    };
+
+    const deletePdf = async (id)=>{
+        try{
+            setIsLoading(true)
+            const response = await DeleteLessonPdf(id);
+            console.log("delete lesson pdf success - ", response);
+            setLessonData((prev) => {
+                return {...prev, pdfs: prev.pdfs.filter((pdf) => pdf.id !== id)}
+            });
+            showToast("Pdf deleted successfully", "success", 3000)
+        }
+        catch(error){
+            console.log("some error while deleting lesson Pdf- ", error);
+        }
+        finally{
+            setIsLoading(false)
+        }
     }
+
+    const handleDeletePdf = (id)=>{
+        if(window.confirm("Are you sure you want to delete this file?")){            
+            deletePdf(id);
+        }
+    };
+
+    if(isLoading){
+        return <Spinner />
+    }
+
+
     return (
         <>
         {!isEditing ? (
@@ -66,28 +101,40 @@ function DisplayPdfForLesson(
         ) : (
             <>
                 {/* Show the current file link */}
-                <a
-                    href={pdf.pdf}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ textDecoration: 'none' }}
-                >
-                    <Button
-                        variant="text"
-                        color="primary"
-                        sx={{ textDecoration: 'underline' }}
+                <Box>
+                    <a
+                        href={pdf.pdf}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
                     >
-                        Open PDF - {index+1}
-                    </Button>
-                </a>
+                        <Button
+                            variant="text"
+                            color="primary"
+                            sx={{ textDecoration: 'underline' }}
+                        >
+                            Open PDF - {index+1}
+                        </Button>
+                    </a>
 
-                {/* File input to upload new PDF */}
-                <input
-                    type="file"
-                    accept="application/pdf"
-                    onChange={(e) => {handlePdfChange(e, index, pdf.id)}}
-                />
-                {fileError && <> <br/> <span style={{ color: 'red' }}>{fileError}</span></>}
+                    {/* File input to upload new PDF */}
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        onChange={(e) => {handlePdfChange(e, index, pdf.id)}}
+                    />
+                    {fileError && <> <br/> <span style={{ color: 'red' }}>{fileError}</span></>}
+                </Box>
+                <Box>
+                    {lessonData.pdfs.length > 1 &&(
+                        <Button variant="outlined" color="error"
+                        sx={{ml:2}}
+                        onClick={()=> handleDeletePdf(pdf.id)}
+                        >
+                            Delete
+                        </Button>
+                    )}
+                </Box>               
             </>
         )}
         </>
