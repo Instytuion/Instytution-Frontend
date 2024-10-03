@@ -204,7 +204,7 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                         <Typography variant="h6" my={1}>Media</Typography>
                         <Grid container spacing={2}>
                             {/* Display Images */}
-                            {selectedFiles.images.length > 0 && (
+                            {selectedFiles.images.length > -1 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
                                     <Typography variant="subtitle1">
                                         Images:
@@ -238,7 +238,7 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                             )}
 
                             {/* Display PDFs */}
-                            {selectedFiles.pdfs.length > 0 && (
+                            {selectedFiles.pdfs.length > -1 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
                                     <Typography variant="subtitle1">
                                         PDFs:
