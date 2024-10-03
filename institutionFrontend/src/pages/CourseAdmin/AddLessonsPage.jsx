@@ -9,6 +9,7 @@ import AddPdfForLesson from "../../component/AddPdfForLesson/AddPdfForLesson";
 import AddVideoForLesson from "../../component/AddVideoForLesson/AddVideoForLesson";
 import { useState } from "react";
 import Spinner from "../../component/Spinner/Spinner";
+import BackButton from "../../component/Button/BackButton";
 
 
 function AddLessonsPage() {
@@ -144,7 +145,8 @@ function AddLessonsPage() {
   }
 
   return (
-    <>
+    <Box sx={{position: 'relative'}}>
+      <BackButton sx={{position:'absolute', top:0, left:0}} />
       <Typography variant="h4" sx={{ mb: 4, textAlign: 'center' }}>
         Add New Lesson
       </Typography>
@@ -223,7 +225,7 @@ function AddLessonsPage() {
           Submit
         </Button>
       </Box>
-    </>
+    </Box>
   );
 }
 

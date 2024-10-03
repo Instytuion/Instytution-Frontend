@@ -6,6 +6,8 @@ import HeroCourseDetail from "../../component/Hero/HeroCourseDetail"
 import Navbar from "../../component/Navbar/Navbar"
 import FetchCourseDetail from "../../services/courses/FetchCourseDetail"
 import Spinner from "../../component/Spinner/Spinner";
+import BackButton from "../../component/Button/BackButton";
+import { Box } from "@mui/material";
 
 
 function CourseDetailPage() {
@@ -42,6 +44,9 @@ function CourseDetailPage() {
   return (
     <>
       <Navbar />
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mr: ["1rem", "2rem", "4rem"], mt:1 }}>
+        <BackButton />
+      </Box>
       <HeroCourseDetail 
       name={data.name} 
       description={data.description} 
