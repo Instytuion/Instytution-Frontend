@@ -10,7 +10,6 @@ function ProgramDetailPage() {
     <>
     <Box sx={{position:'relative'}}>
       <Navbar /> 
-      <BackButton sx={{position:'absolute', top:80, right:["2rem", "2rem", "4rem"]}}/>
       <ProgramDetail fetchCourses={FetchProgramCourses} 
       linkPrefix="courses"  />
       <Footer />
