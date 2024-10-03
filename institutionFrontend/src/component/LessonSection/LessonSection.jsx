@@ -11,6 +11,7 @@ import DisplayPdfForLesson from '../DisplayPdfForLesson/DisplayPdfForLesson';
 import DisplayVideoForLesson from '../DisplayVideoForLesson/DisplayVideoForLesson';
 import useToast from '../../hooks/useToast';
 import UploadImageModal from '../UploadImageModal/UploadImageModal';
+import UploadPdfModal from '../UploadPdfModal/UploadPdfModal';
 
 
 const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
@@ -19,7 +20,8 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [lessonData, setLessonData] = useState(lessonItem);
     const [disableSave, setDisableSave] = useState(true)
-    const [openModal, setOpenModal] = useState(false);
+    const [openImageModal, setOpenImageModal] = useState(false);
+    const [openPdfModal, setOpenPdfModal] = useState(false);
     const showToast = useToast();
     const [selectedFiles, setSelectedFiles] = useState(
         {
@@ -79,8 +81,10 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
         }
     }
 
-    const handleModalOpen = () => setOpenModal(true);
-    const handleModalClose = () => setOpenModal(false);
+    const handleImageModalOpen = () => setOpenImageModal(true);
+    const handleImageModalClose = () => setOpenImageModal(false);
+    const handlePdfModalOpen = () => setOpenPdfModal(true);
+    const handlePdfModalClose = () => setOpenPdfModal(false);
 
 
 
@@ -207,7 +211,7 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                                         <Tooltip title="Add Image" arrow>
                                             <IconButton  
                                             color="primary"
-                                            onClick={handleModalOpen}
+                                            onClick={handleImageModalOpen}
                                             >
                                                 <AddCircleOutlineIcon />
                                             </IconButton>
@@ -236,7 +240,17 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                             {/* Display PDFs */}
                             {selectedFiles.pdfs.length > 0 && (
                                 <Grid item xs={12} sx={{border:1, my:1, p:2}}>
-                                    <Typography variant="subtitle1">PDFs:</Typography>
+                                    <Typography variant="subtitle1">
+                                        PDFs:
+                                        <Tooltip title="Add PDF" arrow>
+                                            <IconButton  
+                                            color="primary"
+                                            onClick={handlePdfModalOpen}
+                                            >
+                                                <AddCircleOutlineIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </Typography>
                                     {selectedFiles.pdfs.map((pdf, index) => (
                                         <Stack key={index} direction={"row"}
                                         justifyContent="space-between"
@@ -313,10 +327,17 @@ const LessonSection = ({ lessonItem, handleRemoveLesson}) => {
                     )}
                 </form>
             </Box>
-             {/*  Modal component */}
+             {/*  Image Modal component */}
              <UploadImageModal
-                open={openModal}
-                onClose={handleModalClose}
+                open={openImageModal}
+                onClose={handleImageModalClose}
+                lessonId={lessonData.id}
+                setLessonData={setLessonData}
+            />
+             {/*  Pdf Modal component */}
+             <UploadPdfModal
+                open={openPdfModal}
+                onClose={handlePdfModalClose}
                 lessonId={lessonData.id}
                 setLessonData={setLessonData}
             />
