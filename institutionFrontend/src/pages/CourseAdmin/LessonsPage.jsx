@@ -6,6 +6,7 @@ import Spinner from '../../component/Spinner/Spinner'
 import LessonSection from '../../component/LessonSection/LessonSection';
 import DeleteLesson from '../../services/courseAdmin/DeleteLesson';
 import useToast from '../../hooks/useToast';
+import BackButton from '../../component/Button/BackButton';
 
 function LessonsPage() {
     const {courseName} = useParams()
@@ -67,7 +68,8 @@ function LessonsPage() {
         return <Spinner />
       };
     return (
-        <Box>
+        <Box sx={{position:'relative'}}>
+        <BackButton sx={{position:'absolute', top:0, right:20}} />
         <Typography variant="h4" gutterBottom>
             Lessons Page
         </Typography>
