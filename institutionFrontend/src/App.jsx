@@ -8,6 +8,8 @@ import Spinner from "./component/Spinner/Spinner";
 import AdminRoute from "./routes/admin/AdminRoutes";
 import ThemeProvider from "./component/ThemeProvider/ThemeProvider";
 import CourseAdminRoutes from "./routes/CourseAdmin/CourseAdminRoutes";
+import { RoleBasedRoute } from "./routes/protectedRoutes/RoleBasedRoutes";
+import Unauthorized from "./component/ErrorPages/Unathorized";
 const App = () => {
   return (
     <Provider store={store}>
@@ -20,8 +22,23 @@ const App = () => {
             <Router>
               <Routes>
                 <Route path="/*" element={<UserRoutes />} />
-                <Route path="admin/*" element={<AdminRoute />} />
-                <Route path="course-admin/*" element={<CourseAdminRoutes />} />
+                <Route path="/unauthorized" element={<Unauthorized />} />
+                <Route
+                  path="admin/*"
+                  element={
+                    <RoleBasedRoute allowedRole={["admin"]}>
+                      <AdminRoute />
+                    </RoleBasedRoute>
+                  }
+                />
+                <Route
+                  path="course-admin/*"
+                  element={
+                    <RoleBasedRoute allowedRole={["course_admin"]}>
+                      <CourseAdminRoutes />
+                    </RoleBasedRoute>
+                  }
+                />
               </Routes>
             </Router>
           </SnackbarProvider>
