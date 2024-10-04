@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import Spinner from "../Spinner/Spinner";
+import BackButton from "../../component/Button/BackButton";
 import {useTheme} from "@emotion/react";
 
 function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
@@ -46,18 +47,21 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
           justifyContent: "space-between",
         }}
       >
-        <Typography
-          variant="h5"
-          component="h2"
-          sx={{
-            borderBottom: 5,
-            display: "inline-block",
-            padding: 2,
-            color: theme.palette.text.primary,
-          }}
-        >
-          {`${decodedProgramName || "Loading..."}`}
-        </Typography>
+        <Box>
+          <BackButton />
+          <Typography
+            variant="h5"
+            component="h2"
+            sx={{
+              borderBottom: 5,
+              display: "inline-block",
+              padding: 2,
+              color: theme.palette.text.primary,
+            }}
+          >
+            {`${decodedProgramName || "Loading..."}`}
+          </Typography>
+        </Box>
         {buttonText ? (
           <Button
             onClick={() =>

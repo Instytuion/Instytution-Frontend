@@ -8,6 +8,7 @@ import FetchCourseDetails from "../../services/courseAdmin/FetchCourseDetails";
 import CourseFormServices from "../../services/courseAdmin/CourseFormServices";
 import useToast from "../../hooks/useToast";
 import Tooltip from "@mui/material/Tooltip";
+import BackButton from "../../component/Button/BackButton";
 
 const CourseForm = () => {
   const [courseData, setCourseData] = useState(null);
@@ -124,6 +125,7 @@ const CourseForm = () => {
 
   return (
     <Container maxWidth={"md"}>
+      <BackButton  sx={{mb:2}}/>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CourseFormFields
           control={control}
