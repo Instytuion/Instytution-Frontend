@@ -1,25 +1,32 @@
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function SignUpLoginProtectRoutes({ element: Component, ...rest }) {
-    const { isAuthenticated } = useSelector(
-        (state) => state.userAuth
-    );
-    const navigate = useNavigate()
-    const location = useLocation()
+  const { isAuthenticated, role } = useSelector((state) => state.userAuth);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    useEffect(() => {
-        if(isAuthenticated){
-            navigate('/')
-        }
-    });
-
-    if (!isAuthenticated) {
-        return <Component {...rest} />;
+  useEffect(() => {
+    if (isAuthenticated) {
+      const redirectPath = location.state?.from || "/";
+      if (role === "course_admin") {
+        navigate("/course-admin/dashboard");
+      } else if (role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (role === "shope_admin") {
+        navigate("/shope-admin/dashboard");
+      } else {
+        navigate(redirectPath);
       }
-    
-    return null;
-};
+    }
+  });
 
-export default SignUpLoginProtectRoutes
+  if (!isAuthenticated) {
+    return <Component {...rest} />;
+  }
+
+  return null;
+}
+
+export default SignUpLoginProtectRoutes;
