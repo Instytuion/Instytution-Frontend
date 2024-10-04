@@ -12,13 +12,13 @@ function UpComingBatch({courseName}) {
     const FetchData = async ()=>{
       try{
         const response = await FetchCourseBatches(courseName)
-        console.log('Fetch related courses succes - ', response.data);
+        console.log('Fetch related course batches - ', response.data);
         setData(response.data)
         setLoading(false)
       }
       catch(error){
         setLoading(false)
-        console.log('Error while fetching related courses - ', error);
+        console.log('Error while fetching courses batches- ', error);
       }
     }
 

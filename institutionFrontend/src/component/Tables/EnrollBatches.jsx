@@ -8,6 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import { Box, Radio, Typography } from '@mui/material';
 import { useContext } from 'react';
 import EnrollBatchContext from '../../Context/enrollBatchContext';
+import { convert24T012Hour } from '../../utils/utilityFunctions';
 
 
 function EnrollBatches({rows}) {
@@ -32,13 +33,10 @@ function EnrollBatches({rows}) {
                 <TableCell>Batch Name</TableCell>
                 <TableCell align="right">Start Date</TableCell>
                 <TableCell align="right">End Date</TableCell>
-                <TableCell align="right">Time</TableCell>
+                <TableCell align="right">Start Time</TableCell>
+                <TableCell align="right">End Time</TableCell>
                 <TableCell align="right">Instructor</TableCell>
-                <TableCell align="right">
-                    Student Count
-                    <br />
-                    <Typography variant="body2" color="red">(Maximum 9)</Typography>
-                </TableCell>
+                <TableCell align="right">Student Count</TableCell>
             </TableRow>
             </TableHead>
             <TableBody>
@@ -50,7 +48,7 @@ function EnrollBatches({rows}) {
                     <TableCell>
                         <Radio
                         checked={selectedRowId === row.id}
-                        disabled={row.student_count >= 9}
+                        disabled={row.student_count >= row.strength}
                         onChange={() => handleRadioChange(row.id)}
                         value={row.id}
                         name="enroll-radio-buttons"
@@ -68,13 +66,10 @@ function EnrollBatches({rows}) {
                     </TableCell>
                     <TableCell align="right">{row.start_date}</TableCell>
                     <TableCell align="right">{row.end_date}</TableCell>
-                    {row.time_slot === 'morning' ? (
-                        <TableCell align="right">{row.time_slot} (8 - 10 Am)</TableCell>
-                    ) : (
-                        <TableCell align="right">{row.time_slot} (2 - 4 Pm)</TableCell>
-                    )}
+                    <TableCell align="right">{convert24T012Hour(row.start_time)}</TableCell>
+                    <TableCell align="right">{convert24T012Hour(row.end_time)}</TableCell>
                     <TableCell align="right">{row.instructor_name}</TableCell>
-                    <TableCell align="right">{row.student_count} / 9</TableCell>
+                    <TableCell align="right">{row.student_count} / {row.strength}</TableCell>
                 </TableRow>
             ))}
             </TableBody>
