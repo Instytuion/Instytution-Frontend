@@ -10,6 +10,8 @@ import CourseAdminPrograms from "../../pages/CourseAdmin/Programmes";
 import CourseForm from "../../pages/CourseAdmin/CourseForm"
 import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
 import ProgramForm from "../../pages/CourseAdmin/ProgramForm";
+import Batches from "../../pages/CourseAdmin/Batches";
+import BatchForm from "../../pages/CourseAdmin/BatchForm";
 
 const Dashboard = lazy(() => import("../../pages/CourseAdmin/Dashboard"));
 const AddLessonsPage = lazy(() => import("../../pages/CourseAdmin/AddLessonsPage"));
@@ -31,6 +33,8 @@ function CourseAdminRoutes() {
           <Route path="course-form" element={<CourseForm />} />
           <Route path="lessons/:courseName" element={  <IsAuthenticatedRoutes element={LessonsPage} />} />
           <Route path="program-form" element={<ProgramForm />} />
+          <Route path="batches/:courseName" element={<Batches />} />
+          <Route path="batch-form/" element={<BatchForm />} /> 
         </Route>
         <Route path="*" element={<PageNotFoundPage />} />
       </Routes>

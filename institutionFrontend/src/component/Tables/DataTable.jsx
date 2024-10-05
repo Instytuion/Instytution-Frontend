@@ -234,24 +234,20 @@
 
 // export default CustomDataTable;
 
-
-
-
-
-
-import React, { useState, useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Box, Typography, Button } from "@mui/material";
-import { CreateUsersByRole } from "../../services/admin/UsersCreation";
+import React, {useState, useEffect} from "react";
+import {DataGrid} from "@mui/x-data-grid";
+import {TextField, Box, Typography, Button} from "@mui/material";
+import {CreateUsersByRole} from "../../services/admin/UsersCreation";
 import UserCrudModal from "../Modals/UserCrudModal";
 import useToast from "../../hooks/useToast";
-import { ColumnsHeading } from "./TableColumns";
+import {ColumnsHeading} from "./TableColumns";
 import LitsUsersByRole from "../../services/admin/UsersLIst";
 import CustomPagination from "./CustomePagination";
-import { useTheme } from "@emotion/react";
-import { StyledTextField } from "../CustomeElements/CustomFormInputs";
-
-
+import {useTheme} from "@emotion/react";
+import {StyledTextField} from "../CustomeElements/CustomFormInputs";
+import {useSelector} from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { BatchColumnsHeading } from "./BatchColumnsHeading";
 
 // const StyledTextField = (props) => {
 //   const theme = useTheme();
@@ -278,7 +274,8 @@ import { StyledTextField } from "../CustomeElements/CustomFormInputs";
 //   );
 // };
 
-const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
+const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=null}) => {
+  
   const role =
     title === "Course Admin"
       ? "course_admin"
@@ -300,14 +297,16 @@ const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
   const [pageSize, setPageSize] = useState(5);
   const [rowCount, setRowCount] = useState(0);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const theme = useTheme()
-
-
-
+  console.log('row dat5a is :0',rows);
+  
+  const [loading, setLoading] = useState(false);
+  const theme = useTheme();
+  const userRole = useSelector((state) => state.userAuth.role);
+  const navigate = useNavigate()
+  
   const fetchUsers = async () => {
     try {
-      const response = await LitsUsersByRole(role, page, pageSize, search);
+      const response = await LitsUsersByRole(role, page, pageSize, search, userRole);
       const usersWithRowNumber = response.results.map((user, index) => ({
         ...user,
         rowNumber: (page - 1) * 20 + index + 1,
@@ -319,26 +318,31 @@ const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
     }
   };
 
-
   useEffect(() => {
-    fetchUsers();
-    
+    if (!row) {
+      fetchUsers();
+    }
   }, [page, pageSize, search, role]);
-
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewUser((prev) => ({...prev, [name]: value}));
   };
 
   const handleFormSubmit = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await CreateUsersByRole(newUser);
-      setNewUser({ email: "", password: "", first_name: "", last_name: "", role });
+      setNewUser({
+        email: "",
+        password: "",
+        first_name: "",
+        last_name: "",
+        role,
+      });
       setError("");
       showToast(response.message, "success");
       handleCloseModal();
@@ -348,29 +352,53 @@ const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
         email: error.response?.data?.email || "",
         password: error.response?.data?.password || "",
       });
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
+
   const filteredRows = search
-    ? rows.filter((row) =>
-        Object.values(row).some(
+    ? (row || rows).filter((r) =>
+        Object.values(r).some(
           (value) =>
             value !== null &&
             value.toString().toLowerCase().includes(search.toLowerCase())
         )
       )
-    : rows;
+    : row || rows;
+  
+  
   return (
-    <Box sx={{ width: "77vw", }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography sx={{ fontSize: 20, fontWeight: "bold", marginBottom: 2,color:theme.palette.text.primary }}>
+    <Box sx={{width: "77vw"}}>
+      <Box sx={{display: "flex", justifyContent: "space-between"}}>
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontWeight: "bold",
+            marginBottom: 2,
+            color: theme.palette.text.primary,
+          }}
+        >
           {title}
         </Typography>
         {buttonText && (
           <Button
-            onClick={handleOpenModal}
-            sx={{ color: "white", p: 2.8,height:0, backgroundColor: theme.palette.customColors }}
+            onClick={
+              row
+                ? () =>
+                    navigate("/course-admin/batch-form", {
+                      state: {
+                        courseName: courseName,
+                      },
+                    })
+                : handleOpenModal
+            }
+            sx={{
+              color: "white",
+              p: 2.8,
+              height: 0,
+              backgroundColor: theme.palette.customColors,
+            }}
           >
             Add New
           </Button>
@@ -383,10 +411,10 @@ const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Box sx={{ overflow: "auto" }}>
+      <Box sx={{overflow: "auto"}}>
         <DataGrid
           rows={filteredRows}
-          columns={ColumnsHeading(setRows)}
+          columns={row ? BatchColumnsHeading() : ColumnsHeading(setRows)}
           // rowCount={rowCount}
           // pagination
           // paginationMode="server"
@@ -409,25 +437,26 @@ const CustomDataTable = ({ title, buttonText, setNewUsers }) => {
           // }}
           sx={{
             height: "68.58vh",
-            width:"100vw",
+            width: "100vw",
             "& .MuiDataGrid-virtualScroller": {
               overflowY: "auto",
               overflowX: "auto",
             },
-            "& .MuiDataGrid-footerContainer":{
-              display:'none'
-            }
+            "& .MuiDataGrid-footerContainer": {
+              display: "none",
+            },
           }}
-          
         />
       </Box>
-      <CustomPagination
-        page={page}
-        pageSize={pageSize}
-        rowCount={rowCount}
-        onPageChange={setPage}
-        onPageSizeChange={setPageSize}
-      />
+      {!row && (
+        <CustomPagination
+          page={page}
+          pageSize={pageSize}
+          rowCount={rowCount}
+          onPageChange={setPage}
+          onPageSizeChange={setPageSize}
+        />
+      )}
       <UserCrudModal
         open={openModal}
         handleClose={handleCloseModal}

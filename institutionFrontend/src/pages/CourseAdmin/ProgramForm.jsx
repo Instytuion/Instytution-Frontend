@@ -16,12 +16,18 @@ const ProgramForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const showToast = useToast();
-  
+
   console.log("programData:", programData);
 
   const {mode = "create", programName} = location.state || {};
 
   console.log("mode:", mode, "programName:", programName);
+
+  useEffect(() => {
+    if (mode === "edit" && !programName) {
+      navigate("/*");
+    }
+  }, [mode, navigate, programName]);
 
   const {
     control,

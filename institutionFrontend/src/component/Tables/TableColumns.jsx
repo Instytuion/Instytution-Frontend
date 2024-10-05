@@ -5,10 +5,14 @@ import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { updateUserStatus } from "../../services/unblockAndBlock/UserController";
 import useToast from "../../hooks/useToast";
+import { useSelector } from "react-redux";
 
-export const ColumnsHeading = (setUsers) => {
+export const ColumnsHeading = (setUsers ) => {
+  
     const showToast = useToast();
-
+ const userRole = useSelector((state) => state.userAuth.role);
+ console.log('user4 roe ojdgnshog dshgdsohgh',userRole);
+ 
   return [
     { field: "rowNumber", headerName: "No.", flex: 0.01, text: 'center' },
     { field: "id", headerName: "ID", flex: 0.01 },
@@ -66,12 +70,24 @@ export const ColumnsHeading = (setUsers) => {
         const toggleStatus = async () => {
           const newStatus = !row.is_active;
           try {
-            const response = await updateUserStatus(row.id, newStatus);
+            console.log('starting -----------------------------');
+                        console.log(userRole, "THisis user totrel");
+
+            const response = await updateUserStatus(
+              row.id,
+              newStatus,
+              userRole
+            );
+            console.log(" ----------------------------------------------usr id , row id ,new status ",  row, newStatus);
             setUsers((prev) =>
               prev.map((user) => (user.id === row.id ? { ...user, is_active: newStatus } : user))
             );
+           
+            
             showToast(`${row.first_name} ${newStatus ? "UNBlocked" : "Blocked"} Successfully`,'success');
           } catch (error) {
+            console.log('Eroor is ',error);
+            
             showToast(error.response.data,'error');
           }
         };

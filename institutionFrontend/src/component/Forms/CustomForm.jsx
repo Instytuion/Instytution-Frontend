@@ -13,12 +13,17 @@ export const CustomFormField = ({
   helperText,
   options = [], // For select options
   isSelect = false, // Flag to determine whether to render a Select or TextField
+  rules,
+  min,
+  defaultValue,
+  
 }) => (
   <Controller
     name={name}
     control={control}
-    defaultValue={""}
-    rules={{required: `${label} is required`}}
+    defaultValue={defaultValue ? defaultValue : ""}
+    min={min}
+    rules={{validate: rules, required: `${label} is required  `}}
     render={({field}) =>
       isSelect ? (
         <StyledSelect
@@ -39,6 +44,9 @@ export const CustomFormField = ({
           rows={rows}
           error={!!error}
           helperText={error ? helperText : ""}
+          inputProps={{
+            min: type === "date" ? min : undefined,
+          }}
         />
       )
     }
