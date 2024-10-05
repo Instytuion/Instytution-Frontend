@@ -30,6 +30,14 @@ const CourseForm = () => {
   );
   console.log(courseData);
 
+  useEffect(()=>{
+    if (mode==="create" && !programName){
+      navigate('/*')
+    }else if (mode ==="edit" && !courseName){
+      navigate('/*')
+    }
+  },[mode,programName, courseName])
+
   const {
     control,
     handleSubmit,

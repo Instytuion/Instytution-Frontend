@@ -54,6 +54,7 @@ function App() {
           path={"/courses/myCourses"}
           element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
+        
 
         <Route path="*" element={<PageNotFoundPage />} />
         <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />

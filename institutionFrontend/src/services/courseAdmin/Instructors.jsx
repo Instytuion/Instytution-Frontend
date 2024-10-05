@@ -6,3 +6,8 @@ export const GetInstructors = async(data)=>{
     
     return response.data
 }
+
+export const listInstructors = async () => {
+  const response = await instance.get("courses/instructors/instructor/");
+  return response.data;
+};

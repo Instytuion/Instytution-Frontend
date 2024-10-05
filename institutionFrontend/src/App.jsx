@@ -1,13 +1,17 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import UserRoutes from "./routes/user/UserRoutes";
-import { SnackbarProvider } from "notistack";
-import { Provider } from "react-redux";
-import { persistor, store } from "./redux/stores/store";
-import { PersistGate } from "redux-persist/lib/integration/react";
+import {SnackbarProvider} from "notistack";
+import {Provider} from "react-redux";
+import {persistor, store} from "./redux/stores/store";
+import {PersistGate} from "redux-persist/lib/integration/react";
 import Spinner from "./component/Spinner/Spinner";
 import AdminRoute from "./routes/admin/AdminRoutes";
 import ThemeProvider from "./component/ThemeProvider/ThemeProvider";
 import CourseAdminRoutes from "./routes/CourseAdmin/CourseAdminRoutes";
+import {QueryClient, QueryClientProvider} from "react-query";
+
+const queryClient = new QueryClient();
+
 const App = () => {
   return (
     <Provider store={store}>
@@ -15,15 +19,20 @@ const App = () => {
         <ThemeProvider>
           <SnackbarProvider
             maxSnack={3}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            anchorOrigin={{vertical: "top", horizontal: "center"}}
           >
-            <Router>
-              <Routes>
-                <Route path="/*" element={<UserRoutes />} />
-                <Route path="admin/*" element={<AdminRoute />} />
-                <Route path="course-admin/*" element={<CourseAdminRoutes />} />
-              </Routes>
-            </Router>
+            <QueryClientProvider client={queryClient}>
+              <Router>
+                <Routes>
+                  <Route path="/*" element={<UserRoutes />} />
+                  <Route path="admin/*" element={<AdminRoute />} />
+                  <Route
+                    path="course-admin/*"
+                    element={<CourseAdminRoutes />}
+                  />
+                </Routes>
+              </Router>
+            </QueryClientProvider>
           </SnackbarProvider>
         </ThemeProvider>
       </PersistGate>

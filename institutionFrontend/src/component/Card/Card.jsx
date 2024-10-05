@@ -162,6 +162,7 @@ const CommonCard = ({name, duration, price, image, link}) => {
                 aria-label="view batches"
                 onClick={(e) => {
                   e.stopPropagation();
+                  navigate(`/course-admin/batches/${name}`)
                 }}
                 sx={{
                   padding: 0,

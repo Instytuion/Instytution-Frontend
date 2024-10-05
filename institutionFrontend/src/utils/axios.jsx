@@ -43,13 +43,13 @@ const hasTokenExpired = () => {
 
 // Function to log out the user by clearing cookies and session data
 export const logoutUser = async () => {
-  Cookies.remove("expiryTime", {path: "/"});
-  store.dispatch(logout()); // Dispatch logout to Redux
   try{
     const response = await logoutService()
   }catch(error){
     console.log('error while user logout api',error)
   }
+  Cookies.remove("expiryTime", {path: "/"});
+  store.dispatch(logout()); // Dispatch logout to Redux
 };
 
 // Function to refresh the token if needed

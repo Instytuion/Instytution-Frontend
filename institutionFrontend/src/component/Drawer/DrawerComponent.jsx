@@ -34,10 +34,8 @@ const DrawerComponent = ({ menuItems = [], drawerWidth = "240px" }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const location = useLocation(); // Get current route
-  const { email, profileImage } = useSelector((state) => ({
-    email: state.userAuth.email,
-    profileImage: state.userAuth.profileImage,
-  }));
+  const email = useSelector((state)=>state.userAuth.email)
+  const profileImage = useSelector((state)=>state.userAuth.profileImage)
 
   const icon = email ? email.charAt(0).toUpperCase() : "U";
 
