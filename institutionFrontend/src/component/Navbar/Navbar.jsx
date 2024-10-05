@@ -35,7 +35,7 @@ function Navbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation(); 
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedTab, setSelectedTab] = useState(null);
+  const [selectedTab, setSelectedTab] = useState("Home");
   const [bottomNavVAlue, setbottomNavVAlue] = useState(0)
   const navigate = useNavigate();
   const showToast = useToast();

@@ -14,7 +14,7 @@ const Hero = () => {
             <Link to="/about">Learn More</Link>
           </Button>
         </Grid>
-        <Grid sx={12} md={6}>
+        <Grid items sx={12} md={6}>
           <img width="100%" src={image} alt="" />
         </Grid>
       </Grid>
