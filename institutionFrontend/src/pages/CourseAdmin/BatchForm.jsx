@@ -61,52 +61,65 @@ const BatchForm = () => {
   } = useForm();
 
 
-  // Form submission handler
-  const onSubmit = (formData) => {
-    setLoading(true);
-    if (mode === "create") {
-      formData["course_name"] = courseName;
+  // Form submission 
+ const onSubmit = async (formData) => {
+   setLoading(true);
 
-      console.log("formData", formData);
-      CourseAdminBatchServices.crateBatch(courseName, formData)
-        .then(() => {
-          showToast("Batch created successfully!", "success");
-          navigate(`/course-admin/batches/${courseName}`);
-        })
-        .catch((err) => {
-          showToast("Error creating batch", "error");
-        })
-        .finally(() => setLoading(false));
-    } else if (mode === "edit") {
-      const updatedData = {};
+   try {
+     if (mode === "create") {
+       formData["course_name"] = courseName;
+       console.log("formData", formData);
 
-      const cleanValue = (value) => value?.toString().trim() || "";
+       // Create Batch
+       await CourseAdminBatchServices.crateBatch(courseName, formData);
+       showToast("Batch created successfully!", "success");
+       navigate(`/course-admin/batches/${courseName}`);
+     } else if (mode === "edit") {
+       const updatedData = {};
+       const cleanValue = (value) => value?.toString().trim() || "";
 
-      Object.keys(data).forEach((key) => {
-        const originalValue = cleanValue(data[key]);
-        const currentValue = cleanValue(formData[key]);
+       // Compare and only update changed fields
+       Object.keys(data).forEach((key) => {
+         const originalValue = cleanValue(data[key]);
+         const currentValue = cleanValue(formData[key]);
 
-        if (originalValue !== currentValue) {
-          updatedData[key] = formData[key];
-        }
-      });
+         if (originalValue !== currentValue) {
+           updatedData[key] = formData[key];
+         }
+       });
 
-      if (Object.keys(updatedData).length > 0) {
-        CourseAdminBatchServices.updateBatch(batchId, updatedData)
-          .then(() => {
-            showToast("Batch updated successfully!", "success");
-            navigate(`/course-admin/batches/${courseName}`);
-          })
-          .catch((err) => {
-            showToast("Error updating batch", "error");
-          })
-          .finally(() => setLoading(false));
-      } else {
-        showToast("No changes detected.", "info");
-        setLoading(false);
-      }
-    }
-  };
+       if (Object.keys(updatedData).length > 0) {
+         // Update Batch
+         await CourseAdminBatchServices.updateBatch(batchId, updatedData);
+         showToast("Batch updated successfully!", "success");
+         navigate(`/course-admin/batches/${courseName}`);
+       } else {
+         showToast("No changes detected.", "info");
+         return;
+       }
+     }
+   } catch (err) {
+    console.log('err-----------------------------', err)
+     if (err?.response?.data?.name) {
+       setError("name", {
+         type: "manual",
+         message: err.response.data.name[0],
+       });
+       showToast(`Error: ${err.response.data.name[0]}`, "error");
+     } else if (err?.response?.data?.start_date) {
+       setError("start_date", {
+         type: "manual",
+         message: err.response.data.start_date,
+       });
+       showToast(`Error: ${err.response.data.start_date}`, "error");
+     } else {
+       showToast("An unexpected error occurred", "error");
+     }
+   } finally {
+     setLoading(false);
+   }
+ };
+
 
   if (isLoading) {
     return <Spinner />;

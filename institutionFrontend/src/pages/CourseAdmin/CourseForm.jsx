@@ -9,6 +9,7 @@ import CourseFormServices from "../../services/courseAdmin/CourseFormServices";
 import useToast from "../../hooks/useToast";
 import Tooltip from "@mui/material/Tooltip";
 import BackButton from "../../component/Button/BackButton";
+import BookLoaderJson from "../../component/Spinner/BookLoaderJson";
 
 const CourseForm = () => {
   const [courseData, setCourseData] = useState(null);
@@ -130,6 +131,10 @@ const CourseForm = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <BookLoaderJson />;
+  }
 
   return (
     <Container maxWidth={"md"}>

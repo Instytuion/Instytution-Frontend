@@ -9,9 +9,10 @@ const rootReducer = combineReducers({
     theme: themeReducer, 
   });
 const persistConfig = {
-    key: 'root',
-    storage,
-  };
+  key: "root",
+  storage,
+  whitelist: ["userAuth", "theme"],
+};
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
