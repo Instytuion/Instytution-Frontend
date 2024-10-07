@@ -12,6 +12,7 @@ import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
 import ProgramForm from "../../pages/CourseAdmin/ProgramForm";
 import Batches from "../../pages/CourseAdmin/Batches";
 import BatchForm from "../../pages/CourseAdmin/BatchForm";
+import CourseAdminCard from "../../component/Card/CourseAdminCourseCard";
 
 const Dashboard = lazy(() => import("../../pages/CourseAdmin/Dashboard"));
 const AddLessonsPage = lazy(() => import("../../pages/CourseAdmin/AddLessonsPage"));
@@ -26,6 +27,7 @@ function CourseAdminRoutes() {
           element={<Layout SidebarComponent={CourseAdminSidebar} />}
         >
           <Route path="dashboard" element={<Dashboard />} />
+            <Route path="1" element={<CourseAdminCard />} />
           <Route path="programs" element={<CourseAdminPrograms />} />
           <Route path="programs/:programName" element={<ProgramCourses />} />
           <Route path="instructor" element={<Instructors />} />

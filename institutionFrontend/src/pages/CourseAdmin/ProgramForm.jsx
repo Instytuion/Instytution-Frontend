@@ -7,6 +7,7 @@ import programFormServices from "../../services/courseAdmin/ProgramFormServices"
 import {useLocation, useNavigate} from "react-router-dom";
 import useToast from "../../hooks/useToast";
 import Tooltip from "@mui/material/Tooltip";
+import BookLoaderJson from "../../component/Spinner/BookLoaderJson";
 
 const ProgramForm = () => {
   const [programData, setProgramData] = useState();
@@ -110,6 +111,10 @@ const ProgramForm = () => {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return <BookLoaderJson />;
+  }
 
   return (
     <Container maxWidth={"md"}>

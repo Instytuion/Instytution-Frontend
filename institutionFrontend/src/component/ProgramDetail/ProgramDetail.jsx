@@ -2,9 +2,9 @@ import {Box, Button, duration, Grid, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import Spinner from "../Spinner/Spinner";
 import BackButton from "../../component/Button/BackButton";
 import {useTheme} from "@emotion/react";
+import BookLoaderJson from "../Spinner/BookLoaderJson";
 
 function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
   console.log("fetch fn adn link is :", linkPrefix);
@@ -36,7 +36,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
   }, []);
 
   if (loading) {
-    return <Spinner />;
+    return <BookLoaderJson/>;
   }
 
   return (
@@ -55,7 +55,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
             sx={{
               borderBottom: 5,
               display: "inline-block",
-              padding: 2,
+              padding: 1,
               color: theme.palette.text.primary,
             }}
           >

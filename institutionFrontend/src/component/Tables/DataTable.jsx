@@ -248,6 +248,7 @@ import {StyledTextField} from "../CustomeElements/CustomFormInputs";
 import {useSelector} from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BatchColumnsHeading } from "./BatchColumnsHeading";
+import BookLoaderJson from "../Spinner/BookLoaderJson";
 
 // const StyledTextField = (props) => {
 //   const theme = useTheme();
@@ -306,6 +307,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
   
   const fetchUsers = async () => {
     try {
+      setLoading(true)
       const response = await LitsUsersByRole(role, page, pageSize, search, userRole);
       const usersWithRowNumber = response.results.map((user, index) => ({
         ...user,
@@ -315,6 +317,8 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
       setRowCount(response.count);
     } catch (error) {
       console.error("Error fetching data:", error);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -335,7 +339,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
   const handleFormSubmit = async () => {
     try {
       setLoading(true);
-      const response = await CreateUsersByRole(newUser);
+      const response = await CreateUsersByRole(newUser, userRole);
       setNewUser({
         email: "",
         password: "",

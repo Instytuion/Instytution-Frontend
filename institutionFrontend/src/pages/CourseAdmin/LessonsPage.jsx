@@ -2,11 +2,11 @@ import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import FetchCourseLessons from '../../services/courseAdmin/FetchCourseLessons'
-import Spinner from '../../component/Spinner/Spinner'
 import LessonSection from '../../component/LessonSection/LessonSection';
 import DeleteLesson from '../../services/courseAdmin/DeleteLesson';
 import useToast from '../../hooks/useToast';
 import BackButton from '../../component/Button/BackButton';
+import BookLoaderJson from '../../component/Spinner/BookLoaderJson';
 
 function LessonsPage() {
     const {courseName} = useParams()
@@ -65,7 +65,7 @@ function LessonsPage() {
     };
 
     if(isLoading){
-        return <Spinner />
+        return <BookLoaderJson />
       };
     return (
         <Box sx={{position:'relative'}}>

@@ -1,10 +1,11 @@
-import instance from "../../utils/axios"
+import instance from "../../utils/axios";
 
-export  const  CreateUsersByRole = async (data) => {
-    console.log('====================================');
-    console.log('data from services file:',data);
-    console.log('====================================');
-    const response = await instance.post('accounts/subadmin-create/',data)
-    return response.data
-  }
-  
+export const CreateUsersByRole = async (data, userRole) => {
+  const url =
+    userRole === "admin"
+      ? "accounts/subadmin-create/"
+      : "accounts/instructor-create/";
+      console.log('userRole', userRole)
+  const response = await instance.post(url, data);
+  return response.data;
+};
