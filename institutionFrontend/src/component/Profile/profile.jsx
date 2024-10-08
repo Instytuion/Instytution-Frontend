@@ -31,6 +31,7 @@ import {getInitials} from "../../utils/utilityFunctions";
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [emailEdited, setEmailEdited] = useState(false);
+  const [showOtpComponent, setShowotpComponent] = useState(false);
   const [editedData, setEditedData] = useState([]);
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +39,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const showToast = useToast();
   const user = useSelector((state) => state.userAuth);
+
 
   const {
     control,
@@ -61,8 +63,9 @@ const Profile = () => {
         updatedData
       );
       console.log("user profile verify -update res:", response);
-      setIsEditing(false);
       setEmailEdited(false);
+      setShowotpComponent(false)
+      setOtp("")
       dispatch(
         updateProfile({
           ...user,
@@ -91,7 +94,7 @@ const Profile = () => {
       setIsLoading(true);
       try {
         await SignupServices.signup({email: formData.email});
-        setEmailEdited(true);
+        setShowotpComponent(true);
       } catch (error) {
         console.log("signup/otp sent  error", error);
         setFormError("email", {
@@ -195,76 +198,73 @@ const Profile = () => {
 
   return (
     <Container disableGutters sx={styles.container}>
-      {
-        !emailEdited ? (
-          <Stack
-            direction={{xs: "column", md: "row"}} // Responsive direction
-            spacing={2} // Space between the cards
-          >
-            {/* User Information Card */}
-            <Card>
-              <Box sx={styles.parentOne}>
-                <Box sx={styles.profileImageContainer}>{profileImage}</Box>
+      {!showOtpComponent ? (
+        <Stack
+          direction={{xs: "column", md: "row"}} // Responsive direction
+          spacing={2} // Space between the cards
+        >
+          {/* User Information Card */}
+          <Card sx={styles.card} >
+            <Box sx={styles.parentOne}>
+              <Box sx={styles.profileImageContainer}>{profileImage}</Box>
 
-                {/* Add Photo Icon */}
-                <IconButton component="label" sx={styles.addPhotoIcon}>
-                  <AddAPhotoIcon fontSize="small" sx={{color: "white"}} />
-                  <input type="file" hidden onChange={handleImageChange} />
-                </IconButton>
-              </Box>
+              {/* Add Photo Icon */}
+              <IconButton component="label" sx={styles.addPhotoIcon}>
+                <AddAPhotoIcon fontSize="small" sx={{color: "white"}} />
+                <input type="file" hidden onChange={handleImageChange} />
+              </IconButton>
+            </Box>
 
-              {/* Input Fields Section */}
-              <Box sx={styles.parentTwo}>
-                <Stack spacing={2} sx={{paddingTop: 5}}>
-                  <Box sx={styles.titleContainer}>
-                    <Typography variant="h6" gutterBottom>
-                      User Information
-                    </Typography>
-                    <IconButton onClick={handleEditClick} color="primary">
-                      {!isEditing ? <EditIcon /> : <CloseIcon />}
-                    </IconButton>
-                  </Box>
+            {/* Input Fields Section */}
+            <Box sx={styles.parentTwo}>
+              <Stack spacing={2} sx={{paddingTop: 5}}>
+                <Box sx={styles.titleContainer}>
+                  <IconButton onClick={handleEditClick} color="primary">
+                    {!isEditing ? <EditIcon /> : <CloseIcon />}
+                  </IconButton>
+                </Box>
 
-                  {/* First Name */}
-                  <Controller
-                    name="firstName"
-                    control={control}
-                    rules={{required: "First name is required"}}
-                    render={({field}) => (
-                      <TextField
-                        fullWidth
-                        label={!isEditing ? "First Name:" : "FirstName"}
-                        variant="outlined"
-                        {...field}
-                        InputLabelProps={getInputLabelProps(isEditing)}
-                        InputProps={getInputProps(isEditing)}
-                        autoFocus={isEditing}
-                        error={!!errors.firstName}
-                        helperText={errors.firstName?.message}
-                      />
-                    )}
-                  />
+                {/* First Name */}
+                <Controller
+                  name="firstName"
+                  control={control}
+                  rules={{required: "First name is required"}}
+                  render={({field}) => (
+                    <TextField
+                      fullWidth
+                      label={!isEditing ? "First Name:" : "FirstName"}
+                      variant="outlined"
+                      {...field}
+                      InputLabelProps={getInputLabelProps(isEditing)}
+                      InputProps={getInputProps(isEditing)}
+                      autoFocus={isEditing}
+                      error={!!errors.firstName}
+                      helperText={errors.firstName?.message}
+                    />
+                  )}
+                />
 
-                  {/* Last Name */}
-                  <Controller
-                    name="lastName"
-                    control={control}
-                    rules={{required: "Last name is required"}}
-                    render={({field}) => (
-                      <TextField
-                        fullWidth
-                        label={!isEditing ? "Last Name:" : "LastName"}
-                        variant="outlined"
-                        {...field}
-                        InputLabelProps={getInputLabelProps(isEditing)}
-                        InputProps={getInputProps(isEditing)}
-                        error={!!errors.lastName}
-                        helperText={errors.lastName?.message}
-                      />
-                    )}
-                  />
+                {/* Last Name */}
+                <Controller
+                  name="lastName"
+                  control={control}
+                  rules={{required: "Last name is required"}}
+                  render={({field}) => (
+                    <TextField
+                      fullWidth
+                      label={!isEditing ? "Last Name:" : "LastName"}
+                      variant="outlined"
+                      {...field}
+                      InputLabelProps={getInputLabelProps(isEditing)}
+                      InputProps={getInputProps(isEditing)}
+                      error={!!errors.lastName}
+                      helperText={errors.lastName?.message}
+                    />
+                  )}
+                />
 
-                  {/* Email */}
+                {/* Email */}
+                <Stack direction={"row"}>
                   <Controller
                     name="email"
                     control={control}
@@ -278,18 +278,40 @@ const Profile = () => {
                     render={({field}) => (
                       <TextField
                         fullWidth
-                        label={!isEditing ? "Email:" : "Email"}
+                        label={!emailEdited ? "Email:" : "Email"}
                         variant="outlined"
-                        {...field}
-                        InputLabelProps={getInputLabelProps(isEditing)}
-                        InputProps={getInputProps(isEditing)}
+                        // Here we apply truncation to the value only if not editing
+                        value={
+                          !emailEdited
+                            ? field.value.length > 24
+                              ? `${field.value.slice(0, 24)}...`
+                              : field.value
+                            : field.value
+                        }
+                        onChange={(e) => {
+                          // Update field value as user types
+                          field.onChange(e); // This will update the form state
+                        }}
+                        InputLabelProps={getInputLabelProps(emailEdited)}
+                        InputProps={getInputProps(emailEdited)}
                         error={!!errors.email}
                         helperText={errors.email?.message}
                       />
                     )}
                   />
 
-                  {isEditing && (
+                  <IconButton
+                    onClick={() => {
+                      setEmailEdited((prev) => !prev);
+                      reset({email: user.email || ""});
+                    }}
+                    color="primary"
+                  >
+                    {!emailEdited ? <EditIcon /> : <CloseIcon />}
+                  </IconButton>
+                </Stack>
+
+                { (isEditing || emailEdited) && (
                     <Button
                       fullWidth
                       variant="contained"
@@ -305,54 +327,52 @@ const Profile = () => {
                       {isLoading ? "Loading..." : "Save"}
                     </Button>
                   )}
-                </Stack>
-              </Box>
-            </Card>
-
-            {/* User Address Card */}
-            <Card>
-              <Box sx={styles.parentTwo}>
-                <Stack spacing={2} sx={{paddingTop: 5}}>
-                  <Box sx={styles.titleContainer}>
-                    <Typography variant="h6" gutterBottom>
-                      User Address
-                    </Typography>
-                  </Box>
-
-                  {/* Placeholder for Address Information */}
-                  <Typography variant="body1" sx={{color: "gray"}}>
-                    Address information will be displayed here.
-                  </Typography>
-                </Stack>
-              </Box>
-            </Card>
-          </Stack>
-        ):(
-            <Box sx={styles.otpContainer}>
-              <IconButton
-                sx={{position: "absolute", left: 10, top: 10}}
-                onClick={() => setEmailEdited(false)}
-              >
-                <ArrowBackIcon />
-              </IconButton>
-              <Typography sx={{textAlign: "center"}} fontSize={20}>
-                Enter Your OTP
-              </Typography>
-              <Typography sx={{textAlign: "center", color: "text.secondary"}}>
-                OTP has been sent to your {editedData.email}
-              </Typography>
-              <OTP
-                data={editedData}
-                separator={<span></span>}
-                value={otp}
-                onChange={setOtp}
-                length={6}
-                onverify={handleVerifyOtp}
-              />
+              </Stack>
             </Box>
- 
-        )}
-      </Container>
+          </Card>
+
+          {/* User Address Card */}
+          <Card sx={styles.card}>
+            <Box sx={styles.parentTwo}>
+              <Stack spacing={2} sx={{paddingTop: 5}}>
+                <Box sx={styles.titleContainer}></Box>
+
+                {/* Placeholder for Address Information */}
+                <Typography variant="body1" sx={{color: "gray"}}>
+                  Address information will be displayed here.
+                </Typography>
+              </Stack>
+            </Box>
+          </Card>
+        </Stack>
+      ) : (
+        <Box sx={styles.otpContainer}>
+          <IconButton
+            sx={{position: "absolute", left: 10, top: 10}}
+            onClick={() => {
+              setShowotpComponent(false);
+              setOtp(false);
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography sx={{textAlign: "center"}} fontSize={20}>
+            Enter Your OTP
+          </Typography>
+          <Typography sx={{textAlign: "center", color: "text.secondary"}}>
+            OTP has been sent to your {editedData.email}
+          </Typography>
+          <OTP
+            data={editedData}
+            separator={<span></span>}
+            value={otp}
+            onChange={setOtp}
+            length={6}
+            onverify={handleVerifyOtp}
+          />
+        </Box>
+      )}
+    </Container>
   );
 };
 
