@@ -3,7 +3,7 @@ export const getInitials = (email) => {
   return email.charAt(0).toUpperCase();
 };
 
-export const convert24T012Hour = (time) => {
+export const convert24To12Hour = (time) => {
   const [hour, minute, second] = time.split(':');
   const ampm = hour >= 12 ? 'PM' : 'AM';
   const hour12 = hour % 12 || 12;

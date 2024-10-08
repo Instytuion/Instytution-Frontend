@@ -8,7 +8,7 @@ import TableRow from '@mui/material/TableRow';
 import { Box, Radio, Typography } from '@mui/material';
 import { useContext } from 'react';
 import EnrollBatchContext from '../../Context/enrollBatchContext';
-import { convert24T012Hour } from '../../utils/utilityFunctions';
+import { convert24To12Hour } from '../../utils/utilityFunctions';
 
 
 function EnrollBatches({rows}) {
@@ -66,8 +66,8 @@ function EnrollBatches({rows}) {
                     </TableCell>
                     <TableCell align="right">{row.start_date}</TableCell>
                     <TableCell align="right">{row.end_date}</TableCell>
-                    <TableCell align="right">{convert24T012Hour(row.start_time)}</TableCell>
-                    <TableCell align="right">{convert24T012Hour(row.end_time)}</TableCell>
+                    <TableCell align="right">{convert24To12Hour(row.start_time)}</TableCell>
+                    <TableCell align="right">{convert24To12Hour(row.end_time)}</TableCell>
                     <TableCell align="right">{row.instructor_name}</TableCell>
                     <TableCell align="right">{row.student_count} / {row.strength}</TableCell>
                 </TableRow>

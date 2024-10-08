@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {convert24T012Hour} from '../../utils/utilityFunctions.js'
+import {convert24To12Hour} from '../../utils/utilityFunctions.js'
 
 function UpComingBatchTable({rows}) {
   
@@ -35,8 +35,8 @@ function UpComingBatchTable({rows}) {
               </TableCell>
               <TableCell align="right">{row.start_date}</TableCell>
               <TableCell align="right">{row.end_date}</TableCell>
-              <TableCell align="right">{convert24T012Hour(row.start_time)}</TableCell>
-              <TableCell align="right">{convert24T012Hour(row.end_time)}</TableCell>
+              <TableCell align="right">{convert24To12Hour(row.start_time)}</TableCell>
+              <TableCell align="right">{convert24To12Hour(row.end_time)}</TableCell>
               <TableCell align="right">{row.instructor_name}</TableCell>
               <TableCell align="right">{row.student_count} / {row.strength}</TableCell>
             </TableRow>

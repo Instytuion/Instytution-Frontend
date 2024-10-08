@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {IconButton} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+import { convert24To12Hour } from "../../utils/utilityFunctions";
 
 
 export const BatchColumnsHeading = () => {
@@ -36,8 +37,10 @@ export const BatchColumnsHeading = () => {
             maxWidth: "100%",
             cursor: "pointer",
           }}
-          onMouseOver={(e) =>(e.currentTarget.style.textDecoration = "underline")} 
-          onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")} 
+          onMouseOver={(e) =>
+            (e.currentTarget.style.textDecoration = "underline")
+          }
+          onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}
         >
           {params.value || "N/A"}
         </div>
@@ -66,13 +69,13 @@ export const BatchColumnsHeading = () => {
       field: "start_time",
       headerName: "Start Time",
       flex: 0.2,
-      renderCell: (params) => params.value || "N/A",
+      renderCell: (params) => convert24To12Hour(params.value) || "N/A",
     },
     {
       field: "end_time",
       headerName: "End Time",
       flex: 0.2,
-      renderCell: (params) => params.value || "N/A",
+      renderCell: (params) => convert24To12Hour(params.value) || "N/A",
     },
     {
       field: "strength",
@@ -97,7 +100,7 @@ export const BatchColumnsHeading = () => {
 
         return (
           <IconButton onClick={handleEdit}>
-            <EditIcon sx={{color: "#00aeff"}}/>
+            <EditIcon sx={{color: "#00aeff"}} />
           </IconButton>
         );
       },
