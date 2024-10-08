@@ -6,6 +6,7 @@ import {
   Typography,
   Stack,
   Button,
+  Card,
 } from "@mui/material";
 import React, {useState} from "react";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
@@ -25,8 +26,7 @@ import {
 } from "../CustomeElements/FormLabelInput";
 import updateProfileService from "../../services/user/UserProfileServices";
 import styles from "./styles";
-import { getInitials } from "../../utils/utilityFunctions";
-
+import {getInitials} from "../../utils/utilityFunctions";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -103,6 +103,11 @@ const Profile = () => {
         setIsLoading(false);
         setEditedData(updatedData);
       }
+      return;
+    }
+
+    if (Object.keys(updatedData).length === 0) {
+      showToast("No changes made", "info"); 
       return;
     }
 
@@ -189,12 +194,15 @@ const Profile = () => {
   );
 
   return (
-    <>
-      <Container disableGutters sx={styles.container}>
-        {!emailEdited ? (
-          !isLoading ? (
-            <>
-              {/* Profile Picture Section */}
+    <Container disableGutters sx={styles.container}>
+      {
+        !emailEdited ? (
+          <Stack
+            direction={{xs: "column", md: "row"}} // Responsive direction
+            spacing={2} // Space between the cards
+          >
+            {/* User Information Card */}
+            <Card>
               <Box sx={styles.parentOne}>
                 <Box sx={styles.profileImageContainer}>{profileImage}</Box>
 
@@ -218,7 +226,6 @@ const Profile = () => {
                   </Box>
 
                   {/* First Name */}
-
                   <Controller
                     name="firstName"
                     control={control}
@@ -226,10 +233,10 @@ const Profile = () => {
                     render={({field}) => (
                       <TextField
                         fullWidth
-                        label="First Name"
+                        label={!isEditing ? "First Name:" : "FirstName"}
                         variant="outlined"
                         {...field}
-                        InputLabelProps={getInputLabelProps}
+                        InputLabelProps={getInputLabelProps(isEditing)}
                         InputProps={getInputProps(isEditing)}
                         autoFocus={isEditing}
                         error={!!errors.firstName}
@@ -239,7 +246,6 @@ const Profile = () => {
                   />
 
                   {/* Last Name */}
-
                   <Controller
                     name="lastName"
                     control={control}
@@ -247,10 +253,10 @@ const Profile = () => {
                     render={({field}) => (
                       <TextField
                         fullWidth
-                        label="Last Name"
+                        label={!isEditing ? "Last Name:" : "LastName"}
                         variant="outlined"
                         {...field}
-                        InputLabelProps={getInputLabelProps}
+                        InputLabelProps={getInputLabelProps(isEditing)}
                         InputProps={getInputProps(isEditing)}
                         error={!!errors.lastName}
                         helperText={errors.lastName?.message}
@@ -258,8 +264,7 @@ const Profile = () => {
                     )}
                   />
 
-                  {/*  Email */}
-
+                  {/* Email */}
                   <Controller
                     name="email"
                     control={control}
@@ -273,10 +278,10 @@ const Profile = () => {
                     render={({field}) => (
                       <TextField
                         fullWidth
-                        label="Email"
+                        label={!isEditing ? "Email:" : "Email"}
                         variant="outlined"
                         {...field}
-                        InputLabelProps={getInputLabelProps}
+                        InputLabelProps={getInputLabelProps(isEditing)}
                         InputProps={getInputProps(isEditing)}
                         error={!!errors.email}
                         helperText={errors.email?.message}
@@ -288,25 +293,41 @@ const Profile = () => {
                     <Button
                       fullWidth
                       variant="contained"
-                      color="primary"
+                      sx={{
+                        bgcolor: "#00796b",
+                        "&:hover": {
+                          bgcolor: "#009688",
+                        },
+                      }}
                       onClick={handleSubmit(onSubmit)}
+                      disabled={isLoading}
                     >
-                      Save
+                      {isLoading ? "Loading..." : "Save"}
                     </Button>
                   )}
                 </Stack>
               </Box>
-            </>
-          ) : (
-            <Box sx={{paddingTop: 3}}>
-              <Typography sx={{textAlign: "center", mb: 2, mt: 2}}>
-                Loading...
-              </Typography>
-              <OTPSkeleton />
-            </Box>
-          )
-        ) : (
-          <>
+            </Card>
+
+            {/* User Address Card */}
+            <Card>
+              <Box sx={styles.parentTwo}>
+                <Stack spacing={2} sx={{paddingTop: 5}}>
+                  <Box sx={styles.titleContainer}>
+                    <Typography variant="h6" gutterBottom>
+                      User Address
+                    </Typography>
+                  </Box>
+
+                  {/* Placeholder for Address Information */}
+                  <Typography variant="body1" sx={{color: "gray"}}>
+                    Address information will be displayed here.
+                  </Typography>
+                </Stack>
+              </Box>
+            </Card>
+          </Stack>
+        ):(
             <Box sx={styles.otpContainer}>
               <IconButton
                 sx={{position: "absolute", left: 10, top: 10}}
@@ -329,11 +350,11 @@ const Profile = () => {
                 onverify={handleVerifyOtp}
               />
             </Box>
-          </>
+ 
         )}
       </Container>
-    </>
   );
 };
 
 export default Profile;
+
