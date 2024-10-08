@@ -282,6 +282,8 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
       ? "course_admin"
       : title === "Instructors"
       ? "instructor"
+      : title === "ShopeAdmin"
+      ? "shop_admin"
       : "user";
   const [search, setSearch] = useState("");
   const [openModal, setOpenModal] = useState(false);

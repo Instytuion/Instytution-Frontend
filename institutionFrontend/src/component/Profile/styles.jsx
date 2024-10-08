@@ -1,7 +1,6 @@
 const styles = {
   container: {
     boxShadow: 3,
-    minHeight: "75vh",
     mt: 3,
     borderRadius: 3,
     maxWidth: "90%",
