@@ -22,6 +22,7 @@ const Batches = () => {
       onSuccess: (fetchedData) => {
         setBatches(fetchedData);
       },
+      staleTime:Infinity,
     }
   );
 
@@ -39,7 +40,7 @@ const Batches = () => {
         <BackButton />
       </Box>
       <CustomDataTable
-        row={data.map((value, idx) => ({
+        row={data?.map((value, idx) => ({
           ...value,
           rowNumber: idx + 1,
         }))}

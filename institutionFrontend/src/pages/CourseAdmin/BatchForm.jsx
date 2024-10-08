@@ -6,9 +6,10 @@ import {useForm} from "react-hook-form";
 import BatchFormFields from "../../component/Forms/BatchFormFeilds";
 import {Container, Button, CircularProgress, Stack} from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import {useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 import Spinner from "../../component/Spinner/Spinner";
 import CourseAdminBatchServices from "../../services/courseAdmin/CourseAdminBatchServices";
+
 
 const BatchForm = () => {
   const [hasChanges, setHasChanges] = useState(false);
@@ -18,6 +19,7 @@ const BatchForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const showToast = useToast();
+  const queryClient = useQueryClient()
 
   const {mode = "create", courseName, batchId} = location.state || {};
 
@@ -39,16 +41,17 @@ const BatchForm = () => {
     return Promise.resolve(null); // Return null or some default value in create mode
   };
 
-  // useQuery to fetch batch details (always called, but conditionally enabled)
+  
   const {data, error, isLoading} = useQuery(
     ["batchDetails", courseName, batchId],
     fetchBatchDetails,
     {
-      enabled: mode === "edit" && !!batchId, // Enabled only when editing and batchId is present
+      enabled: mode === "edit" && !!batchId,
+      staleTime: Infinity,
     }
   );
 
-  // React Hook Form setup
+  
   const {
     control,
     handleSubmit,
@@ -73,6 +76,9 @@ const BatchForm = () => {
        // Create Batch
        await CourseAdminBatchServices.crateBatch(courseName, formData);
        showToast("Batch created successfully!", "success");
+
+       queryClient.invalidateQueries(["batches", courseName]);
+       
        navigate(`/course-admin/batches/${courseName}`);
      } else if (mode === "edit") {
        const updatedData = {};
@@ -92,6 +98,10 @@ const BatchForm = () => {
          // Update Batch
          await CourseAdminBatchServices.updateBatch(batchId, updatedData);
          showToast("Batch updated successfully!", "success");
+
+         queryClient.invalidateQueries(["batches", courseName]);
+         queryClient.invalidateQueries(["batchDetails", courseName, batchId]);
+
          navigate(`/course-admin/batches/${courseName}`);
        } else {
          showToast("No changes detected.", "info");
