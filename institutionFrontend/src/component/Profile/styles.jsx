@@ -1,9 +1,8 @@
 const styles = {
   container: {
-    boxShadow: 3,
-    minHeight: "75vh",
     mt: 3,
     borderRadius: 3,
+    pb: 3,
     maxWidth: "90%",
     "@media (min-width:600px)": {
       maxWidth: "600px",
@@ -48,7 +47,7 @@ const styles = {
   },
   titleContainer: {
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "end",
     alignItems: "center",
   },
   otpContainer: {
@@ -75,7 +74,12 @@ const styles = {
     color: "white",
     fontSize: 36,
   },
+  card: {
+    width: {
+      xs: "100%",
+      md: "50%",
+    },
+  },
 };
-
 
 export default styles;
