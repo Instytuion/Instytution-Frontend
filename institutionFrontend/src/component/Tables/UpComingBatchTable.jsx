@@ -7,8 +7,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {convert24To12Hour} from '../../utils/utilityFunctions.js'
+import { IconButton } from '@mui/material';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import { useNavigate } from 'react-router-dom';
 
-function UpComingBatchTable({rows}) {
+function UpComingBatchTable({rows, actions=false}) {
+  const navigate = useNavigate();
   
   return (
     <TableContainer component={Paper} sx={{borderRadius:5, p:2}}>
@@ -22,6 +26,9 @@ function UpComingBatchTable({rows}) {
             <TableCell align="right">End Time</TableCell>
             <TableCell align="right">Instructor</TableCell>
             <TableCell align="right">Student Count</TableCell>
+            {actions ? (
+              <TableCell align="right">Actions</TableCell>
+            ) : null}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -39,6 +46,15 @@ function UpComingBatchTable({rows}) {
               <TableCell align="right">{convert24To12Hour(row.end_time)}</TableCell>
               <TableCell align="right">{row.instructor_name}</TableCell>
               <TableCell align="right">{row.student_count} / {row.strength}</TableCell>
+              {actions ? (
+                <TableCell align="right">
+                  <IconButton
+                  onClick={()=> navigate(`/class-room/${row.name}/`)}
+                  >
+                    <LiveTvIcon />
+                  </IconButton>
+                </TableCell>
+              ) : null}
             </TableRow>
           ))}
         </TableBody>
