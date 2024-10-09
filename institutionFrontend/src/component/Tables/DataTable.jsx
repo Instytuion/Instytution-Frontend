@@ -417,7 +417,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Box sx={{overflow: "auto"}}>
+      <Box sx={{overflow: "auto", maxHeight: "68.58vh"}}>
         <DataGrid
           rows={filteredRows}
           columns={row ? BatchColumnsHeading() : ColumnsHeading(setRows)}
@@ -442,7 +442,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
           //   },
           // }}
           sx={{
-            height: "68.58vh",
+            // height: "68.58vh",
             width: "100vw",
             "& .MuiDataGrid-virtualScroller": {
               overflowY: "auto",
