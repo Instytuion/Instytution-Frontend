@@ -24,7 +24,9 @@ function UpComingBatchTable({rows, actions=false}) {
             <TableCell align="right">End Date</TableCell>
             <TableCell align="right">Start Time</TableCell>
             <TableCell align="right">End Time</TableCell>
-            <TableCell align="right">Instructor</TableCell>
+            {actions ? (
+                <TableCell align="right">Instructor</TableCell>
+              ): null}
             <TableCell align="right">Student Count</TableCell>
             {actions ? (
               <TableCell align="right">Actions</TableCell>
@@ -32,7 +34,7 @@ function UpComingBatchTable({rows, actions=false}) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row,idx) => (
+          {rows?.map((row,idx) => (
             <TableRow
               key={idx}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -44,12 +46,14 @@ function UpComingBatchTable({rows, actions=false}) {
               <TableCell align="right">{row.end_date}</TableCell>
               <TableCell align="right">{convert24To12Hour(row.start_time)}</TableCell>
               <TableCell align="right">{convert24To12Hour(row.end_time)}</TableCell>
-              <TableCell align="right">{row.instructor_name}</TableCell>
+              {actions ? (
+                <TableCell align="right">{row.instructor_name}</TableCell>
+              ): null}
               <TableCell align="right">{row.student_count} / {row.strength}</TableCell>
               {actions ? (
                 <TableCell align="right">
                   <IconButton
-                  onClick={()=> navigate(`/class-room/${row.name}/`)}
+                  onClick={()=> navigate(`/instructor/class-room/${row.name}/`)}
                   >
                     <LiveTvIcon />
                   </IconButton>
