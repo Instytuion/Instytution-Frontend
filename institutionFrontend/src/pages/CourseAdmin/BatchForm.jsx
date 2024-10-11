@@ -10,7 +10,6 @@ import {useQuery, useQueryClient} from "react-query";
 import Spinner from "../../component/Spinner/Spinner";
 import CourseAdminBatchServices from "../../services/courseAdmin/CourseAdminBatchServices";
 
-
 const BatchForm = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,12 +18,11 @@ const BatchForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const showToast = useToast();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const {mode = "create", courseName, batchId} = location.state || {};
 
   console.log("mode:", mode, "batchID:", batchId, "courseName:", courseName);
-
 
   useEffect(() => {
     if (mode === "edit" && !batchId && !courseName) {
@@ -38,10 +36,9 @@ const BatchForm = () => {
     if (mode === "edit" && batchId) {
       return CourseAdminBatchServices.getBatchDetails(batchId);
     }
-    return Promise.resolve(null); // Return null or some default value in create mode
+    return Promise.resolve(null);
   };
 
-  
   const {data, error, isLoading} = useQuery(
     ["batchDetails", courseName, batchId],
     fetchBatchDetails,
@@ -51,7 +48,6 @@ const BatchForm = () => {
     }
   );
 
-  
   const {
     control,
     handleSubmit,
@@ -63,73 +59,77 @@ const BatchForm = () => {
     setValue,
   } = useForm();
 
+  // Form submission
+  const onSubmit = async (formData) => {
+    setLoading(true);
 
-  // Form submission 
- const onSubmit = async (formData) => {
-   setLoading(true);
+    try {
+      if (mode === "create") {
+        formData["course_name"] = courseName;
+        console.log("formData", formData);
 
-   try {
-     if (mode === "create") {
-       formData["course_name"] = courseName;
-       console.log("formData", formData);
+        // Create Batch
+        await CourseAdminBatchServices.crateBatch(courseName, formData);
+        showToast("Batch created successfully!", "success");
 
-       // Create Batch
-       await CourseAdminBatchServices.crateBatch(courseName, formData);
-       showToast("Batch created successfully!", "success");
+        queryClient.invalidateQueries(["batches", courseName]);
 
-       queryClient.invalidateQueries(["batches", courseName]);
-       
-       navigate(`/course-admin/batches/${courseName}`);
-     } else if (mode === "edit") {
-       const updatedData = {};
-       const cleanValue = (value) => value?.toString().trim() || "";
+        navigate(`/course-admin/batches/${courseName}`);
+      } else if (mode === "edit") {
+        const updatedData = {};
+        const cleanValue = (value) => value?.toString().trim() || "";
 
-       // Compare and only update changed fields
-       Object.keys(data).forEach((key) => {
-         const originalValue = cleanValue(data[key]);
-         const currentValue = cleanValue(formData[key]);
+        // Compare and only update changed fields
+        Object.keys(data).forEach((key) => {
+          const originalValue = cleanValue(data[key]);
+          const currentValue = cleanValue(formData[key]);
 
-         if (originalValue !== currentValue) {
-           updatedData[key] = formData[key];
-         }
-       });
+          if (key === "instructor_id") {
+            if (data[key] !== formData['instructor']) {
+              updatedData['instructor'] = formData['instructor'];
+            }
+          }
 
-       if (Object.keys(updatedData).length > 0) {
-         // Update Batch
-         await CourseAdminBatchServices.updateBatch(batchId, updatedData);
-         showToast("Batch updated successfully!", "success");
+          if (originalValue !== currentValue) {
+            updatedData[key] = formData[key];
+          }
+        });
 
-         queryClient.invalidateQueries(["batches", courseName]);
-         queryClient.invalidateQueries(["batchDetails", courseName, batchId]);
+        if (Object.keys(updatedData).length > 0) {
+          // Update Batch
+          await CourseAdminBatchServices.updateBatch(batchId, updatedData);
+          showToast("Batch updated successfully!", "success");
 
-         navigate(`/course-admin/batches/${courseName}`);
-       } else {
-         showToast("No changes detected.", "info");
-         return;
-       }
-     }
-   } catch (err) {
-    console.log('err-----------------------------', err)
-     if (err?.response?.data?.name) {
-       setError("name", {
-         type: "manual",
-         message: err.response.data.name[0],
-       });
-       showToast(`Error: ${err.response.data.name[0]}`, "error");
-     } else if (err?.response?.data?.start_date) {
-       setError("start_date", {
-         type: "manual",
-         message: err.response.data.start_date,
-       });
-       showToast(`Error: ${err.response.data.start_date}`, "error");
-     } else {
-       showToast("An unexpected error occurred", "error");
-     }
-   } finally {
-     setLoading(false);
-   }
- };
+          queryClient.invalidateQueries(["batches", courseName]);
+          queryClient.invalidateQueries(["batchDetails", courseName, batchId]);
 
+          navigate(`/course-admin/batches/${courseName}`);
+        } else {
+          showToast("No changes detected.", "info");
+          return;
+        }
+      }
+    } catch (err) {
+      console.log("err-----------------------------", err);
+      if (err?.response?.data?.name) {
+        setError("name", {
+          type: "manual",
+          message: err.response.data.name[0],
+        });
+        showToast(`Error: ${err.response.data.name[0]}`, "error");
+      } else if (err?.response?.data?.start_time) {
+        setError("start_time", {
+          type: "manual",
+          message: err.response.data.start_time,
+        });
+        showToast(`Error: ${err.response.data.start_time}`, "error");
+      } else {
+        showToast("An unexpected error occurred", "error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
