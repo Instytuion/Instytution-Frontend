@@ -4,7 +4,9 @@ import {useParams} from "react-router-dom";
 import Spinner from "../../component/Spinner/Spinner";
 import CustomDataTable from "../../component/Tables/DataTable";
 import CourseAdminBatchServices from "../../services/courseAdmin/CourseAdminBatchServices";
-import {BatchColumnsHeading} from "../../component/Tables/BatchColumnsHeading";
+import BackButton from "../../component/Button/BackButton";
+import { Box } from "@mui/material";
+import BookLoaderJson from "../../component/Spinner/BookLoaderJson";
 
 const Batches = () => {
   const [batches, setBatches] = useState([]);
@@ -20,11 +22,12 @@ const Batches = () => {
       onSuccess: (fetchedData) => {
         setBatches(fetchedData);
       },
+      staleTime:Infinity,
     }
   );
 
   if (isLoading) {
-    return <Spinner />;
+    return <BookLoaderJson/>;
   }
 
   if (error) {
@@ -33,10 +36,13 @@ const Batches = () => {
 
   return (
     <>
+      <Box>
+        <BackButton />
+      </Box>
       <CustomDataTable
-        row={data.map((value,idx) => ({
+        row={data?.map((value, idx) => ({
           ...value,
-          rowNumber:  idx + 1,
+          rowNumber: idx + 1,
         }))}
         title="Batches"
         buttonText={"Batches"}

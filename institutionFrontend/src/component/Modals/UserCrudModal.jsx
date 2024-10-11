@@ -18,38 +18,58 @@ const UserCrudModal = ({
       onClose={handleClose}
       closeAfterTransition
       BackdropComponent={Backdrop}
-      BackdropProps={{ timeout: 500 }}
+      BackdropProps={{timeout: 500}}
+      // sx={{overflow: "scroll"}}
     >
       <Fade in={open}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            borderRadius: 1,
-            boxShadow: 24,
-            p: 4,
-          }}
-        >
-          <Typography variant="h6" component="h2" mb={2} sx={{
-            color:theme.palette.text.primary
-          }} >
-            {title}
-          </Typography>
-          {children}
-          
-          <Button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            sx={{ mt: 2, color: "white", backgroundColor: "teal",width:'100%' }}
+        <Box sx={{p:1}}>
+          <Box 
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              bgcolor: "background.paper",
+              borderRadius: 1,
+              boxShadow: 24,
+              width:"360px",
+              maxHeight:'84vh',
+              overflowY:"auto",
+              p: 4,
+            }}
           >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : submitText}
-          </Button>
-         
+            <Typography
+              textAlign={"center"}
+              variant="h5"
+              fontWeight={"bold"}
+              component="h2"
+              mb={1}
+              sx={{
+                color: theme.palette.text.primary,
+              }}
+            >
+              {title}
+            </Typography>
+            {children}
 
+            <Button
+              onClick={handleSubmit}
+              disabled={isLoading}
+              sx={{
+                mt: 2,
+                color: "white",
+                backgroundColor: "teal",
+                width: "100%",
+                height: "3.2rem",
+              }}
+            >
+              {isLoading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                submitText
+              )}
+            </Button>
+          </Box>
         </Box>
       </Fade>
     </Modal>

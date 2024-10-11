@@ -2,10 +2,21 @@ import React, { useState } from "react";
 import {IconButton} from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+import { convert24To12Hour } from "../../utils/utilityFunctions";
 
 
 export const BatchColumnsHeading = () => {
   const navigate = useNavigate()
+
+  const handleNavigate = (courseName, batchId) => {
+    navigate("/course-admin/batch-form/", {
+      state: {
+        mode: "edit",
+        courseName: courseName,
+        batchId: batchId,
+      },
+    });
+  };
 
 
   return [
@@ -18,12 +29,18 @@ export const BatchColumnsHeading = () => {
       minWidth: 200,
       renderCell: (params) => (
         <div
+          onClick={() => handleNavigate(params.row.course_name, params.row.id)}
           style={{
             overflow: "hidden",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis",
             maxWidth: "100%",
+            cursor: "pointer",
           }}
+          onMouseOver={(e) =>
+            (e.currentTarget.style.textDecoration = "underline")
+          }
+          onMouseOut={(e) => (e.currentTarget.style.textDecoration = "none")}
         >
           {params.value || "N/A"}
         </div>
@@ -52,13 +69,13 @@ export const BatchColumnsHeading = () => {
       field: "start_time",
       headerName: "Start Time",
       flex: 0.2,
-      renderCell: (params) => params.value || "N/A",
+      renderCell: (params) => convert24To12Hour(params.value) || "N/A",
     },
     {
       field: "end_time",
       headerName: "End Time",
       flex: 0.2,
-      renderCell: (params) => params.value || "N/A",
+      renderCell: (params) => convert24To12Hour(params.value) || "N/A",
     },
     {
       field: "strength",
@@ -67,8 +84,8 @@ export const BatchColumnsHeading = () => {
       renderCell: (params) => params.value || "N/A",
     },
     {
-      field: "actions",
-      headerName: "Actions",
+      field: "Edit",
+      headerName: "Edit",
       flex: 0.15,
       renderCell: (params) => {
         const handleEdit = () => {
@@ -76,14 +93,14 @@ export const BatchColumnsHeading = () => {
             state: {
               mode: "edit",
               courseName: params.row.course_name,
-              batchId: params.row.id, 
+              batchId: params.row.id,
             },
           });
         };
 
         return (
           <IconButton onClick={handleEdit}>
-            <EditIcon color="primary" />
+            <EditIcon sx={{color: "#00aeff"}} />
           </IconButton>
         );
       },

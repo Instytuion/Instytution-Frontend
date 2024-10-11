@@ -6,6 +6,7 @@ import {
   Stack,
   IconButton,
   Box,
+  Button,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -22,8 +23,6 @@ const CommonCard = ({name, duration, price, image, link}) => {
   const pathParts = location.pathname.split("/");
   const isInCourses = pathParts.length == 4 && pathParts[2] === "programs";
   const isInPrograms = pathParts.length == 3 && pathParts[2] === "programs";
-
-  console.log(isInPrograms, isInCourses);
 
   const isCourseAdmin = location.pathname.includes("/course-admin");
 
@@ -59,9 +58,11 @@ const CommonCard = ({name, duration, price, image, link}) => {
         image={image}
         alt={`${name}-image`}
         sx={{
+          borderRadius: 5,
+          padding: 1.5,
           width: "100%", // Ensure image takes full width
           objectFit: "cover",
-          height:[ "15rem"]
+          height: ["15rem"],
         }}
       />
 
@@ -71,13 +72,13 @@ const CommonCard = ({name, duration, price, image, link}) => {
           display: "flex",
           justifyContent: "space-between",
           flexGrow: 1,
-          flexDirection: "row", // Content and icons in one row
+          flexDirection: "column",
         }}
       >
         {/* Course Details */}
         <Box sx={{flex: 1}}>
           <Typography
-            variant="body1"
+            variant="h6"
             component="div"
             sx={{
               display: "-webkit-box",
@@ -92,13 +93,13 @@ const CommonCard = ({name, duration, price, image, link}) => {
             {name}
           </Typography>
           {duration && (
-            <Typography variant="body2" component="div">
-              Duration: {duration}
+            <Typography variant="body1" component="div">
+              <strong>Duration:</strong> {duration} weeks
             </Typography>
           )}
           {price && (
             <Typography variant="body2" component="div">
-              Price: {price}
+              <strong>Price:</strong> {price}
             </Typography>
           )}
         </Box>
@@ -111,7 +112,7 @@ const CommonCard = ({name, duration, price, image, link}) => {
             justifyContent="flex-start"
             sx={{ml: 2}}
           >
-            <Tooltip title="Edit Course" arrow>
+            <Tooltip title="Edit Program" arrow>
               <IconButton
                 aria-label="edit"
                 onClick={(e) => {
@@ -132,7 +133,7 @@ const CommonCard = ({name, duration, price, image, link}) => {
         )}
 
         {/* course Card Icons */}
-        {isInCourses && isCourseAdmin && (
+        {/* {isInCourses && isCourseAdmin && (
           <Stack
             spacing={1}
             alignItems="flex-end"
@@ -162,7 +163,7 @@ const CommonCard = ({name, duration, price, image, link}) => {
                 aria-label="view batches"
                 onClick={(e) => {
                   e.stopPropagation();
-                  navigate(`/course-admin/batches/${name}`)
+                  navigate(`/course-admin/batches/${name}`);
                 }}
                 sx={{
                   padding: 0,
@@ -188,6 +189,38 @@ const CommonCard = ({name, duration, price, image, link}) => {
                 <AddCircleIcon />
               </IconButton>
             </Tooltip>
+          </Stack>
+        )} */}
+        {isInCourses && isCourseAdmin && (
+          <Stack direction={"row"} justifyContent={"between"} gap={1} mt={1}>
+            <Button
+              sx={{
+                width: "50%",
+                bgcolor: "#00796b",
+                color: "white",
+                fontSize: 12,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/course-admin/batches/${name}`);
+              }}
+            >
+              Batches
+            </Button>
+            <Button
+              sx={{
+                width: "50%",
+                bgcolor: "#00796b",
+                color: "white",
+                fontSize: 12,
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/course-admin/lessons/${name}`);
+              }}
+            >
+              Lessons
+            </Button>
           </Stack>
         )}
       </CardContent>

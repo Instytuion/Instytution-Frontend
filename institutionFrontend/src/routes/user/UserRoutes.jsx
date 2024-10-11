@@ -56,7 +56,6 @@ function App() {
           element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
          <Route path="/video" element={<VideoPage />} />
-
         <Route path="*" element={<PageNotFoundPage />} />
         <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />
 

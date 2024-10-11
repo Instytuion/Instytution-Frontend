@@ -1,9 +1,9 @@
 import {Box, Button, Grid, Typography} from "@mui/material";
 import CommonCard from "../Card/Card";
 import {useEffect, useState} from "react";
-import Spinner from "../Spinner/Spinner";
 import {useTheme} from "@emotion/react";
 import {useLocation, useNavigate} from "react-router-dom";
+import BookLoaderJson from "../Spinner/BookLoaderJson";
 
 const Programs = ({fetchProgrammes, linkPrefix, buttonText}) => {
   console.log(
@@ -38,7 +38,7 @@ const Programs = ({fetchProgrammes, linkPrefix, buttonText}) => {
   }, []);
 
   if (loading) {
-    return <Spinner />;
+    return <BookLoaderJson />;
   }
 
   return (
@@ -55,7 +55,7 @@ const Programs = ({fetchProgrammes, linkPrefix, buttonText}) => {
           sx={{
             borderBottom: 5,
             display: "inline-block",
-            padding: 2,
+            padding: 1,
             color: theme.palette.text.primary,
           }}
         >
