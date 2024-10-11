@@ -5,6 +5,7 @@ import PageNotFoundPage from '../../component/ErrorPages/PageNotFound';
 import SignUpLoginProtectRoutes from '../protectedRoutes/SignUpLoginProtectRoutes';
 import IsAuthenticatedRoutes from '../protectedRoutes/IsAuthenticatedRoutes';
 import SessionExpired from '../../component/ErrorPages/SessionExpired';
+
  
 
 // Lazy load components (example)
@@ -18,7 +19,7 @@ const Profile = lazy(() => import('../../pages/user/userProfile'));
 const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPassword'));
 const EnrollPage = lazy(() => import('../../pages/user/EnrollPage'));
 const MyCourses = lazy(() => import('../../pages/user/MyCourses'));
-
+const VideoPage  = lazy(() => import ('../../component/MyCourseSection/VideoPage'));
 function App() {
   return (
     <Suspense fallback={<Spinner />}>
@@ -51,9 +52,10 @@ function App() {
           element={<IsAuthenticatedRoutes element={EnrollPage} />}
         />
         <Route
-          path={"/courses/myCourses"}
+          path={"/courses/mycourses"}
           element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
+         <Route path="/video" element={<VideoPage />} />
         <Route path="*" element={<PageNotFoundPage />} />
         <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />
 
