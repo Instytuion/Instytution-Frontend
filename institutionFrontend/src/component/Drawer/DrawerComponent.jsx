@@ -24,6 +24,8 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import { toggleTheme } from "../../redux/slices/ThemeSlice";
 import Logo from "../../assets/logo1.png";
+import MenuItem from "../Collapse/MenuItems";
+import UserSection from "./UserSection";
 
 const DrawerComponent = ({ menuItems = [], drawerWidth = "240px" }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -95,7 +97,7 @@ const DrawerComponent = ({ menuItems = [], drawerWidth = "240px" }) => {
               </Tooltip>
             </Box>
           </Box>
-          <List sx={{ flexGrow: 1 }}>
+          {/* <List sx={{ flexGrow: 1 }}>
             {menuItems.map((item, index) => (
               <Box key={index}>
                 {console.log("item is :", item.path)}
@@ -163,8 +165,13 @@ const DrawerComponent = ({ menuItems = [], drawerWidth = "240px" }) => {
                 )}
               </Box>
             ))}
+          </List> */}
+          <List sx={{ flexGrow: 1 }}>
+            {menuItems.map((item, index) => (
+              <MenuItem key={index} item={item} hello="Hey iam ok with this "/>
+            ))}
           </List>
-          <Box
+          {/* <Box
             sx={{
               display: "flex",
               alignItems: "center",
@@ -188,7 +195,8 @@ const DrawerComponent = ({ menuItems = [], drawerWidth = "240px" }) => {
             <Typography variant="body2" sx={{ marginLeft: 1 }}>
               {email}
             </Typography>
-          </Box>
+          </Box> */}
+          <UserSection/>
         </Drawer>
       ) : (
         <IconButton
