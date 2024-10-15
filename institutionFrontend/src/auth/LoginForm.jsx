@@ -31,7 +31,7 @@ import {useDispatch} from "react-redux";
 import {setUser} from "../redux/slices/AuthSlice";
 import resetPassword from "../services/user/ResetPasswordService";
 import Spinner from "../component/Spinner/Spinner";
-import { setExpiryTime } from "../utils/axios";
+import { setExpiryTime } from "../utils/axiosFunctions";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
