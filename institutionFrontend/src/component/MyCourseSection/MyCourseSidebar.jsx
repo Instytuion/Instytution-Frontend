@@ -10,9 +10,9 @@ export const MyCourseSidebar = ({  onCourseSelect }) => {
   const selectRef = useRef(null);
   const dummyCoursesData = {
     OnGoing: [
-      { id: 31, batch: "2023-C", courseName: "Advanced CSS" },
-      { id: 41, batch: "2023-D", courseName: "Node.js Basics" },
-      { id: 32, batch: "2023-C", courseName: "Advanced CSS" },
+      { id: 31, batch: "Audrey Mann", courseName: "Advanced CSS" },
+      { id: 41, batch: "Python-B-A2", courseName: "Node.js Basics" },
+      { id: 32, batch: "Lilah Booker", courseName: "Advanced CSS" },
       { id: 42, batch: "2023-D", courseName: "Node.js Basics" },
       { id: 33, batch: "2023-C", courseName: "Advanced CSS" },
       { id: 43, batch: "2023-D", courseName: "Node.js Basics" },

@@ -10,6 +10,7 @@ export const RoleBasedRoute = ({ children, allowedRole }) => {
   const isAllowed = allowedRole.some((role) => {
     if (userRole === "course_admin" && role === "course_admin") return true;
     if (userRole === "admin" && role === "admin") return true;
+    if (userRole === "instructor" && role === "instructor") return true;
     return false;
   });
 

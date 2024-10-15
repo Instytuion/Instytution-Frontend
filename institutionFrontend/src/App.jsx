@@ -5,12 +5,13 @@ import {Provider} from "react-redux";
 import {persistor, store} from "./redux/stores/store";
 import {PersistGate} from "redux-persist/lib/integration/react";
 import Spinner from "./component/Spinner/Spinner";
-import AdminRoute from "./routes/admin/AdminRoutes";
+import AdminRoute from "./routes/admin/AdminRoutes"; 
 import ThemeProvider from "./component/ThemeProvider/ThemeProvider";
 import CourseAdminRoutes from "./routes/CourseAdmin/CourseAdminRoutes";
 import { RoleBasedRoute } from "./routes/protectedRoutes/RoleBasedRoutes";
 import Unauthorized from "./component/ErrorPages/Unathorized";
 import {QueryClient, QueryClientProvider} from "react-query";
+import InstructorRoutes from "./routes/instructor/instructorRoutes";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,14 @@ const App = () => {
                   element={
                     <RoleBasedRoute allowedRole={["course_admin"]}>
                       <CourseAdminRoutes />
+                    </RoleBasedRoute>
+                  }
+                />
+                <Route
+                  path="instructor/*"
+                  element={
+                    <RoleBasedRoute allowedRole={["instructor"]}>
+                      <InstructorRoutes />
                     </RoleBasedRoute>
                   }
                 />
