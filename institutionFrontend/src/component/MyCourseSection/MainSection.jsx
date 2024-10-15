@@ -1,14 +1,16 @@
 import React, { useState } from "react";
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, IconButton } from "@mui/material";
 import { MyCourseSidebar } from "./MyCourseSidebar";
 import CourseTabPanel from "./TabPanel";
-import CalendarComponent from "./CustomDatePicker";
 import BookIcon from "@mui/icons-material/Book";
 import GroupIcon from "@mui/icons-material/Group";
 import PersonIcon from "@mui/icons-material/Person";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import { useNavigate } from "react-router-dom";
 const MainComponent = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const navigate = useNavigate();
 
   const handleCourseSelect = (course) => setSelectedCourse(course);
 
@@ -41,8 +43,25 @@ const MainComponent = () => {
                 backgroundColor: "#f0f8ff",
                 borderRadius: 2,
                 border: "1px solid #ddd",
+                position: "relative"
               }}
             >
+              <Paper
+              sx={{
+                position:"absolute",
+                right:"10px",
+                top: "10px",
+                flex:"column",
+                p:0,
+                backgroundColor: "#f0f8ff",
+              }}
+              >
+                <IconButton
+                onClick={()=> navigate(`/courses/mycourses/classRoom/${selectedCourse.batch}`)}
+                >
+                  <LiveTvIcon />Live
+                </IconButton>
+              </Paper>
               {/* Course Name */}
               <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                 <BookIcon sx={{ color: "#008080", mr: 1 }} />
