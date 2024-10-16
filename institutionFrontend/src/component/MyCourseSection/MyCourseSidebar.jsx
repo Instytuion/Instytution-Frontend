@@ -1,72 +1,55 @@
-// import React, { useState, useEffect ,useRef } from "react";
+// import SchoolIcon from "@mui/icons-material/School";
+// import React, { useState, useEffect, useRef } from "react";
 // import { Box, Paper, Typography } from "@mui/material";
 // import DropdownMenu from "./DropdownMenu";
-// import SchoolIcon from "@mui/icons-material/School";
 
-// export const MyCourseSidebar = ({  onCourseSelect, batch }) => {
-//   console.log('batch data is: ',batch);
-  
+// export const MyCourseSidebar = ({ onCourseSelect, batch }) => {
 //   const [status, setStatus] = useState("OnGoing");
 //   const [courses, setCourses] = useState([]);
-//   const [selectedCourseId, setSelectedCourseId] = useState(null); 
+//   const [selectedCourseId, setSelectedCourseId] = useState(null);
 //   const selectRef = useRef(null);
-//   const dummyCoursesData = {
-//     OnGoing: [
-//       { id: 31, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 41, batch: "2023-D", courseName: "Node.js Basics" },
-//       { id: 32, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 42, batch: "2023-D", courseName: "Node.js Basics" },
-//       { id: 33, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 43, batch: "2023-D", courseName: "Node.js Basics" },
-//       { id: 34, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 44, batch: "2023-D", courseName: "Node.js Basics" },
-//       { id: 35, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 45, batch: "2023-D", courseName: "Node.js Basics" },
-//       { id: 36, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 46, batch: "2023-D", courseName: "Node.js Basics" },
-//     ],
-//     Upcoming: [
-//       { id: 3, batch: "2023-C", courseName: "Advanced CSS" },
-//       { id: 4, batch: "2023-D", courseName: "Node.js Basics" },
-//     ],
-//     Completed: [
-//       { id: 5, batch: "2023-E", courseName: "Python for Data Science" },
-//       { id: 6, batch: "2023-F", courseName: "Django Web Development" },
-//     ],
-//     Cancelled: [{ id: 7, batch: "2023-G", courseName: "Machine Learning" }],
-//   };
 
-//   const fetchCoursesByStatus = (selectedStatus) => {
-//     const coursesByStatus = dummyCoursesData[selectedStatus] || [];
-//     setCourses(coursesByStatus);
+//   const filterCoursesByStatus = (selectedStatus) => {
+//     const filteredItems = batch.filter((item) => {
+//       console.log("items are :", item);
+
+//       const isMatchingStatus = item.status === selectedStatus;
+//       return isMatchingStatus;
+//     });
+
+//     const courses = filteredItems.flatMap((item) => {
+//       const data = item.batch;
+
+//       return data;
+//     });
+
+//     return courses;
 //   };
 
 //   const handleStatusChange = (newStatus) => {
 //     setStatus(newStatus);
-//     fetchCoursesByStatus(newStatus);
 //     if (selectRef.current) {
 //       selectRef.current.blur();
 //     }
 //   };
 
 //   const handleCourseClick = (course) => {
-//     setSelectedCourseId(course.id); 
+//     setSelectedCourseId(course.id);
 //     onCourseSelect(course);
 //   };
 
 //   useEffect(() => {
-//     fetchCoursesByStatus(status);
-//   }, [status]);
+//     if (batch && Array.isArray(batch)) {
+//       const da = filterCoursesByStatus(status);
+
+//       setCourses(da);
+//     } else {
+//       setCourses([]);
+//     }
+//   }, [batch, status]);
 
 //   return (
-//     <Paper
-//       elevation={7}
-//       sx={{
-//         width: 350,
-        
-//         borderRadius: 6,
-//       }}
-//     >
+//     <Paper elevation={7} sx={{ width: 350, borderRadius: 6 }}>
 //       <Box>
 //         <Typography
 //           variant="h6"
@@ -80,17 +63,13 @@
 //           }}
 //         >
 //           My Course <SchoolIcon sx={{ fontSize: 40, color: "#008080" }} />
-//         </Typography> <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
-//           <Typography variant="body1" >
-//             Select Status:
-//           </Typography>
+//         </Typography>
+//         <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+//           <Typography variant="body1">Select Status:</Typography>
 //           <DropdownMenu onStatusChange={handleStatusChange} />
 //         </Box>
-
 //       </Box>
-//       <Box sx={{height: "calc(100vh - 32vh)",
-//         overflow: "auto",}}>
-       
+//       <Box sx={{ height: "calc(100vh - 32vh)", overflow: "auto" }}>
 //         <Box sx={{ padding: 2 }}>
 //           {courses.length > 0 ? (
 //             courses.map((course) => (
@@ -113,13 +92,13 @@
 //                 onClick={() => handleCourseClick(course)}
 //               >
 //                 <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-//                   Batch: {course.batch} ({course.courseName})
+//                   {course.name}({course.course_name})
 //                 </Typography>
 //               </Box>
 //             ))
 //           ) : (
 //             <Typography sx={{ textAlign: "center", color: "#888" }}>
-//               No courses available for {status}
+//               No courses available for {status}.
 //             </Typography>
 //           )}
 //         </Box>
@@ -128,61 +107,40 @@
 //   );
 // };
 
+//
 
-
-
-
-
-
-
-
-
+import SchoolIcon from "@mui/icons-material/School";
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, useMediaQuery } from "@mui/material";
 import DropdownMenu from "./DropdownMenu";
 
 export const MyCourseSidebar = ({ onCourseSelect, batch }) => {
-  console.log('log data comign from parent to mycourse sidebar is :',batch);
-  
   const [status, setStatus] = useState("OnGoing");
   const [courses, setCourses] = useState([]);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const selectRef = useRef(null);
-  console.log('courses are :',courses);
-  
-  // Function to filter courses based on the selected status
+
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
   const filterCoursesByStatus = (selectedStatus) => {
-    console.log('Selected Status:', selectedStatus); // Log the selected status
-  
-    // Filter items based on the selected status
     const filteredItems = batch.filter((item) => {
-      console.log('Item:', item); // Log the current item
-      const isMatchingStatus = item.status === selectedStatus; // Check if the status matches
-      console.log(`Item Status: ${item.status}, Matches: ${isMatchingStatus}`); // Log the comparison result
-      return isMatchingStatus; // Return true if the status matches
+      const isMatchingStatus = item.status === selectedStatus;
+      return isMatchingStatus;
     });
-  
-    console.log('Filtered Items:', filteredItems); // Log filtered items before flattening
-  
-    // Extract lessons (courses) for the matched status
+
     const courses = filteredItems.flatMap((item) => {
-      console.log('====================================');
-      console.log('Inside flattening for item:', item); // Log the current item being processed
-      const data = item.batch; // Extract the batch data
-      console.log('Extracted Batch Data:', data); // Log the extracted batch data
-      return data; // Return the batch data to be flattened
+      const data = item.batch;
+      return data;
     });
-  
-    console.log('Courses:', courses); // Log the final list of courses
-    return courses; // Return the final courses array
+
+    return courses;
   };
-  ``
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus);
-    if (selectRef.current) {
-      selectRef.current.blur();
-    }
+    // if (selectRef.current ) {
+    //   selectRef.current.blur();
+    // }
   };
 
   const handleCourseClick = (course) => {
@@ -192,20 +150,23 @@ export const MyCourseSidebar = ({ onCourseSelect, batch }) => {
 
   useEffect(() => {
     if (batch && Array.isArray(batch)) {
-      const da = filterCoursesByStatus(status)
-      console.log('====================================');
-      console.log('data from return fn :',da);
-      console.log('====================================');
-      
-      
-      setCourses(da); // Filter courses based on the initial status
+      const filteredCourses = filterCoursesByStatus(status);
+      setCourses(filteredCourses);
     } else {
-      setCourses([]); // Clear courses if batch is invalid
+      setCourses([]);
     }
-  }, [batch, status]); // Re-filter courses when batch or status changes
+  }, [batch, status]);
 
   return (
-    <Paper elevation={7} sx={{ width: 350, borderRadius: 6 }}>
+    <Paper
+      elevation={7}
+      sx={{
+        width: isSmallScreen ? "100%" : 350, // Full width on small screens
+        borderRadius: 6,
+        position: isSmallScreen ? "relative" : "sticky",
+        top: isSmallScreen ? "auto" : "10px", // Adjust top margin for non-small screens
+      }}
+    >
       <Box>
         <Typography
           variant="h6"
@@ -218,14 +179,25 @@ export const MyCourseSidebar = ({ onCourseSelect, batch }) => {
             fontWeight: "bold",
           }}
         >
-          My Courses
+          My Course <SchoolIcon sx={{ fontSize: 40, color: "#008080" }} />
         </Typography>
-        <Box sx={{ display: "flex", alignItems: "center", padding: 2 }}>
+        <Box
+          sx={{
+            display: isSmallScreen ? "block" : "flex",
+            alignItems: "center",
+            padding: isSmallScreen ? 2 : 1,
+          }}
+        >
           <Typography variant="body1">Select Status:</Typography>
           <DropdownMenu onStatusChange={handleStatusChange} />
         </Box>
       </Box>
-      <Box sx={{ height: "calc(100vh - 32vh)", overflow: "auto" }}>
+      <Box
+        sx={{
+          height: isSmallScreen ? "auto" : "calc(100vh - 32vh)", // Dynamic height
+          overflow: "auto",
+        }}
+      >
         <Box sx={{ padding: 2 }}>
           {courses.length > 0 ? (
             courses.map((course) => (

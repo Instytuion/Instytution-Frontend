@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 const VideoPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const videoUrl = queryParams.get("url"); 
+  const videoUrl = queryParams.get("url");
 
   const embedUrl = videoUrl ? videoUrl.replace("watch?v=", "embed/") : "";
 
