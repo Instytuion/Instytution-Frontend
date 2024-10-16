@@ -20,6 +20,7 @@ const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPas
 const EnrollPage = lazy(() => import('../../pages/user/EnrollPage'));
 const MyCourses = lazy(() => import('../../pages/user/MyCourses'));
 const VideoPage  = lazy(() => import ('../../component/MyCourseSection/VideoPage'));
+const classRoom = lazy(()=> import('../../pages/user/ClassRoom'));
 function App() {
   return (
     <Suspense fallback={<Spinner />}>
@@ -56,6 +57,13 @@ function App() {
           element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
          <Route path="/video" element={<VideoPage />} />
+
+         <Route
+          path={"/courses/myCourses/classRoom/:batchName"}
+          element={<IsAuthenticatedRoutes element={classRoom} />}
+        />
+
+
         <Route path="*" element={<PageNotFoundPage />} />
         <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />
 

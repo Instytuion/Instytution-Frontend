@@ -1,9 +1,6 @@
 import axios from "axios";
-import Cookies from "js-cookie";
 import {store} from "../redux/stores/store";
-import {setAccessToken, logout} from "../redux/slices/AuthSlice";
-import logoutService from "../services/user/LogoutService";
-import { Navigate } from "react-router-dom";
+import { hasTokenExpired, refreshToken} from "./axiosFunctions";
 
 const baseUrl = "http://localhost:8000/";
 
@@ -21,62 +18,6 @@ export const noAuthInstance = axios.create({
   withCredentials: true,
 });
 
-// Function to get expiry time from cookies
-const getExpiryTime = () => {
-  const expiryTime = Cookies.get("expiryTime");
-  return expiryTime ? parseInt(expiryTime, 10) : null;
-};
-
-// Function to set a new expiry time in the cookies (5 minutes from now)
-export const setExpiryTime = () => {
-  const currentTime = new Date().getTime();
-  const newExpiryTime = currentTime + 5 * 60 * 1000; // 5 minutes in milliseconds
-  Cookies.set("expiryTime", newExpiryTime, {path: "/", secure: true});
-};
-
-// Function to check if the access token has expired
-const hasTokenExpired = () => {
-  const expiryTime = getExpiryTime();
-  const currentTime = new Date().getTime();
-  return !expiryTime || currentTime >= expiryTime;
-};
-
-// Function to log out the user by clearing cookies and session data
-export const logoutUser = async () => {
-  try{
-    const response = await logoutService()
-  }catch(error){
-    console.log('error while user logout api',error)
-  }
-  Cookies.remove("expiryTime", {path: "/"});
-  store.dispatch(logout()); // Dispatch logout to Redux
-};
-
-// Function to refresh the token if needed
-const refreshToken = async () => {
-  try {
-    const response = await noAuthInstance.post("accounts/api/token/refresh/");
-    console.log("response refresh success", response.data);
-
-    // Dispatch action to store new access token in Redux stor
-    const newAccessToken = response.data.access;
-    if (newAccessToken) {
-      store.dispatch(setAccessToken({accessToken: newAccessToken}));
-      console.log("new access token", newAccessToken);
-    } else {
-      console.log("refresh failed no access token");
-    }
-    // Set a new expiry time for the access token
-    setExpiryTime();
-
-    return newAccessToken;
-  } catch (error) {
-    console.log("Token refresh failed, logging out...,", error);
-    logoutUser(); 
-    window.location.href = "/ded5fr6bt7gyh8juiokpl[sd;klosadf";
-    return null;
-  }
-};
 
 // Request interceptor to refresh token if needed before sending any request
 instance.interceptors.request.use(

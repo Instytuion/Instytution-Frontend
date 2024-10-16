@@ -23,7 +23,7 @@ import OTP from "../component/Otp/OtpInput";
 import Spinner from "../component/Spinner/Spinner";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/slices/AuthSlice";
-import { setExpiryTime } from "../utils/axios";
+import { setExpiryTime } from "../utils/axiosFunctions";
 
 const SignupForm = () => {
   const [showPassword, setShowPassword] = useState(false);

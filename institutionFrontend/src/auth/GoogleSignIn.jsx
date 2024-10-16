@@ -6,7 +6,7 @@ import useToast from '../hooks/useToast';
 import GoogleSignInServices from '../services/user/GoogleSignInServices';
 import { useState } from 'react';
 import Spinner from '../component/Spinner/Spinner';
-import { setExpiryTime } from '../utils/axios';
+import { setExpiryTime } from '../utils/axiosFunctions'; 
 
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;

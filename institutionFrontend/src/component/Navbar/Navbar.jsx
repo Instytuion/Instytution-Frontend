@@ -28,7 +28,7 @@ import dummyProfilePic from "../../assets/profile-picture.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import useToast from "../../hooks/useToast";
 import { logout } from "../../redux/slices/AuthSlice";
-import { logoutUser } from "../../utils/axios";
+import { logoutUser } from "../../utils/axiosFunctions";
 
 function Navbar() {
   const theme = useTheme();
