@@ -1,26 +1,35 @@
-import  { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Spinner from '../../component/Spinner/Spinner';
-import PageNotFoundPage from '../../component/ErrorPages/PageNotFound';
-import SignUpLoginProtectRoutes from '../protectedRoutes/SignUpLoginProtectRoutes';
-import IsAuthenticatedRoutes from '../protectedRoutes/IsAuthenticatedRoutes';
-import SessionExpired from '../../component/ErrorPages/SessionExpired';
-
- 
+import {Suspense, lazy} from "react";
+import {Routes, Route} from "react-router-dom";
+import Spinner from "../../component/Spinner/Spinner";
+import PageNotFoundPage from "../../component/ErrorPages/PageNotFound";
+import SignUpLoginProtectRoutes from "../protectedRoutes/SignUpLoginProtectRoutes";
+import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
+import SessionExpired from "../../component/ErrorPages/SessionExpired";
+import ProductsList from "../../pages/user/ProductsList";
 
 // Lazy load components (example)
-const Home = lazy(() => import('../../pages/user//Home'));
-const Login = lazy(() => import('../../pages/user/LoginPage'));
-const Signup = lazy(() => import('../../pages/user/SignupPage'));
-const ProgramPage = lazy(() => import('../../pages/user/ProgramPage'));
-const ProgramDetailPage = lazy(() => import('../../pages/user/ProgramDetailPage'));
-const CourseDetailPage = lazy(() => import('../../pages/user/CourseDetailPage'));
-const Profile = lazy(() => import('../../pages/user/userProfile'));
-const ConfirmResetPassword = lazy(() => import('../../pages/user/ConfirmResetPassword'));
-const EnrollPage = lazy(() => import('../../pages/user/EnrollPage'));
-const MyCourses = lazy(() => import('../../pages/user/MyCourses'));
-const VideoPage  = lazy(() => import ('../../component/MyCourseSection/VideoPage'));
-const classRoom = lazy(()=> import('../../pages/user/ClassRoom'));
+const Home = lazy(() => import("../../pages/user//Home"));
+const Login = lazy(() => import("../../pages/user/LoginPage"));
+const Signup = lazy(() => import("../../pages/user/SignupPage"));
+const ProgramPage = lazy(() => import("../../pages/user/ProgramPage"));
+const ProgramDetailPage = lazy(() =>
+  import("../../pages/user/ProgramDetailPage")
+);
+const CourseDetailPage = lazy(() =>
+  import("../../pages/user/CourseDetailPage")
+);
+const Profile = lazy(() => import("../../pages/user/userProfile"));
+const ConfirmResetPassword = lazy(() =>
+  import("../../pages/user/ConfirmResetPassword")
+);
+const EnrollPage = lazy(() => import("../../pages/user/EnrollPage"));
+const MyCourses = lazy(() => import("../../pages/user/MyCourses"));
+const VideoPage = lazy(() =>
+  import("../../component/MyCourseSection/VideoPage")
+);
+const classRoom = lazy(() => import("../../pages/user/ClassRoom"));
+const Store = lazy(() => import("../../pages/user/Store"));
+
 function App() {
   return (
     <Suspense fallback={<Spinner />}>
@@ -56,17 +65,21 @@ function App() {
           path={"/courses/mycourses"}
           element={<IsAuthenticatedRoutes element={MyCourses} />}
         />
-         <Route path="/video" element={<VideoPage />} />
+        <Route path="/video" element={<VideoPage />} />
 
-         <Route
+        <Route
           path={"/courses/myCourses/classRoom/:batchName"}
           element={<IsAuthenticatedRoutes element={classRoom} />}
         />
 
+        <Route path={"/store"} element={<Store />} />
+        <Route path={"/products/:category"} element={<ProductsList />} />
 
         <Route path="*" element={<PageNotFoundPage />} />
-        <Route path="/ded5fr6bt7gyh8juiokpl[sd;klosadf" element={<SessionExpired />} />
-
+        <Route
+          path="/ded5fr6bt7gyh8juiokpl[sd;klosadf"
+          element={<SessionExpired />}
+        />
       </Routes>
     </Suspense>
   );

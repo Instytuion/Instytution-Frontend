@@ -1,15 +1,15 @@
 import React, {useEffect} from "react";
 import {Button, Typography, Box} from "@mui/material";
-import Cookies from "js-cookie";
 import sessionExpired from "../../assets/session-expired-.mp4";
 import {useNavigate} from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SessionExpired = () => {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.userAuth.isAuthenticated);
   const checkSessionValidity = () => {
-    const expiryTime = Cookies.get("expiryTime");
 
-    if (expiryTime) {
+    if (user) {
       navigate("/page-not-found");
     }
   };
