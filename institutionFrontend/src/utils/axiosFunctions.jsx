@@ -2,6 +2,7 @@ import {setAccessToken, logout} from "../redux/slices/AuthSlice";
 import logoutService from "../services/user/LogoutService";
 import {store} from "../redux/stores/store";
 import Cookies from "js-cookie";
+import { noAuthInstance } from "./axios";
 
 
 const getExpiryTime = () => {
@@ -32,6 +33,7 @@ const logoutUser = async () => {
 };
 
 const refreshToken = async () => {
+  console.log("entered in refresh token logic")
   try {
     const response = await noAuthInstance.post("accounts/api/token/refresh/");
     console.log("response refresh success", response.data);
