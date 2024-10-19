@@ -5,6 +5,7 @@ import {Typography} from "@mui/material";
 import {useQuery} from "react-query";
 import ProductsServices from "../../services/user/ProductServices";
 import CartLoader from "../../component/Spinner/CartLoader";
+import ProductCard from "../../component/Card/ProductCard";
 
 const ProductsList = () => {
   const {category} = useParams();
@@ -31,7 +32,8 @@ const ProductsList = () => {
 //   if (!category) {
 //     return <PageNotFoundPage />;
 //   }
-  return <Typography>{category}</Typography>;
+  // return <Typography>{category}</Typography>;
+  return <ProductCard data={data}/>
 };
 
 export default ProductsList;
