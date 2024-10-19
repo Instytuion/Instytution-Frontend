@@ -7,6 +7,7 @@ import ProductsServices from "../../services/user/ProductServices";
 import CartLoader from "../../component/Spinner/CartLoader";
 import ProductFilter from "../../component/Drawer/ProductFilter";
 import {Menu as MenuIcon, Close as CloseIcon} from "@mui/icons-material";
+import ProductCard from "../../component/Card/ProductCard";
 
 const ProductsList = () => {
   const {category} = useParams();
@@ -72,12 +73,15 @@ const ProductsList = () => {
 
         <Box width={isMobile ? "100%" : "75%"}>
           {isLoading && <CartLoader />}
-          {error && <div>{error.response?.data?.error}</div>}
+          {/* {error && <div>{error.response?.data?.error}</div>}
           {data?.map((item) => {
             return (
               <Typography key={item.id}>{item.name}</Typography> // Display each product's name
             );
-          })}{" "}
+          })}{" "} */}
+          {data && data.length > 0 && (
+            <ProductCard data={data} />
+          )}
         </Box>
       </Stack>
     </>
