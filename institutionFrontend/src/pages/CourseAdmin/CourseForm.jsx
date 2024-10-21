@@ -1,15 +1,15 @@
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CourseFormFields from "../../component/Forms/CourseFormFeilds";
-import {Container, Button, Stack, CircularProgress} from "@mui/material";
-import {useTheme} from "@emotion/react";
-import {useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { Container, Button, Stack, CircularProgress } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import FetchCourseDetails from "../../services/courseAdmin/FetchCourseDetails";
 import CourseFormServices from "../../services/courseAdmin/CourseFormServices";
 import useToast from "../../hooks/useToast";
 import Tooltip from "@mui/material/Tooltip";
-import BackButton from "../../component/Button/BackButton";
 import BookLoaderJson from "../../component/Spinner/BookLoaderJson";
+import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
 
 const CourseForm = () => {
   const [courseData, setCourseData] = useState(null);
@@ -20,7 +20,8 @@ const CourseForm = () => {
   const showToast = useToast();
   const navigate = useNavigate();
 
-  const {mode = "create", courseName, programName} = location.state || {};
+  const { mode = "create", courseName, programName } = location.state || {};
+
   console.log(
     "mode:",
     mode,
@@ -29,22 +30,22 @@ const CourseForm = () => {
     "programName:",
     programName
   );
-  console.log(courseData);
+  console.log("course sdata is :", courseData);
 
-  useEffect(()=>{
-    if (mode==="create" && !programName){
-      navigate('/*')
-    }else if (mode ==="edit" && !courseName){
-      navigate('/*')
+  useEffect(() => {
+    if (mode === "create" && !programName) {
+      navigate("/*");
+    } else if (mode === "edit" && !courseName) {
+      navigate("/*");
     }
-  },[mode,programName, courseName])
+  }, [mode, programName, courseName]);
 
   const {
     control,
     handleSubmit,
     setError,
     watch,
-    formState: {errors},
+    formState: { errors },
     setValue,
   } = useForm();
 
@@ -66,7 +67,6 @@ const CourseForm = () => {
     }
   }, [mode, courseName]);
 
-  
   useEffect(() => {
     if (mode === "edit" && courseData) {
       const subscription = watch((value) => {
@@ -135,58 +135,77 @@ const CourseForm = () => {
   if (loading) {
     return <BookLoaderJson />;
   }
+  console.log("====================================");
+  console.log("Programs Name is :", programName);
+  console.log("====================================");
+  const links = [
+    { path: "/course-admin/programs", label: "Programs" },
+    {
+      path: `/course-admin/programs/${
+        programName ? programName : courseData?.program
+      }`,
+      label: programName ? programName : courseData?.program,
+    },
+    {
+    
 
+      label: mode === "create" ? "Create Course" : courseName,
+    },
+  ];
   return (
-    <Container maxWidth={"md"}>
-      <BackButton  sx={{mb:2}}/>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CourseFormFields
-          control={control}
-          errors={errors}
-          mode={mode}
-          courseData={courseData}
-          setValue={setValue}
-        />
-        <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
+    <>
+      <CustomeBreadCrumbs links={links} />
+      <Container maxWidth={"md"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CourseFormFields
+            control={control}
+            errors={errors}
+            mode={mode}
+            courseData={courseData}
+            setValue={setValue}
+          />
+          <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
+            <Tooltip
+              title={mode === "edit" && !hasChanges ? "No changes made" : ""}
+              arrow
+            >
+              <span>
+                <Button
+                  type="submit"
+                  sx={{
+                    color:
+                      mode === "edit" && !hasChanges
+                        ? "black !important"
+                        : "white",
+                    bgcolor:
+                      mode === "edit" && !hasChanges
+                        ? "rgba(200, 200, 200, 0.5)" // This gives a blurry appearance
+                        : theme.palette.customColors,
+                  }}
+                  disabled={mode === "edit" && !hasChanges}
+                >
+                  {loading ? (
+                    <CircularProgress size={20} color="white" />
+                  ) : mode == "create" ? (
+                    "create"
+                  ) : (
+                    "update"
+                  )}
+                </Button>
+              </span>
+            </Tooltip>
 
-          <Tooltip
-            title={mode === "edit" && !hasChanges ? "No changes made" : ""}
-            arrow
-          >
-            <span>
-              <Button
-                type="submit"
-                sx={{
-                  color: "white !important",
-                  bgcolor:
-                    mode === "edit" && !hasChanges
-                      ? "grey.200"
-                      : theme.palette.customColors,
-                }}
-                disabled={mode === "edit" && !hasChanges}
-              >
-                {loading ? (
-                  <CircularProgress size={20} color="white" />
-                ) : mode == "create" ? (
-                  "create"
-                ) : (
-                  "update"
-                )}
-              </Button>
-            </span>
-          </Tooltip>
-
-          <Button
-            sx={{bgcolor: "red", color: "white"}}
-            onClick={() => window.history.back()}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-          
-        </Stack>
-      </form>
-    </Container>
+            <Button
+              sx={{ bgcolor: "red", color: "white" }}
+              onClick={() => window.history.back()}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </form>
+      </Container>
+    </>
   );
 };
 

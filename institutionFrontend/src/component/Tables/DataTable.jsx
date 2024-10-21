@@ -275,7 +275,10 @@ import BookLoaderJson from "../Spinner/BookLoaderJson";
 //   );
 // };
 
-const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=null}) => {
+const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=null,programeName=null}) => {
+  console.log('====================================');
+  console.log('prgtms :',programeName);
+  console.log('====================================');
   
   const role =
     title === "Course Admin"
@@ -299,9 +302,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [rowCount, setRowCount] = useState(0);
-  const [rows, setRows] = useState([]);
-  console.log('row dat5a is :0',rows);
-  
+  const [rows, setRows] = useState([]);  
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const userRole = useSelector((state) => state.userAuth.role);
@@ -395,6 +396,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
                     navigate("/course-admin/batch-form", {
                       state: {
                         courseName: courseName,
+                        programeName:programeName
                       },
                     })
                 : handleOpenModal

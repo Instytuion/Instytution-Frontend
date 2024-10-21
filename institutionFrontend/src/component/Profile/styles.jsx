@@ -31,12 +31,12 @@ const styles = {
   addPhotoIcon: {
     position: "absolute",
     bottom: -65,
-    left: {xs: "55%"},
-    transform: {xs: "translateX(-60%)"},
+    left: { xs: "55%" },
+    transform: { xs: "translateX(-60%)" },
     bgcolor: "grey",
     opacity: "59%",
     p: 1,
-    ":hover": {backgroundColor: "#009688", color: "white"},
+    ":hover": { backgroundColor: "#009688", color: "white" },
   },
   parentTwo: {
     p: 3,

@@ -1,14 +1,15 @@
-import {useTheme} from "@emotion/react";
-import React, {useEffect, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useTheme } from "@emotion/react";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import useToast from "../../hooks/useToast";
-import {useForm} from "react-hook-form";
+import { useForm } from "react-hook-form";
 import BatchFormFields from "../../component/Forms/BatchFormFeilds";
-import {Container, Button, CircularProgress, Stack} from "@mui/material";
+import { Container, Button, CircularProgress, Stack } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
-import {useQuery, useQueryClient} from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Spinner from "../../component/Spinner/Spinner";
 import CourseAdminBatchServices from "../../services/courseAdmin/CourseAdminBatchServices";
+import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
 
 const BatchForm = () => {
   const [hasChanges, setHasChanges] = useState(false);
@@ -20,9 +21,24 @@ const BatchForm = () => {
   const showToast = useToast();
   const queryClient = useQueryClient();
 
-  const {mode = "create", courseName, batchId} = location.state || {};
+  const {
+    mode = "create",
+    courseName,
+    batchId,
+    programeName,
+  } = location.state || {}
+  
+  ;
 
-  console.log("mode:", mode, "batchID:", batchId, "courseName:", courseName);
+  console.log(
+    "mode:",
+    mode,
+    "batchID:",
+    batchId,
+    "courseName:",
+    courseName,
+    programeName
+  );
 
   useEffect(() => {
     if (mode === "edit" && !batchId && !courseName) {
@@ -39,7 +55,7 @@ const BatchForm = () => {
     return Promise.resolve(null);
   };
 
-  const {data, error, isLoading} = useQuery(
+  const { data, error, isLoading } = useQuery(
     ["batchDetails", courseName, batchId],
     fetchBatchDetails,
     {
@@ -55,7 +71,7 @@ const BatchForm = () => {
     getValues,
     watch,
     trigger,
-    formState: {errors},
+    formState: { errors },
     setValue,
   } = useForm();
 
@@ -85,8 +101,8 @@ const BatchForm = () => {
           const currentValue = cleanValue(formData[key]);
 
           if (key === "instructor_id") {
-            if (data[key] !== formData['instructor']) {
-              updatedData['instructor'] = formData['instructor'];
+            if (data[key] !== formData["instructor"]) {
+              updatedData["instructor"] = formData["instructor"];
             }
           }
 
@@ -138,58 +154,76 @@ const BatchForm = () => {
   if (error) {
     return <div>Error fetching batches: {error.message}</div>;
   }
+  const link = [
+    { path: "/course-admin/programs", label: "Programs" },
+
+    {
+      path: `/course-admin/programs/${programeName}`,
+      label: programeName,
+    },
+    {
+      path:`/course-admin/batches/${courseName}`,
+      label: "Batches",
+    },
+    {
+      label:"Batch Creation"
+    }
+  ];
 
   return (
-    <Container maxWidth={"md"}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <BatchFormFields
-          control={control}
-          errors={errors}
-          mode={mode}
-          batchData={data}
-          setValue={setValue}
-          getValues={getValues}
-          watch={watch}
-          trigger={trigger}
-          setHasChanges={setHasChanges}
-        />
-        <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
-          <Tooltip
-            title={mode === "edit" && !hasChanges ? "No changes made" : ""}
-            arrow
-          >
-            <span>
-              <Button
-                type="submit"
-                sx={{
-                  color: "white",
-                  bgcolor:
-                    mode === "edit" && !hasChanges
-                      ? "grey.200"
-                      : theme.palette.customColors,
-                }}
-                disabled={mode === "edit" && !hasChanges}
-              >
-                {loading ? (
-                  <CircularProgress size={20} color="white" />
-                ) : mode == "create" ? (
-                  "create"
-                ) : (
-                  "update"
-                )}
-              </Button>
-            </span>
-          </Tooltip>
-          <Button
-            sx={{bgcolor: "red", color: "white"}}
-            onClick={() => navigate(-1)} // Using navigate to go back
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+    <>
+      <CustomeBreadCrumbs links={link} />
+      <Container maxWidth={"md"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <BatchFormFields
+            control={control}
+            errors={errors}
+            mode={mode}
+            batchData={data}
+            setValue={setValue}
+            getValues={getValues}
+            watch={watch}
+            trigger={trigger}
+            setHasChanges={setHasChanges}
+          />
+          <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
+            <Tooltip
+              title={mode === "edit" && !hasChanges ? "No changes made" : ""}
+              arrow
+            >
+              <span>
+                <Button
+                  type="submit"
+                  sx={{
+                    color: "white",
+                    bgcolor:
+                      mode === "edit" && !hasChanges
+                        ? "grey.200"
+                        : theme.palette.customColors,
+                  }}
+                  disabled={mode === "edit" && !hasChanges}
+                >
+                  {loading ? (
+                    <CircularProgress size={20} color="white" />
+                  ) : mode == "create" ? (
+                    "create"
+                  ) : (
+                    "update"
+                  )}
+                </Button>
+              </span>
+            </Tooltip>
+            <Button
+              sx={{ bgcolor: "red", color: "white" }}
+              onClick={() => navigate(-1)} // Using navigate to go back
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </form>
+      </Container>
+    </>
   );
 };
 
