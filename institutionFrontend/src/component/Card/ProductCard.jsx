@@ -14,12 +14,15 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 
 const ProductCard = ({ data }) => {
-    console.log('data from propes to prdct card is ',data);
-    
-  const navigate = useNavigate();
+  console.log("data from propes to prdct card is ", data);
 
+  const navigate = useNavigate();
+  const getDetails =(id)=>{
+    return data.filter((item)=> item.id == id)
+  }
   const handleCardClick = (item) => {
     console.log("Clicked Product: ", item.name);
+    navigate(`/product/${item.id}`,{state:{productData : getDetails(item.id)}});
   };
 
   const getUniqueColors = (images) => {
@@ -121,7 +124,10 @@ const ProductCard = ({ data }) => {
                   renderArrowPrev={(clickHandler, hasPrev) =>
                     hasPrev && (
                       <ArrowBackIos
-                        onClick={clickHandler}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation on arrow click
+                          clickHandler();
+                        }}
                         className="arrow"
                         sx={{
                           position: "absolute",
@@ -140,7 +146,10 @@ const ProductCard = ({ data }) => {
                   renderArrowNext={(clickHandler, hasNext) =>
                     hasNext && (
                       <ArrowForwardIos
-                        onClick={clickHandler}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent navigation on arrow click
+                          clickHandler();
+                        }}
                         className="arrow"
                         sx={{
                           position: "absolute",
@@ -192,7 +201,7 @@ const ProductCard = ({ data }) => {
               <CardContent
                 sx={{
                   height: 230,
-                  textAlign:'center'
+                  textAlign: "center",
                 }}
               >
                 <Typography
@@ -237,10 +246,11 @@ const ProductCard = ({ data }) => {
                       key={i}
                     >
                       <Box
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           availableColorsForSize.has(color) &&
-                          setSelectedColor(color)
-                        }
+                            setSelectedColor(color);
+                        }}
                         sx={{
                           width: "20px",
                           height: "20px",
@@ -277,7 +287,8 @@ const ProductCard = ({ data }) => {
                   {getUniqueSizes(item.details).map((size, i) => (
                     <Box
                       key={i}
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelectedSize(size);
                       }}
                       sx={{
@@ -308,13 +319,12 @@ const ProductCard = ({ data }) => {
                   variant="caption"
                   component="div"
                   sx={{
-                    
                     display: "inline-block",
                     bgcolor: "#FFCCCB",
                     fontSize: ["0.75rem", "0.75rem", "1rem"],
                     color: selectedStock < 20 ? "red" : "",
                     mb: 1,
-                    px:2
+                    px: 2,
                   }}
                 >
                   {selectedStock < 20 ? "only few left" : ""}
