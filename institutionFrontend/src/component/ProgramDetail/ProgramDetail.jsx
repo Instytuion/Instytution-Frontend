@@ -2,7 +2,6 @@ import {Box, Button, duration, Grid, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import BackButton from "../../component/Button/BackButton";
 import {useTheme} from "@emotion/react";
 import BookLoaderJson from "../Spinner/BookLoaderJson";
 
@@ -11,7 +10,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
   const theme = useTheme();
 
   const {programName} = useParams();
-  const decodedProgramName = programName ? decodeURIComponent(programName) : "";
+  // const decodedProgramName = programName ? decodeURIComponent(programName) : "";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -48,7 +47,6 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
         }}
       >
         <Box>
-          <BackButton />
           <Typography
             variant="h5"
             component="h2"
@@ -59,7 +57,7 @@ function ProgramDetail({fetchCourses, linkPrefix, buttonText}) {
               color: theme.palette.text.primary,
             }}
           >
-            {`${decodedProgramName || "Loading..."}`}
+            {programName}
           </Typography>
         </Box>
         {buttonText ? (

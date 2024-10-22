@@ -10,7 +10,8 @@ const Programs = ({fetchProgrammes, linkPrefix, buttonText}) => {
     "function for program is :",
     fetchProgrammes,
     "and link nis :",
-    linkPrefix
+    linkPrefix,
+    buttonText
   );
 
   const [data, setData] = useState([]);

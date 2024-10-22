@@ -8,13 +8,13 @@ import {
   Button,
   Card,
 } from "@mui/material";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import {useForm, Controller} from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
-import {useDispatch, useSelector} from "react-redux";
-import {updateProfile} from "../../redux/slices/AuthSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfile } from "../../redux/slices/AuthSlice";
 import useToast from "../../hooks/useToast";
 import OTP from "../../component/Otp/OtpInput";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -26,7 +26,8 @@ import {
 } from "../CustomeElements/FormLabelInput";
 import updateProfileService from "../../services/user/UserProfileServices";
 import styles from "./styles";
-import {getInitials} from "../../utils/utilityFunctions";
+import { getInitials } from "../../utils/utilityFunctions";
+import BackButton from "../Button/BackButton";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -40,11 +41,10 @@ const Profile = () => {
   const showToast = useToast();
   const user = useSelector((state) => state.userAuth);
 
-
   const {
     control,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
     reset,
     setError: setFormError,
   } = useForm({
@@ -57,15 +57,15 @@ const Profile = () => {
 
   const handleVerifyOtp = async () => {
     try {
-      const updatedData = {...editedData, otp: otp};
+      const updatedData = { ...editedData, otp: otp };
 
       const response = await updateProfileService.updateProfileWithEmail(
         updatedData
       );
       console.log("user profile verify -update res:", response);
       setEmailEdited(false);
-      setShowotpComponent(false)
-      setOtp("")
+      setShowotpComponent(false);
+      setOtp("");
       dispatch(
         updateProfile({
           ...user,
@@ -93,7 +93,7 @@ const Profile = () => {
       updatedData.email = formData.email;
       setIsLoading(true);
       try {
-        await SignupServices.signup({email: formData.email});
+        await SignupServices.signup({ email: formData.email });
         setShowotpComponent(true);
       } catch (error) {
         console.log("signup/otp sent  error", error);
@@ -110,7 +110,7 @@ const Profile = () => {
     }
 
     if (Object.keys(updatedData).length === 0) {
-      showToast("No changes made", "info"); 
+      showToast("No changes made", "info");
       return;
     }
 
@@ -198,26 +198,33 @@ const Profile = () => {
 
   return (
     <Container disableGutters sx={styles.container}>
+      <BackButton />
       {!showOtpComponent ? (
         <Stack
-          direction={{xs: "column", md: "row"}} // Responsive direction
+          direction={{ xs: "column", md: "row" }} // Responsive direction
           spacing={2} // Space between the cards
         >
           {/* User Information Card */}
-          <Card sx={styles.card} >
+          <Card sx={styles.card}>
             <Box sx={styles.parentOne}>
               <Box sx={styles.profileImageContainer}>{profileImage}</Box>
 
               {/* Add Photo Icon */}
               <IconButton component="label" sx={styles.addPhotoIcon}>
-                <AddAPhotoIcon fontSize="small" sx={{color: "white"}} />
-                <input type="file" hidden onChange={handleImageChange} />
+                <AddAPhotoIcon fontSize="small" sx={{ color: "white" }} />
+                <input
+    type="file"
+    hidden
+    accept="image/jpeg, image/png, image/gif"
+    onChange={handleImageChange}
+  />
+                {/* <input type="file" hidden onChange={handleImageChange} /> */}
               </IconButton>
             </Box>
 
             {/* Input Fields Section */}
             <Box sx={styles.parentTwo}>
-              <Stack spacing={2} sx={{paddingTop: 5}}>
+              <Stack spacing={2} sx={{ paddingTop: 5 }}>
                 <Box sx={styles.titleContainer}>
                   <IconButton onClick={handleEditClick} color="primary">
                     {!isEditing ? <EditIcon /> : <CloseIcon />}
@@ -228,8 +235,8 @@ const Profile = () => {
                 <Controller
                   name="firstName"
                   control={control}
-                  rules={{required: "First name is required"}}
-                  render={({field}) => (
+                  rules={{ required: "First name is required" }}
+                  render={({ field }) => (
                     <TextField
                       fullWidth
                       label={!isEditing ? "First Name:" : "FirstName"}
@@ -248,8 +255,8 @@ const Profile = () => {
                 <Controller
                   name="lastName"
                   control={control}
-                  rules={{required: "Last name is required"}}
-                  render={({field}) => (
+                  rules={{ required: "Last name is required" }}
+                  render={({ field }) => (
                     <TextField
                       fullWidth
                       label={!isEditing ? "Last Name:" : "LastName"}
@@ -275,7 +282,7 @@ const Profile = () => {
                         message: "Invalid email format",
                       },
                     }}
-                    render={({field}) => (
+                    render={({ field }) => (
                       <TextField
                         fullWidth
                         label={!emailEdited ? "Email:" : "Email"}
@@ -303,7 +310,7 @@ const Profile = () => {
                   <IconButton
                     onClick={() => {
                       setEmailEdited((prev) => !prev);
-                      reset({email: user.email || ""});
+                      reset({ email: user.email || "" });
                     }}
                     color="primary"
                   >
@@ -311,22 +318,22 @@ const Profile = () => {
                   </IconButton>
                 </Stack>
 
-                { (isEditing || emailEdited) && (
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      sx={{
-                        bgcolor: "#00796b",
-                        "&:hover": {
-                          bgcolor: "#009688",
-                        },
-                      }}
-                      onClick={handleSubmit(onSubmit)}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Loading..." : "Save"}
-                    </Button>
-                  )}
+                {(isEditing || emailEdited) && (
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      bgcolor: "#00796b",
+                      "&:hover": {
+                        bgcolor: "#009688",
+                      },
+                    }}
+                    onClick={handleSubmit(onSubmit)}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Loading..." : "Save"}
+                  </Button>
+                )}
               </Stack>
             </Box>
           </Card>
@@ -334,11 +341,11 @@ const Profile = () => {
           {/* User Address Card */}
           <Card sx={styles.card}>
             <Box sx={styles.parentTwo}>
-              <Stack spacing={2} sx={{paddingTop: 5}}>
+              <Stack spacing={2} sx={{ paddingTop: 5 }}>
                 <Box sx={styles.titleContainer}></Box>
 
                 {/* Placeholder for Address Information */}
-                <Typography variant="body1" sx={{color: "gray"}}>
+                <Typography variant="body1" sx={{ color: "gray" }}>
                   Address information will be displayed here.
                 </Typography>
               </Stack>
@@ -348,7 +355,7 @@ const Profile = () => {
       ) : (
         <Box sx={styles.otpContainer}>
           <IconButton
-            sx={{position: "absolute", left: 10, top: 10}}
+            sx={{ position: "absolute", left: 10, top: 10 }}
             onClick={() => {
               setShowotpComponent(false);
               setOtp(false);
@@ -356,10 +363,10 @@ const Profile = () => {
           >
             <ArrowBackIcon />
           </IconButton>
-          <Typography sx={{textAlign: "center"}} fontSize={20}>
+          <Typography sx={{ textAlign: "center" }} fontSize={20}>
             Enter Your OTP
           </Typography>
-          <Typography sx={{textAlign: "center", color: "text.secondary"}}>
+          <Typography sx={{ textAlign: "center", color: "text.secondary" }}>
             OTP has been sent to your {editedData.email}
           </Typography>
           <OTP
@@ -377,4 +384,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

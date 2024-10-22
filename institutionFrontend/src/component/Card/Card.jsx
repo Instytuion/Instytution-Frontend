@@ -21,6 +21,9 @@ const CommonCard = ({name, duration, price, image, link}) => {
   const theme = useTheme();
 
   const pathParts = location.pathname.split("/");
+  console.log('====================================');
+  console.log('path part',pathParts.at(-1));
+  console.log('====================================');
   const isInCourses = pathParts.length == 4 && pathParts[2] === "programs";
   const isInPrograms = pathParts.length == 3 && pathParts[2] === "programs";
 
@@ -202,7 +205,8 @@ const CommonCard = ({name, duration, price, image, link}) => {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/course-admin/batches/${name}`);
+                navigate(`/course-admin/batches/${name}`, { state: { programeName: pathParts.at(-1) } });
+
               }}
             >
               Batches
@@ -216,7 +220,7 @@ const CommonCard = ({name, duration, price, image, link}) => {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/course-admin/lessons/${name}`);
+               navigate(`/course-admin/lessons/${name}`, { state: { programeName: pathParts.at(-1) } });
               }}
             >
               Lessons

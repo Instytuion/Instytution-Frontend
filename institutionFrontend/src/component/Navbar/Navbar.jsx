@@ -35,8 +35,8 @@ function Navbar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const location = useLocation();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedTab, setSelectedTab] = useState("Home");
-  const [bottomNavVAlue, setbottomNavVAlue] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(null);
+  const [bottomNavValue, setBottomNavValue] = useState(0);
   const navigate = useNavigate();
   const showToast = useToast();
   const dispatch = useDispatch();
@@ -44,16 +44,44 @@ function Navbar() {
     (state) => state.userAuth
   );
 
+  const data = [
+    { id: 1, label: "Home", link: "/", icon: <HomeIcon /> },
+    { id: 2, label: "Program", link: "/courses/programs", icon: <StoreIcon /> },
+    { id: 3, label: "About Us", link: "/about", icon: <InfoIcon /> },
+    { id: 4, label: "Our store", link: "/store", icon: <StoreIcon /> },
+    { id: 5, label: "Contact Us", link: "/contact", icon: <ContactMailIcon /> },
+  ];
+
+  const bottomNavData = [
+    { id: 0, label: "Home", link: "/", icon: <HomeIcon /> },
+    {
+      id: 1,
+      label: "Program",
+      link: "/courses/programs",
+      icon: <OndemandVideoIcon />,
+    },
+    { id: 2, label: "Store", link: "/store", icon: <ShoppingBagIcon /> },
+    { id: 3, label: "About Us", link: "/about", icon: <GroupsIcon /> },
+    { id: 4, label: "Contact", link: "/contact", icon: <ContactMailIcon /> },
+  ];
+
   useEffect(() => {
     const currentTab = data.find((tab) => tab.link === location.pathname);
     if (currentTab) {
       setSelectedTab(currentTab.label);
+    } else {
+      if (location.pathname !== "/") {
+        setSelectedTab(null);
+      }
     }
+
     const currentBottomTab = bottomNavData.find(
       (tab) => tab.link === location.pathname
     );
     if (currentBottomTab) {
-      setbottomNavVAlue(currentBottomTab.id);
+      setBottomNavValue(currentBottomTab.id);
+    } else {
+      setBottomNavValue(0); 
     }
   }, [location.pathname]);
 
@@ -74,26 +102,6 @@ function Navbar() {
   };
 
   const isMenuOpen = Boolean(anchorEl);
-
-  const data = [
-    { id: 1, label: "Home", link: "/", icon: <HomeIcon /> },
-    { id: 2, label: "Program", link: "/courses/programs", icon: <StoreIcon /> },
-    { id: 3, label: "About Us", link: "/about", icon: <InfoIcon /> },
-    { id: 4, label: "Our store", link: "/store", icon: <StoreIcon /> },
-    { id: 5, label: "Contact Us", link: "/contact", icon: <ContactMailIcon /> },
-  ];
-  const bottomNavData = [
-    { id: 0, label: "Home", link: "/", icon: <HomeIcon /> },
-    {
-      id: 1,
-      label: "Program",
-      link: "/courses/programs",
-      icon: <OndemandVideoIcon />,
-    },
-    { id: 2, label: "Store", link: "/store", icon: <ShoppingBagIcon /> },
-    { id: 3, label: "About Us", link: "/about", icon: <GroupsIcon /> },
-    { id: 4, label: "Contact", link: "/contact", icon: <ContactMailIcon /> },
-  ];
 
   return (
     <>
@@ -169,7 +177,9 @@ function Navbar() {
                     <MenuItem onClick={() => navigate("/profile")}>
                       Profile
                     </MenuItem>
-                    <MenuItem onClick={()=>navigate("/courses/myCourses")}>My Courses</MenuItem>
+                    <MenuItem onClick={() => navigate("/courses/myCourses")}>
+                      My Courses
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
@@ -228,7 +238,9 @@ function Navbar() {
                     <MenuItem onClick={() => navigate("/profile")}>
                       Profile
                     </MenuItem>
-                    <MenuItem onClick={()=>navigate("/courses/myCourses")}>My Courses</MenuItem>
+                    <MenuItem onClick={() => navigate("/courses/myCourses")}>
+                      My Courses
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
@@ -259,9 +271,9 @@ function Navbar() {
         >
           <BottomNavigation
             showLabels
-            value={bottomNavVAlue}
+            value={bottomNavValue}
             onChange={(event, newValue) => {
-              setbottomNavVAlue(newValue);
+              setBottomNavValue(newValue);
             }}
             sx={{ backgroundColor: "#00796b" }}
           >
@@ -272,7 +284,6 @@ function Navbar() {
                 icon={tab.icon}
                 component={Link}
                 to={tab.link}
-                sx={{ color: "#d4d4d4", "&.Mui-selected": { color: "white" } }}
               />
             ))}
           </BottomNavigation>

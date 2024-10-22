@@ -1,19 +1,21 @@
 import { Box, Button, Paper, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams,useLocation } from 'react-router-dom'
 import FetchCourseLessons from '../../services/courseAdmin/FetchCourseLessons'
 import LessonSection from '../../component/LessonSection/LessonSection';
 import DeleteLesson from '../../services/courseAdmin/DeleteLesson';
 import useToast from '../../hooks/useToast';
-import BackButton from '../../component/Button/BackButton';
 import BookLoaderJson from '../../component/Spinner/BookLoaderJson';
+import CustomeBreadCrumbs from '../../component/Breadcrumbs/Breadcrumbs';
 
 function LessonsPage() {
     const {courseName} = useParams()
+    const location = useLocation()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false);
     const [lessonData, setLessonData] = useState([]);
     const showToast = useToast();
+    const { programeName } = location.state  || {}
 
     useEffect(()=>{
         const fetchData = async ()=>{
@@ -67,9 +69,22 @@ function LessonsPage() {
     if(isLoading){
         return <BookLoaderJson />
       };
+
+      const link = [
+        { path: "/course-admin/programs", label: "Programs" },
+    
+        {
+          path: `/course-admin/programs/${programeName}`,
+          label: programeName,
+        },
+        
+        {
+          label:"Lessons"
+        }
+      ];
     return (
         <Box sx={{position:'relative'}}>
-        <BackButton sx={{position:'absolute', top:0, right:20}} />
+            <CustomeBreadCrumbs links={link}/>
         <Typography variant="h4" gutterBottom>
             Lessons Page
         </Typography>
