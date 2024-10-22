@@ -234,52 +234,36 @@
 
 // export default CustomDataTable;
 
-import React, {useState, useEffect} from "react";
-import {DataGrid} from "@mui/x-data-grid";
-import {TextField, Box, Typography, Button} from "@mui/material";
-import {CreateUsersByRole} from "../../services/admin/UsersCreation";
+import React, { useState, useEffect } from "react";
+import { DataGrid } from "@mui/x-data-grid";
+import { TextField, Box, Typography, Button } from "@mui/material";
+import { CreateUsersByRole } from "../../services/admin/UsersCreation";
 import UserCrudModal from "../Modals/UserCrudModal";
 import useToast from "../../hooks/useToast";
-import {ColumnsHeading} from "./TableColumns";
+import { ColumnsHeading } from "./TableColumns";
 import LitsUsersByRole from "../../services/admin/UsersLIst";
 import CustomPagination from "./CustomePagination";
-import {useTheme} from "@emotion/react";
-import {StyledTextField} from "../CustomeElements/CustomFormInputs";
-import {useSelector} from "react-redux";
+import { useTheme } from "@emotion/react";
+import { StyledTextField } from "../CustomeElements/CustomFormInputs";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { BatchColumnsHeading } from "./BatchColumnsHeading";
 import BookLoaderJson from "../Spinner/BookLoaderJson";
+import ConfirmationModal from "../Modals/ConfirmModal";
+import { updateUserStatus } from "../../services/unblockAndBlock/UserController";
 
-// const StyledTextField = (props) => {
-//   const theme = useTheme();
-//   return (
-//     <TextField
-//       {...props}
-//       sx={{
-//         "& .MuiInputBase-root": { color: theme.palette.text.primary },
-//         "& .MuiOutlinedInput-notchedOutline": {
-//           borderColor: theme.palette.text.primary,
-//         },
-//         "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-//           { borderColor: theme.palette.text.primary },
-//         "& .MuiInputLabel-root": { color: theme.palette.text.primary },
-//         "& .MuiInputLabel-root.Mui-focused": {
-//           color: theme.palette.text.primary,
-//         },
-//         "& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-//           borderColor: theme.palette.text.primary,
-//         },
-//         ...props.sx,
-//       }}
-//     />
-//   );
-// };
+const CustomDataTable = ({
+  title,
+  buttonText,
+  setNewUsers,
+  row = null,
+  courseName = null,
+  programeName = null,
+}) => {
+  console.log("====================================");
+  console.log("prgtms :", programeName);
+  console.log("====================================");
 
-const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=null,programeName=null}) => {
-  console.log('====================================');
-  console.log('prgtms :',programeName);
-  console.log('====================================');
-  
   const role =
     title === "Course Admin"
       ? "course_admin"
@@ -302,16 +286,63 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [rowCount, setRowCount] = useState(0);
-  const [rows, setRows] = useState([]);  
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
+  const [actionType, setActionType] = useState("");
+  const [selectedUser, setSelectedUser] = useState(null);
   const theme = useTheme();
   const userRole = useSelector((state) => state.userAuth.role);
-  const navigate = useNavigate()
-  
+  const navigate = useNavigate();
+  const handleConfirmOpenModal = () => setOpenModal(true);
+  const handleConfirmCloseModal = () => setOpenModal(false);
+
+  const handleOpenConfirmModal = (user, type) => {
+    setSelectedUser(user);
+    setActionType(type);
+    setOpenConfirmModal(true);
+  };
+
+  const handleCloseConfirmModal = () => setOpenConfirmModal(false);
+
+  const handleConfirm = async () => {
+    try {
+      const response = await updateUserStatus(
+        selectedUser.id,
+        actionType === "block" ? false : true,
+        userRole
+      );
+      showToast(
+        `${selectedUser.email} has been ${
+          actionType === "block" ? "Blocked" : "Unblocked"
+        } successfully`,
+        "success"
+      );
+      setRows((prev) =>
+        prev.map((user) =>
+          user.id === selectedUser.id
+            ? { ...user, is_active: actionType === "block" ? false : true }
+            : user
+        )
+      );
+    } catch (error) {
+      showToast(error.response.data, "error");
+    } finally {
+      handleCloseConfirmModal();
+    }
+  };
+
   const fetchUsers = async () => {
     try {
-      setLoading(true)
-      const response = await LitsUsersByRole(role, page, pageSize, search, userRole);
+      setLoading(true);
+      const response = await LitsUsersByRole(
+        role,
+        page,
+        pageSize,
+        search,
+        userRole
+      );
       const usersWithRowNumber = response.results.map((user, index) => ({
         ...user,
         rowNumber: (page - 1) * 20 + index + 1,
@@ -320,8 +351,8 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
       setRowCount(response.count);
     } catch (error) {
       console.error("Error fetching data:", error);
-    }finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -335,8 +366,8 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
   const handleCloseModal = () => setOpenModal(false);
 
   const handleInputChange = (e) => {
-    const {name, value} = e.target;
-    setNewUser((prev) => ({...prev, [name]: value}));
+    const { name, value } = e.target;
+    setNewUser((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFormSubmit = async () => {
@@ -373,11 +404,11 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
         )
       )
     : row || rows;
-  
-  
+
   return (
-    <Box sx={{width: "77vw"}}>
-      <Box sx={{display: "flex", justifyContent: "space-between"}}>
+    <>
+     <Box sx={{ width: "77vw" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography
           sx={{
             fontSize: 20,
@@ -396,7 +427,7 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
                     navigate("/course-admin/batch-form", {
                       state: {
                         courseName: courseName,
-                        programeName:programeName
+                        programeName: programeName,
                       },
                     })
                 : handleOpenModal
@@ -419,32 +450,15 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
         margin="normal"
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Box sx={{overflow: "auto", maxHeight: "68.58vh"}}>
+      <Box sx={{ overflow: "auto", maxHeight: "68.58vh" }}>
         <DataGrid
           rows={filteredRows}
-          columns={row ? BatchColumnsHeading() : ColumnsHeading(setRows)}
-          // rowCount={rowCount}
-          // pagination
-          // paginationMode="server"
-          // pageSize={pageSize}
-          // page={page - 1}
-          // onPageChange={(newPage) => setPage(newPage + 1)}
-          // onPageSizeChange={(newPageSize) => {
-          //     setPageSize(newPageSize);
-          //     setPage(1);
-          // }}
-          // components={{
-          //     Pagination: CustomTablePagination // If you have a custom pagination component
-          // }}
-          // initialState={{
-          //   pagination: {
-          //     paginationModel: {
-          //       pageSize: 10,
-          //     },
-          //   },
-          // }}
+          columns={
+            row
+              ? BatchColumnsHeading()
+              : ColumnsHeading(setRows, handleOpenConfirmModal)
+          }
           sx={{
-            // height: "68.58vh",
             width: "100vw",
             "& .MuiDataGrid-virtualScroller": {
               overflowY: "auto",
@@ -510,7 +524,18 @@ const CustomDataTable = ({title, buttonText, setNewUsers, row=null, courseName=n
           onChange={handleInputChange}
         />
       </UserCrudModal>
+
+      
     </Box>
+    <ConfirmationModal
+        open={openConfirmModal}
+        onClose={handleCloseConfirmModal}
+        onConfirm={handleConfirm}
+        actionType={actionType}
+        email= {selectedUser?.email}
+      />
+    </>
+   
   );
 };
 
