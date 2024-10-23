@@ -1,13 +1,17 @@
-import { Box, Paper, Button } from "@mui/material";
-import { useState } from "react";
+import {Box, Button} from "@mui/material";
+import {useEffect, useState} from "react";
 import Styles from "./Style";
 
-const ProductImages = ({ images }) => {
-  const [selectedImage, setSelectedImage] = useState(
-    images.length > 0 ? images[0].image : ""
-  );
+const ProductImages = ({images}) => {
+  const [selectedImage, setSelectedImage] = useState("");
   const [showMore, setShowMore] = useState(false);
   const styles = Styles();
+
+  useEffect(() => {
+    if (images.length > 0) {
+      setSelectedImage(images[0].image);
+    }
+  }, [images]);
 
   const handleImageChange = (image) => {
     setSelectedImage(image);
@@ -20,14 +24,14 @@ const ProductImages = ({ images }) => {
   const displayedImages = showMore ? images : images.slice(0, 2);
 
   return (
-    <Box sx={{ width: "20vw" }}>
-      <Paper sx={styles.imagePaper}>
+    <Box sx={{height: "auto", width: "290px", margin: "auto"}}>
+      <Box sx={styles.imagePaper}>
         <img
           src={selectedImage}
           alt="Product-image"
           style={styles.productImage}
         />
-      </Paper>
+      </Box>
       <Box sx={styles.containerBox}>
         <Box sx={styles.flexContainer}>
           {displayedImages.map((item, idx) => (
@@ -39,7 +43,7 @@ const ProductImages = ({ images }) => {
               <img
                 src={item.image}
                 alt={`Thumbnail ${idx + 1}`}
-                style={styles.subImages}
+                style={styles.subImages(selectedImage, item)}
               />
             </Box>
           ))}

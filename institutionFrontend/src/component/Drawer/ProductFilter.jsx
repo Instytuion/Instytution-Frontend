@@ -12,7 +12,6 @@ import ProductsServices from "../../services/user/ProductServices";
 import {useQuery} from "react-query";
 import styles from "./styles";
 
-const drawerWidth = 250;
 const productFilterStyles = styles();
 
 const SubCategoryButton = ({subCategory, isSelected, onClick}) => (
@@ -50,6 +49,7 @@ const ProductFilter = ({
   const valuetext = useCallback((value) => `${value}₹`, []);
   const [selectedSize, setSelectedSize] = useState(null); // State for selected size
   const [selectedColor, setSelectedColor] = useState(null);
+  const drawerWidth = isMobile ? 240 : "20%";
 
   const {data, error, isLoading} = useQuery(["subCategory"], () =>
     ProductsServices.getSubcategories()
@@ -113,7 +113,6 @@ const ProductFilter = ({
         }}
       >
         <Box p={2} pt={1} mt={1}>
-
           {/* Price Range Slider */}
 
           <Typography
@@ -214,7 +213,7 @@ const ProductFilter = ({
             ))}
           </Stack>
         </Box>
-        
+
         {/* Action Buttons  */}
 
         <Stack direction={"row"} justifyContent="center" p={1} gap={1}>
