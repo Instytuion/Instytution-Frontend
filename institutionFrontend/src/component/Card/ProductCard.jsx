@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
   Card,
   CardMedia,
@@ -8,42 +8,60 @@ import {
   Box,
   Tooltip,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { Carousel } from "react-responsive-carousel";
+import {useNavigate} from "react-router-dom";
+import {Carousel} from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import {
+  ArrowBackIos,
+  ArrowForwardIos,
+  FavoriteBorder,
+  Favorite,
+  Share,
+} from "@mui/icons-material";
+import ColorSelector from "../Products/ColorSelector";
+import {
+  getUniqueColors,
+  getUniqueSizes,
+  getAvailableColorsForSize,
+  getImagesBySelectedColor,
+  getDetailsByColorAndSize,
+} from "../../utils/productUtils";
+import SizeSelector from "../Products/SizeSelector";
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({data}) => {
   console.log("data from propes to prdct card is ", data);
 
+  const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
-  const getDetails =(id)=>{
-    return data.filter((item)=> item.id == id)
-  }
+  const getDetails = (id) => {
+    return data.filter((item) => item.id == id);
+  };
   const handleCardClick = (item) => {
     console.log("Clicked Product: ", item.name);
-    navigate(`/product/${item.id}`,{state:{productData : getDetails(item.id)}});
+    navigate(`/product/${item.id}`, {
+      state: {productData: getDetails(item.id)},
+    });
   };
 
-  const getUniqueColors = (images) => {
-    const colorSet = new Set(images.map((img) => img.color));
-    return [...colorSet];
-  };
+  // const getUniqueColors = (images) => {
+  //   const colorSet = new Set(images.map((img) => img.color));
+  //   return [...colorSet];
+  // };
 
-  const getUniqueSizes = (details) => {
-    const sizeSet = new Set(
-      details.map((detail) => detail.size).filter((size) => size)
-    );
-    return [...sizeSet];
-  };
+  // const getUniqueSizes = (details) => {
+  //   const sizeSet = new Set(
+  //     details.map((detail) => detail.size).filter((size) => size)
+  //   );
+  //   return [...sizeSet];
+  // };
 
-  const getAvailableColorsForSize = (item, size) => {
-    const sizeDetails = item.details.filter((detail) => detail.size === size);
-    return new Set(sizeDetails.map((detail) => detail.color));
-  };
+  // const getAvailableColorsForSize = (item, size) => {
+  //   const sizeDetails = item.details.filter((detail) => detail.size === size);
+  //   return new Set(sizeDetails.map((detail) => detail.color));
+  // };
 
   return (
-    <Grid container spacing={2} sx={{ padding: 2 }}>
+    <Grid container spacing={2} sx={{padding: 2}}>
       {data.map((item, index) => {
         const [selectedColor, setSelectedColor] = useState(
           item.images && item.images.length > 0 ? item.images[0].color : ""
@@ -58,15 +76,22 @@ const ProductCard = ({ data }) => {
           item.details && item.details.length > 0 ? item.details[0].stock : 0
         );
 
-        const getImagesBySelectedColor = () => {
-          return item.images.filter(
-            (img) => img.color.toLowerCase() === selectedColor.toLowerCase()
-          );
-        };
+        // const getImagesBySelectedColor = () => {
+        //   return item.images.filter(
+        //     (img) => img.color.toLowerCase() === selectedColor.toLowerCase()
+        //   );
+        // };
 
-        const colorImages = getImagesBySelectedColor();
+        const colorImages = getImagesBySelectedColor(item, selectedColor);
         const availableColorsForSize = getAvailableColorsForSize(
           item,
+          selectedSize
+        );
+
+        // price and stock
+        const updatedDetails = getDetailsByColorAndSize(
+          item,
+          selectedColor,
           selectedSize
         );
 
@@ -79,6 +104,11 @@ const ProductCard = ({ data }) => {
             setSelectedStock(sizeDetail.stock);
           }
 
+          if (updatedDetails) {
+            setSelectedPrice(updatedDetails.price);
+            setSelectedStock(updatedDetails.stock);
+          }
+
           if (
             !availableColorsForSize.has(selectedColor) &&
             availableColorsForSize.size > 0
@@ -89,7 +119,7 @@ const ProductCard = ({ data }) => {
         }, [selectedSize, availableColorsForSize, selectedColor, item.details]);
 
         return (
-          <Grid item xs={12} sm={6} md={6} lg={4} gap={1} key={index}>
+          <Grid item xs={6} md={6} lg={4} gap={1} key={index}>
             <Card
               sx={{
                 bgcolor: "white",
@@ -98,16 +128,55 @@ const ProductCard = ({ data }) => {
                 margin: "auto",
                 cursor: "pointer",
                 boxShadow: 1,
-                width: 320,
-                "&:hover": {
-                  boxShadow: 8,
-                  transform: "translateY(-4px)",
-                  transition: "transform 0.2s",
-                },
+                maxWidth: 290,
                 overflow: "hidden",
+                height: 360,
+                position: "relative",
               }}
               onClick={() => handleCardClick(item)}
             >
+              <Typography
+                variant="caption"
+                component="div"
+                sx={{
+                  display: "inline-block",
+                  bgcolor: "#FFCCCB",
+                  fontSize: ["0.75rem", "0.75rem", "1rem"],
+                  color: selectedStock < 20 ? "red" : "",
+                  mb: 1,
+                  px: 2,
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  zIndex: 10,
+                }}
+              >
+                {selectedStock < 20 ? "only few left" : ""}
+              </Typography>
+
+              {/* wishList icon */}
+
+              <Tooltip
+                title={isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
+              >
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 15,
+                    right: 5,
+                    cursor: "pointer",
+                    color: isFavorite ? "red" : "inherit",
+                    zIndex: 10,
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsFavorite((prev) => !prev);
+                  }}
+                >
+                  {isFavorite ? <Favorite /> : <FavoriteBorder />}
+                </Box>
+              </Tooltip>
+
               <Box
                 sx={{
                   position: "relative",
@@ -174,8 +243,8 @@ const ProductCard = ({ data }) => {
                           image={img.image}
                           alt={item.name}
                           sx={{
-                            objectFit: "cover",
-                            height: ["20rem"],
+                            height: 200,
+                            objectFit: "contain",
                             transition: "transform 0.3s",
                             "&:hover": {
                               transform: "scale(1.05)",
@@ -190,8 +259,8 @@ const ProductCard = ({ data }) => {
                           image="https://via.placeholder.com/300"
                           alt="Default Image"
                           sx={{
-                            objectFit: "cover",
-                            height: ["20rem"],
+                            objectFit: "contain",
+                            height: 200,
                           }}
                         />,
                       ]}
@@ -200,17 +269,21 @@ const ProductCard = ({ data }) => {
 
               <CardContent
                 sx={{
-                  height: 230,
                   textAlign: "center",
+                  height: "13rem",
                 }}
               >
                 <Typography
                   variant="h6"
                   component="div"
                   sx={{
-                    fontSize: ["1rem", "1rem", "1.5rem"],
+                    fontSize: ["1rem", "1rem", "1.1rem"],
                     fontWeight: "bold",
                     mb: 1,
+                    whiteSpace: "nowrap", // Prevents text wrapping
+                    overflow: "hidden", // Hides overflow text
+                    textOverflow: "ellipsis", // Shows ellipsis for truncated text
+                    mx: "auto", // Centers the text block
                   }}
                 >
                   {item.name}
@@ -225,7 +298,7 @@ const ProductCard = ({ data }) => {
                     mb: 1,
                   }}
                 >
-                  Price: ${selectedPrice || "N/A"}
+                  ₹ {selectedPrice || "N/A"}
                 </Typography>
                 <Box
                   sx={{
@@ -235,45 +308,12 @@ const ProductCard = ({ data }) => {
                     justifyContent: "center",
                   }}
                 >
-                  {getUniqueColors(item.images).map((color, i) => (
-                    <Tooltip
-                      title={
-                        availableColorsForSize.has(color)
-                          ? ""
-                          : "This Is Currently Unavailable"
-                      }
-                      arrow
-                      key={i}
-                    >
-                      <Box
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          availableColorsForSize.has(color) &&
-                            setSelectedColor(color);
-                        }}
-                        sx={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
-                          backgroundColor: color.toLowerCase(),
-                          marginLeft: 1,
-                          textAlign: "center",
-                          boxShadow: availableColorsForSize.has(color)
-                            ? "0 0 5px rgba(0, 0, 0, 0.5)"
-                            : "0 0 5px rgba(255, 0, 0, 0.5)",
-                          cursor: availableColorsForSize.has(color)
-                            ? "pointer"
-                            : "not-allowed",
-                          border: `2px solid ${
-                            selectedColor.toLowerCase() === color.toLowerCase()
-                              ? "#000"
-                              : "#f2f2f2"
-                          }`,
-                          opacity: availableColorsForSize.has(color) ? 1 : 0.3,
-                        }}
-                      />
-                    </Tooltip>
-                  ))}
+                  <ColorSelector
+                    colors={getUniqueColors(item.images)} // Pass the unique colors array
+                    availableColors={availableColorsForSize} // Pass the available colors set
+                    selectedColor={selectedColor} // Pass the currently selected color
+                    setSelectedColor={setSelectedColor} // Pass the function to update the selected color
+                  />
                 </Box>
 
                 <Box
@@ -284,51 +324,12 @@ const ProductCard = ({ data }) => {
                     justifyContent: "center",
                   }}
                 >
-                  {getUniqueSizes(item.details).map((size, i) => (
-                    <Box
-                      key={i}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedSize(size);
-                      }}
-                      sx={{
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        backgroundColor:
-                          selectedSize === size ? "#000" : "#f0f0f0",
-                        color: selectedSize === size ? "#fff" : "#000",
-                        marginLeft: 1,
-                        cursor: "pointer",
-                        border: `2px solid ${
-                          selectedSize === size ? "#000" : "#ddd"
-                        }`,
-                        fontSize: "0.75rem",
-                        boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
-                        "&:hover": {
-                          backgroundColor:
-                            selectedSize === size ? "#333" : "#e0e0e0",
-                        },
-                      }}
-                    >
-                      {size}
-                    </Box>
-                  ))}
+                  <SizeSelector
+                    sizes={getUniqueSizes(item.details)}
+                    selectedSize={selectedSize}
+                    setSelectedSize={setSelectedSize}
+                  />
                 </Box>
-
-                <Typography
-                  variant="caption"
-                  component="div"
-                  sx={{
-                    display: "inline-block",
-                    bgcolor: "#FFCCCB",
-                    fontSize: ["0.75rem", "0.75rem", "1rem"],
-                    color: selectedStock < 20 ? "red" : "",
-                    mb: 1,
-                    px: 2,
-                  }}
-                >
-                  {selectedStock < 20 ? "only few left" : ""}
-                </Typography>
               </CardContent>
             </Card>
           </Grid>
