@@ -10,46 +10,58 @@ const ColorSelector = ({
   console.log("colors----------", colors);
 
   return (
-    <Box display={'flex'}>
+    <Box display={"flex"}>
       {console.log("available colors", availableColors)}
 
       {colors.map((color, i) => (
         <Tooltip
           title={
-            availableColors.has(color.toLowerCase())
+            availableColors && availableColors.has(color.toLowerCase())
               ? ""
               : "This Is Currently Unavailable"
           }
           arrow
           key={i}
         >
-          {/* Ensure Tooltip wraps only the Box component */}
           <Box
             onClick={(e) => {
               e.stopPropagation();
-              if (availableColors.has(color)) {
+              if (availableColors && availableColors.has(color)) {
                 setSelectedColor(color);
               }
             }}
             sx={{
-              width: "20px",
-              height: "20px",
+              width: "24px",
+              height: "24px",
               borderRadius: "50%",
-              backgroundColor: color.toLowerCase(),
+              backgroundColor: "transparent",
               marginLeft: 1,
-              textAlign: "center",
-              boxShadow: availableColors.has(color)
-                ? "0 0 5px rgba(0, 0, 0, 0.5)"
-                : "0 0 5px rgba(255, 0, 0, 0.5)",
-              cursor: availableColors.has(color) ? "pointer" : "not-allowed",
-              border: `2px solid ${
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor:
+                availableColors && availableColors.has(color)
+                  ? "pointer"
+                  : "not-allowed",
+              border:
                 selectedColor.toLowerCase() === color.toLowerCase()
-                  ? "#000"
-                  : "#f2f2f2"
-              }`,
-              opacity: availableColors.has(color) ? 1 : 0.3,
+                  ? "2px solid black"
+                  : "2px solid transparent",
+              boxShadow:
+                availableColors && availableColors.has(color)
+                  ? "0 0 2px rgba(0, 0, 0, 0.5)"
+                  : "0 0 2px rgba(128, 128, 128, 0.5)",
             }}
-          />
+          >
+            <Box
+              sx={{
+                width: "12px",
+                height: "12px",
+                borderRadius: "50%",
+                backgroundColor: color.toLowerCase(),
+              }}
+            />
+          </Box>
         </Tooltip>
       ))}
     </Box>

@@ -24,6 +24,7 @@ const Styles = () => ({
   },
   containerBox: {
     overflowX: "auto",
+    display: "inline-block"
   },
   flexContainer: {
     display: "flex",

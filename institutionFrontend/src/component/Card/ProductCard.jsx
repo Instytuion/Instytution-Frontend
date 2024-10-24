@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {
   Card,
   CardMedia,
@@ -8,7 +8,7 @@ import {
   Box,
   Tooltip,
 } from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {Carousel} from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import {
@@ -16,7 +16,6 @@ import {
   ArrowForwardIos,
   FavoriteBorder,
   Favorite,
-  Share,
 } from "@mui/icons-material";
 import ColorSelector from "../Products/ColorSelector";
 import {
@@ -27,38 +26,33 @@ import {
   getDetailsByColorAndSize,
 } from "../../utils/productUtils";
 import SizeSelector from "../Products/SizeSelector";
+import {useDispatch, useSelector} from "react-redux";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../redux/slices/WishlistSlice";
+import WishlistServices from "../../services/user/Wishlist";
+import useToast from "../../hooks/useToast";
 
 const ProductCard = ({data}) => {
-  console.log("data from propes to prdct card is ", data);
-
-  const [isFavorite, setIsFavorite] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const wishlistItems = useSelector((state) => state.wishlist.wishlists);
+  const isAuthenticated = useSelector(
+    (state) => state.userAuth.isAuthenticated
+  );
+  const showToast = useToast();
+  const location = useLocation();
+
   const getDetails = (id) => {
-    return data.filter((item) => item.id == id);
+    return data.filter((item) => item.id === id);
   };
+
   const handleCardClick = (item) => {
-    console.log("Clicked Product: ", item.name);
     navigate(`/product/${item.id}`, {
       state: {productData: getDetails(item.id)},
     });
   };
-
-  // const getUniqueColors = (images) => {
-  //   const colorSet = new Set(images.map((img) => img.color));
-  //   return [...colorSet];
-  // };
-
-  // const getUniqueSizes = (details) => {
-  //   const sizeSet = new Set(
-  //     details.map((detail) => detail.size).filter((size) => size)
-  //   );
-  //   return [...sizeSet];
-  // };
-
-  // const getAvailableColorsForSize = (item, size) => {
-  //   const sizeDetails = item.details.filter((detail) => detail.size === size);
-  //   return new Set(sizeDetails.map((detail) => detail.color));
-  // };
 
   return (
     <Grid container spacing={2} sx={{padding: 2}}>
@@ -75,12 +69,7 @@ const ProductCard = ({data}) => {
         const [selectedStock, setSelectedStock] = useState(
           item.details && item.details.length > 0 ? item.details[0].stock : 0
         );
-
-        // const getImagesBySelectedColor = () => {
-        //   return item.images.filter(
-        //     (img) => img.color.toLowerCase() === selectedColor.toLowerCase()
-        //   );
-        // };
+        const [isWishlisted, setIsWishlisted] = useState(false);
 
         const colorImages = getImagesBySelectedColor(item, selectedColor);
         const availableColorsForSize = getAvailableColorsForSize(
@@ -88,27 +77,58 @@ const ProductCard = ({data}) => {
           selectedSize
         );
 
-        // price and stock
-        const updatedDetails = getDetailsByColorAndSize(
-          item,
-          selectedColor,
-          selectedSize
-        );
+        // Update the price and stock when color/size changes
+        const updatedDetails = useMemo(() => {
+          return getDetailsByColorAndSize(item, selectedColor, selectedSize);
+        }, [item, selectedColor, selectedSize]);
 
+
+        // Update wishlist state based on selected color/size combination
         useEffect(() => {
-          const sizeDetail = item.details.find(
-            (detail) => detail.size === selectedSize
-          );
-          if (sizeDetail) {
-            setSelectedPrice(sizeDetail.price);
-            setSelectedStock(sizeDetail.stock);
+          if (updatedDetails) {
+            const isInWishlist = wishlistItems.some(
+              (wishItem) => wishItem.product.id === updatedDetails.id
+            );
+            setIsWishlisted(isInWishlist);
+          }
+        }, [wishlistItems, updatedDetails]);
+
+        const handleWishlistToggle = async (e) => {
+          e.stopPropagation();
+          if (!isAuthenticated) {
+            showToast("Login Required", "error");
+            navigate("/login", {state: {from: location.pathname}});
+            return;
           }
 
+          setIsWishlisted(!isWishlisted);
+
+          try {
+            if (isWishlisted) {
+              const wishlistItem = wishlistItems.find(
+                (wishItem) => wishItem.product.id === updatedDetails.id
+              );
+              if (wishlistItem) {
+                await WishlistServices.deleteWishlist(wishlistItem.id);
+                dispatch(removeFromWishlist(wishlistItem.id));
+              }
+            } else {
+              const response = await WishlistServices.addWishlist(
+                updatedDetails.id
+              );
+              dispatch(addToWishlist(response));
+            }
+          } catch (err) {
+            console.error(err);
+            setIsWishlisted(isWishlisted);
+          }
+        };
+
+        useEffect(() => {
           if (updatedDetails) {
             setSelectedPrice(updatedDetails.price);
             setSelectedStock(updatedDetails.stock);
           }
-
           if (
             !availableColorsForSize.has(selectedColor) &&
             availableColorsForSize.size > 0
@@ -116,7 +136,12 @@ const ProductCard = ({data}) => {
             const firstAvailableColor = [...availableColorsForSize][0];
             setSelectedColor(firstAvailableColor);
           }
-        }, [selectedSize, availableColorsForSize, selectedColor, item.details]);
+        }, [
+          selectedSize,
+          availableColorsForSize,
+          selectedColor,
+          updatedDetails,
+        ]);
 
         return (
           <Grid item xs={6} md={6} lg={4} gap={1} key={index}>
@@ -151,13 +176,14 @@ const ProductCard = ({data}) => {
                   zIndex: 10,
                 }}
               >
-                {selectedStock < 20 ? "only few left" : ""}
+                {selectedStock < 20 ? "Only a few left" : ""}
               </Typography>
 
-              {/* wishList icon */}
-
+              {/* Wishlist Icon */}
               <Tooltip
-                title={isFavorite ? "Remove from Wishlist" : "Add to Wishlist"}
+                title={
+                  isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"
+                }
               >
                 <Box
                   sx={{
@@ -165,15 +191,12 @@ const ProductCard = ({data}) => {
                     top: 15,
                     right: 5,
                     cursor: "pointer",
-                    color: isFavorite ? "red" : "inherit",
+                    color: isWishlisted ? "red" : "inherit",
                     zIndex: 10,
                   }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsFavorite((prev) => !prev);
-                  }}
+                  onClick={handleWishlistToggle}
                 >
-                  {isFavorite ? <Favorite /> : <FavoriteBorder />}
+                  {isWishlisted ? <Favorite /> : <FavoriteBorder />}
                 </Box>
               </Tooltip>
 
@@ -216,7 +239,7 @@ const ProductCard = ({data}) => {
                     hasNext && (
                       <ArrowForwardIos
                         onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation on arrow click
+                          e.stopPropagation();
                           clickHandler();
                         }}
                         className="arrow"
@@ -280,10 +303,10 @@ const ProductCard = ({data}) => {
                     fontSize: ["1rem", "1rem", "1.1rem"],
                     fontWeight: "bold",
                     mb: 1,
-                    whiteSpace: "nowrap", // Prevents text wrapping
-                    overflow: "hidden", // Hides overflow text
-                    textOverflow: "ellipsis", // Shows ellipsis for truncated text
-                    mx: "auto", // Centers the text block
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    mx: "auto",
                   }}
                 >
                   {item.name}
@@ -306,24 +329,16 @@ const ProductCard = ({data}) => {
                     alignItems: "center",
                     mb: 2,
                     justifyContent: "center",
+                    flexDirection: "column",
+                    gap: 1,
                   }}
                 >
                   <ColorSelector
-                    colors={getUniqueColors(item.images)} // Pass the unique colors array
-                    availableColors={availableColorsForSize} // Pass the available colors set
-                    selectedColor={selectedColor} // Pass the currently selected color
-                    setSelectedColor={setSelectedColor} // Pass the function to update the selected color
+                    colors={getUniqueColors(item.images)}
+                    availableColors={availableColorsForSize}
+                    selectedColor={selectedColor}
+                    setSelectedColor={setSelectedColor}
                   />
-                </Box>
-
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 2,
-                    justifyContent: "center",
-                  }}
-                >
                   <SizeSelector
                     sizes={getUniqueSizes(item.details)}
                     selectedSize={selectedSize}
