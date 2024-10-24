@@ -7,9 +7,10 @@ import {
   Button,
   Grid,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import ProductImages from "../../../component/ProductImages/ProductImage";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
 import ColorSelector from "../../../component/Products/ColorSelector";
 import {
@@ -21,41 +22,44 @@ import {
 } from "../../../utils/productUtils";
 import { useEffect, useState } from "react";
 import SizeSelector from "../../../component/Products/SizeSelector";
-import { Favorite, Share } from "@mui/icons-material";
-import CartServices from "../../../services/user/ecommerce/CartServices";
-import CounterButtons from "../../../component/Button/CounterButtons";
+import {Favorite, FavoriteBorder, Share} from "@mui/icons-material";
+import {useQuery} from "react-query";
+import CartLoader from "../../../component/Spinner/CartLoader";
+import ProductsServices from "../../../services/user/ProductServices";
+import {useDispatch, useSelector} from "react-redux";
+import WishlistServices from "../../../services/user/Wishlist";
+import { addToWishlist, removeFromWishlist } from "../../../redux/slices/WishlistSlice";
 
 const ProductDetailPage = () => {
-  const location = useLocation();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const { productData } = location.state || {};
-  const product = productData[0];
+  const {id} = useParams();
 
-  // Product details initialization
-  const hasSizes = product?.details.some((detail) => detail.size);
-  const [selectedSize, setSelectedSize] = useState(
-    hasSizes ? product.details[0].size : ""
-  );
-  const [selectedColor, setSelectedColor] = useState(
-    product.details[0].color || ""
-  );
-  const [selectedPrice, setSelectedPrice] = useState(
-    product.details[0].price || ""
-  );
-  const [selectedStock, setSelectedStock] = useState(
-    product.details[0].stock || ""
-  );
+  const {
+    data: product,
+    error,
+    isLoading,
+  } = useQuery(["product", id], () => ProductsServices.getProduct(id), {
+    enabled: !!id,
+    refetchOnWindowFocus: false,
+  });
 
-  const colorImages = getImagesBySelectedColor(product, selectedColor);
-  const availableColorsForSize = hasSizes
-    ? getAvailableColorsForSize(product, selectedSize)
-    : new Set(getUniqueColors(product?.images));
-
-  const updatedDetails = getDetailsByColorAndSize(
-    product,
-    selectedColor,
-    selectedSize
+  const wishlistItems = useSelector((state) => state.wishlist.wishlists);
+  const isAuthenticated = useSelector(
+    (state) => state.userAuth.isAuthenticated
   );
+  const dispatch =  useDispatch();
+  const navigate = useNavigate()
+
+
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedPrice, setSelectedPrice] = useState("");
+  const [selectedStock, setSelectedStock] = useState("");
+  const [hasSizes, setHasSizes] = useState(false);
+  const [updatedDetails, setUpdatedDetails] = useState(null);
+  const [availableColorsForSizeState, setavailableColorsForSizeState] =
+    useState(null);
 
   const handleCart = async () => {
     try {
@@ -67,33 +71,96 @@ const ProductDetailPage = () => {
   };
 
   useEffect(() => {
-    if (hasSizes) {
-      const sizeDetail = product?.details.find(
-        (detail) => detail.size === selectedSize
+    if (product) {
+      const sizesForProduct = product.details?.some((detail) => detail.size);
+      setHasSizes(sizesForProduct);
+      if (sizesForProduct) {
+        setSelectedSize(product.details[0].size);
+      } else {
+        setSelectedSize("");
+      }
+      setSelectedColor(product.details[0].color);
+      setSelectedPrice(product.details[0].price);
+      setSelectedStock(product.details[0].stock);
+    }
+  }, [product]);
+
+  // Effect to update details when product, selectedColor, or selectedSize changes
+  useEffect(() => {
+    if ((product && selectedColor) || selectedSize) {
+      const details = getDetailsByColorAndSize(
+        product,
+        selectedColor,
+        selectedSize
       );
-      if (sizeDetail) {
-        setSelectedPrice(sizeDetail.price);
-        setSelectedStock(sizeDetail.stock);
+      setUpdatedDetails(details);
+      if (details) {
+        console.log("price and stock is :", details.price, details.stock);
+        setSelectedPrice(details.price);
+        setSelectedStock(details.stock);
+      }
+
+      const availableColorsForSize = product?.details?.some(
+        (detail) => detail.size
+      )
+        ? new Set(getAvailableColorsForSize(product, selectedSize))
+        : new Set(getUniqueColors(product?.images));
+
+      if (
+        !availableColorsForSize.has(selectedColor) &&
+        availableColorsForSize.size > 0
+      ) {
+        setavailableColorsForSizeState(availableColorsForSize);
+        const firstAvailableColor = [...availableColorsForSize][0];
+        setSelectedColor(firstAvailableColor);
+      } else {
+        setavailableColorsForSizeState(availableColorsForSize);
       }
     }
-    if (updatedDetails) {
-      setSelectedPrice(updatedDetails.price);
-      setSelectedStock(updatedDetails.stock);
+  }, [product, selectedColor, selectedSize]);
+
+  useEffect(() => {
+    if (wishlistItems && updatedDetails) {
+      const isWishlistedItem = wishlistItems.some(
+        (item) => item.product.id === updatedDetails.id
+      );
+      setIsWishlisted(isWishlistedItem);
+    }
+  }, [wishlistItems, updatedDetails]);
+
+  if (isLoading) return <CartLoader />;
+  if (error || !product) return <PageNotFoundPage />;
+
+  const colorImages = getImagesBySelectedColor(product, selectedColor);
+
+  const handleWishlistToggle = async (e) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      showToast("Login Required", "error");
+      navigate("/login", {state: {from: location.pathname}});
+      return;
     }
 
-    if (hasSizes && !availableColorsForSize.has(selectedColor)) {
-      const firstAvailableColor = [...availableColorsForSize][0];
-      setSelectedColor(firstAvailableColor);
-    }
-  }, [
-    selectedSize,
-    availableColorsForSize,
-    selectedColor,
-    product.details,
-    hasSizes,
-  ]);
+    setIsWishlisted(!isWishlisted);
 
-  if (!productData) return <PageNotFoundPage />;
+    try {
+      if (isWishlisted) {
+        const wishlistItem = wishlistItems.find(
+          (wishItem) => wishItem.product.id === updatedDetails.id
+        );
+        if (wishlistItem) {
+          await WishlistServices.deleteWishlist(wishlistItem.id);
+          dispatch(removeFromWishlist(wishlistItem.id));
+        }
+      } else {
+        const response = await WishlistServices.addWishlist(updatedDetails.id);
+        dispatch(addToWishlist(response));
+      }
+    } catch (err) {
+      console.error(err);
+      setIsWishlisted(isWishlisted);
+    }
+  };
 
   return (
     <Container
@@ -105,84 +172,96 @@ const ProductDetailPage = () => {
         marginTop: 4,
       }}
     >
-      <Grid container spacing={4}>
+      <Grid container spacing={2}>
         {/* Image Section */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={6} sx={{borderRight: 1, borderColor: "divider"}}>
           <ProductImages images={colorImages} />
         </Grid>
 
         {/* Details Section */}
-        <Grid item xs={12} md={6} sx={{ position: "relative" }}>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              position: "absolute",
-              top: 25,
-              right: 5,
-            }}
-          >
-            <IconButton>
-              <Favorite />
-            </IconButton>
-            <IconButton>
-              <Share />
-            </IconButton>
-          </Box>
+        <Grid item xs={12} md={6} sx={{position: "relative"}}>
+          <Box pl={4}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                position: "absolute",
+                top: 25,
+                right: 5,
+              }}
+            >
+              <IconButton onClick={handleWishlistToggle}>
+                {isWishlisted ? (
+                  <Favorite sx={{color: "red"}} />
+                ) : (
+                  <FavoriteBorder />
+                )}
+              </IconButton>
+              <IconButton>
+                <Share />
+              </IconButton>
+            </Box>
 
-          <Stack spacing={3}>
-            {/* Product Name */}
-            <Typography variant="h4" fontWeight="bold">
-              {product.name}
-            </Typography>
+            <Stack spacing={2}>
+              {/* Product Name */}
+              <Typography variant="h5" fontWeight="bold">
+                {product.name}
+              </Typography>
 
-            {/* Product Price */}
-            <Typography variant="h5" color="primary">
-              ₹ {selectedPrice}
-            </Typography>
+              {/* Product Price */}
+              <Typography variant="h5">₹ {selectedPrice}</Typography>
 
-            {/* Horizontal Rule */}
-            <hr style={{ border: "1px solid #e0e0e0", margin: "20px 0" }} />
+              {/* Horizontal Rule */}
+              <hr style={{border: "1px solid #e0e0e0", margin: "20px 0"}} />
 
-            {/* Color and Size Selection */}
-            <Stack direction="row" spacing={2}>
-              <Box sx={{ width: "50%" }}>
-                <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-                  Color
-                </Typography>
-                <ColorSelector
-                  colors={getUniqueColors(product?.images)}
-                  availableColors={availableColorsForSize}
-                  selectedColor={selectedColor}
-                  setSelectedColor={setSelectedColor}
-                />
-              </Box>
-
-              {hasSizes && (
-                <Box sx={{ width: "50%" }}>
+              {/* Color and Size Selection */}
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{margin: "0px !important"}}
+              >
+                <Box sx={{width: "50%"}}>
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
                     gutterBottom
                   >
-                    Size
+                    Color
                   </Typography>
-                  <SizeSelector
-                    sizes={getUniqueSizes(product.details)}
-                    selectedSize={selectedSize}
-                    setSelectedSize={setSelectedSize}
+                  <ColorSelector
+                    colors={getUniqueColors(product?.images)}
+                    availableColors={availableColorsForSizeState}
+                    selectedColor={selectedColor}
+                    setSelectedColor={setSelectedColor}
                   />
                 </Box>
-              )}
-            </Stack>
 
-            {/* Stock Availability */}
-            <Typography variant="body1" color="textSecondary">
-              {selectedStock > 0
-                ? `In Stock (${selectedStock} available)`
-                : "Out of Stock"}
-            </Typography>
-          </Stack>
+                {hasSizes && (
+                  <Box sx={{width: "50%"}}>
+                    <Typography
+                      variant="subtitle1"
+                      fontWeight="bold"
+                      gutterBottom
+                    >
+                      Size
+                    </Typography>
+                    <SizeSelector
+                      sizes={getUniqueSizes(product.details)}
+                      selectedSize={selectedSize}
+                      setSelectedSize={setSelectedSize}
+                    />
+                  </Box>
+                )}
+              </Stack>
+
+              {/* Stock Availability */}
+              <Typography variant="body1" color="textSecondary">
+                {selectedStock > 0
+                  ? `In Stock (${selectedStock} available)`
+                  : "Out of Stock"}
+              </Typography>
+            </Stack>
+          </Box>
         </Grid>
 
         {/* Buttons Section */}

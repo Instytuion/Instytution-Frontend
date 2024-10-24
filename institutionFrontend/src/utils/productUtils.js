@@ -35,6 +35,7 @@ export const getDetailsByColorAndSize = (
     return {
       price: matchedDetail.price,
       stock: matchedDetail.stock,
+      id:matchedDetail.id
     };
   }
 
@@ -47,6 +48,7 @@ export const getDetailsByColorAndSize = (
     return {
       price: matchedDetail.price,
       stock: matchedDetail.stock,
+      id: matchedDetail.id,
     };
   }
 };
