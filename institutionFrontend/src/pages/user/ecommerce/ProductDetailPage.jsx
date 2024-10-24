@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import ProductImages from "../../../component/ProductImages/ProductImage";
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
 import ColorSelector from "../../../component/Products/ColorSelector";
 import {
@@ -19,14 +19,16 @@ import {
   getUniqueColors,
   getUniqueSizes,
 } from "../../../utils/productUtils";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import SizeSelector from "../../../component/Products/SizeSelector";
-import {Favorite, Share} from "@mui/icons-material";
+import { Favorite, Share } from "@mui/icons-material";
+import CartServices from "../../../services/user/ecommerce/CartServices";
+import CounterButtons from "../../../component/Button/CounterButtons";
 
 const ProductDetailPage = () => {
   const location = useLocation();
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const {productData} = location.state || {};
+  const { productData } = location.state || {};
   const product = productData[0];
 
   // Product details initialization
@@ -54,6 +56,15 @@ const ProductDetailPage = () => {
     selectedColor,
     selectedSize
   );
+
+  const handleCart = async () => {
+    try {
+      const response = await CartServices.createCart(product.id);
+      console.log("Response from add to cart is :", response);
+    } catch (error) {
+      console.log("Error is :", error);
+    }
+  };
 
   useEffect(() => {
     if (hasSizes) {
@@ -101,9 +112,16 @@ const ProductDetailPage = () => {
         </Grid>
 
         {/* Details Section */}
-        <Grid item xs={12} md={6} sx={{position: "relative"}}>
-          <Box sx={{display: "flex", gap: 2, position:"absolute", top:25, right:5}}>
-
+        <Grid item xs={12} md={6} sx={{ position: "relative" }}>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              position: "absolute",
+              top: 25,
+              right: 5,
+            }}
+          >
             <IconButton>
               <Favorite />
             </IconButton>
@@ -124,11 +142,11 @@ const ProductDetailPage = () => {
             </Typography>
 
             {/* Horizontal Rule */}
-            <hr style={{border: "1px solid #e0e0e0", margin: "20px 0"}} />
+            <hr style={{ border: "1px solid #e0e0e0", margin: "20px 0" }} />
 
             {/* Color and Size Selection */}
             <Stack direction="row" spacing={2}>
-              <Box sx={{width: "50%"}}>
+              <Box sx={{ width: "50%" }}>
                 <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
                   Color
                 </Typography>
@@ -141,7 +159,7 @@ const ProductDetailPage = () => {
               </Box>
 
               {hasSizes && (
-                <Box sx={{width: "50%"}}>
+                <Box sx={{ width: "50%" }}>
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
@@ -173,6 +191,7 @@ const ProductDetailPage = () => {
             <Button
               variant="contained"
               color="primary"
+              onClick={handleCart}
               sx={{
                 width: "100%",
                 padding: "12px 0",
