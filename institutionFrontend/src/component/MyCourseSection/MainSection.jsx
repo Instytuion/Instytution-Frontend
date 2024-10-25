@@ -164,7 +164,7 @@ const MainComponent = () => {
               }}
               >
                 <IconButton
-                onClick={()=> navigate(`/courses/mycourses/classRoom/${selectedCourse.batch}`)}
+                onClick={()=> navigate(`/courses/mycourses/classRoom/${selectedCourse.name}`)}
                 >
                   <LiveTvIcon />Live
                 </IconButton>
