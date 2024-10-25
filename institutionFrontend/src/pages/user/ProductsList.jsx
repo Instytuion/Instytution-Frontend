@@ -22,10 +22,9 @@ const ProductsList = () => {
     () => ProductsServices.getProducts(category, filterOptions),
     {
       enabled: !!category,
-      refetchOnWindowFocus: false, 
+      refetchOnWindowFocus: false,
     }
   );
-
 
   console.log("productData,----------------", data);
 
@@ -38,8 +37,8 @@ const ProductsList = () => {
   };
 
   const handleFilterChange = (filters) => {
-    setFilterOptions(filters); 
-    setOpenDrawer(false)
+    setFilterOptions(filters);
+    setOpenDrawer(false);
   };
 
   return (
@@ -71,7 +70,7 @@ const ProductsList = () => {
           />
         </Box>
 
-        <Box width={isMobile ? "100%" : "75%"}>
+        <Box width={isMobile ? "100%" : "80%"} sx={{margin: "auto"}}>
           {isLoading && <CartLoader />}
           {/* {error && <div>{error.response?.data?.error}</div>}
           {data?.map((item) => {
@@ -79,9 +78,7 @@ const ProductsList = () => {
               <Typography key={item.id}>{item.name}</Typography> // Display each product's name
             );
           })}{" "} */}
-          {data && data.length > 0 && (
-            <ProductCard data={data} />
-          )}
+          {data && data.length > 0 && <ProductCard data={data} />}
         </Box>
       </Stack>
     </>
