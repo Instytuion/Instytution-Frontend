@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { Box, Button, Container, Grid, IconButton, Typography } from '@mui/material'
+import { Box, Button, Container, Grid, IconButton, List, ListItem, Typography } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import useToast from '../../hooks/useToast';
+import {refreshToken} from '../../utils/axiosFunctions'
 
 
 const TURN_USERNAME = import.meta.env.VITE_TURN_USERNAME;
@@ -49,17 +50,18 @@ const InstructorClassRoom = () => {
     const theme = useTheme();
     const {batchName} = useParams();
     let user = useSelector((state)=> state.userAuth.email);
-    const accessToken = useSelector((state)=> state.userAuth.accessToken);
+    let accessToken = useSelector((state)=> state.userAuth.accessToken);
     const [btnOpenClass, setBtnOpenClass] = useState("Open Class Room")
     const [isConnecting, setIsConnecting] = useState(false);
     const [videoOff, setVideoOff] = useState({[user]: false});
     const [audioMute, setAudioMute] = useState({[user]: false});
     const localStream = useRef(null);
     const remoteStream = useRef(null);
-    const videoStreams = useRef({ [user]: React.createRef() });
-    const [videoList, setVideoList] = useState([user]);
+    const videoStreams = useRef({[user]: React.createRef()});
+    const [videoList, setVideoList] = useState([]);
     const mapPeers = useRef({});
-    const webSocket = useRef(null)
+    const webSocket = useRef(null);
+    const [dcMsg, setDcMsg] = useState([])
     const showToast = useToast();
 
     //let localStream = new MediaStream();
@@ -82,7 +84,7 @@ const InstructorClassRoom = () => {
 
         let userMedia = navigator.mediaDevices.getUserMedia(constrains)
                 .then(stream =>{
-                    if (videoStreams.current[user] && videoStreams.current[user].current) {
+                    if (videoStreams.current[user]) {
                         localStream.current = stream
                         videoStreams.current[user].current.srcObject = localStream.current;
                         videoStreams.current[user].current.muted = true;
@@ -94,11 +96,15 @@ const InstructorClassRoom = () => {
 
         // Cleanup WebSocket on component unmount
         return () => {
+            console.log("cleanup function called...");
             if (webSocket.current) {
                 webSocket.current.close();
             }
             if (localStream.current) {
                 localStream.current.getTracks().forEach(track => track.stop());
+            }
+            if (remoteStream.current) {
+                remoteStream.current.getTracks().forEach(track => track.stop());
             }
         };
 
@@ -140,8 +146,22 @@ const InstructorClassRoom = () => {
                         delete videoStreams.current[peerUserName];
                     }
                 });
-                setVideoList(prev=> [user])
+
+                //close each peer connection
+                Object.keys(mapPeers.current).forEach(peerUserName => {
+                    let peer = mapPeers.current[peerUserName][0];
+                    let dc = mapPeers.current[peerUserName][1];
+                    if (peer && peer.connectionState !== "closed") {
+                        peer.close();
+                    }
+                
+                    if (dc && dc.readyState !== "closed") {
+                        dc.close();
+                    }
+                });
+                setVideoList(prev=> [])
                 mapPeers.current = {}
+                setDcMsg([])
             };
 
             webSocket.current.onerror = (error) => {
@@ -167,6 +187,16 @@ const InstructorClassRoom = () => {
         const action = data["action"]
         const peerUserName = data["user"]
         const student_channel_name = data["student_channel_name"]
+
+        if(message == "Unautherized Entry. Try again"){
+            showToast(message, "error", 3000)
+            try{
+                accessToken = refreshToken();
+            }
+            catch(error){
+                console.log("error while refrshing token at instructor room", error);                
+            }            
+        }
         
         if(message == "Class room opened."){
             showToast(message, "success", 3000)
@@ -212,6 +242,12 @@ const InstructorClassRoom = () => {
             peer.setRemoteDescription(answer);
             return
         }
+        if(action == 'student-close'){
+            console.log("student-close action received for student", peerUserName);
+            setVideoList(prevList => prevList.filter(user => user !== peerUserName));
+            showToast(`${peerUserName} left or disconnected`, "error", 3000)
+            return
+        }
         if (action === 'ice-candidate') {
             let candidate = new RTCIceCandidate(data.candidate);
             console.log("New ICE candidate received from student - ",candidate);
@@ -247,12 +283,25 @@ const InstructorClassRoom = () => {
         };
         setVideoList((prev)=> [...prev, peerUserName]);
 
+        let dc = peer.createDataChannel("channel");
+        dc.onmessage = (event) => {
+            console.log(`Received dc message from student ${peerUserName}: ${event.data}`);
+            setDcMsg(prev=> [...prev, event.data])
+        };
+    
+        dc.onopen = () => {
+            console.log("Data channel opened with student:", peerUserName);
+        };
+    
+        dc.onclose = () => {
+            console.log("Data channel closed with student:", peerUserName);
+        };
+
         peer.oniceconnectionstatechange = () => {
             console.log('ICE connection state changed:', peer.iceConnectionState);
             let iceCS = peer.iceConnectionState;
             if (iceCS === "failed" || iceCS === "disconnected" || iceCS === "closed") {
                 console.error('ICE connection failed/closed/disconnected for student:', peerUserName);
-                setVideoList(prevList => prevList.filter(user => user !== peerUserName));
                 delete mapPeers.current[peerUserName];
                 delete videoStreams.current[peerUserName];
                 if(iceCS !== "closed"){
@@ -284,7 +333,7 @@ const InstructorClassRoom = () => {
                 return peer.setLocalDescription(o)
             })
             .then(()=>{
-                mapPeers.current[peerUserName] = [peer]
+                mapPeers.current[peerUserName] = [peer, dc]
                 console.log("local description set successfully");
                 const data = {
                     "action": "new-offer",
@@ -341,45 +390,168 @@ const InstructorClassRoom = () => {
         >
             {btnOpenClass}
         </Button>
-        <Grid container spacing={2} id="video-grid">
-            {videoList.map((user)=>(
-                <Grid item xs={12} sm={6} md={4} lg={3} key={user}>
-                    <Box
-                    id="video-wrapper"
-                    sx={{ 
-                        border: '1px solid black', 
-                        p: 1 ,
-                        backgroundColor: "gray"
-                    }}
-                    >
-                        <video 
-                        id="local-video"
-                        ref={videoStreams.current[user]}
-                        width={"100%"}
-                        autoPlay
-                        style={{marginBottom:10}}
-                        >
-        
-                        </video>
-                        <Box
-                        id="btn-mute-wrapper"
-                        >
-                            <IconButton 
-                            onClick={()=> handleMuteAudio(user)}
-                            sx={{ color: "white", py: 0 }}>
-                                {audioMute[user] ? <MicOffIcon /> : <MicIcon />}
-                            </IconButton>
-                            <IconButton 
-                            onClick={()=> handleVideoOff(user)}
-                            sx={{ color: "white",  py: 0}}>
-                                {videoOff[user] ? <VideocamOffIcon /> : <VideocamIcon />}
-                            </IconButton>
-                            <Typography component="span" color='white'>Name: {user}</Typography>
-                        </Box>
-                    </Box>                
+        <Box
+        sx={{
+            display: "flex",
+            flexDirection: ["column", "column", "row"],
+            gap: 1,
+        }}
+        >
+            <Box
+            id="student-videos"
+            sx={{ 
+                borderRadius: "20px",
+                border: '3px solid gray',
+                p: 1 ,
+                backgroundColor: "lightgray",
+                width: ["100%", "100%", "75%"],
+                minHeight: "80vh",                
+            }}
+            >
+                <Grid container spacing={2}>
+                    {Array.isArray(videoList) && videoList.length > 0 ? (
+                        videoList.map((peerUser)=>(
+                            <Grid item xs={12} md={6} lg={4} key={peerUser}>
+                                <Box
+                                id="video-wrapper"
+                                sx={{ 
+                                    border: '1px solid black',
+                                    borderRadius: "20px",
+                                    backgroundColor: "gray",
+                                    display: 'flex', // Use flexbox
+                                    flexDirection: 'column',
+                                    height: '300px',
+                                    overflowY: 'hidden',
+                                }}
+                                >
+                                    <video 
+                                    id="grid-video"
+                                    ref={videoStreams.current[peerUser]}
+                                    autoPlay
+                                    style={{
+                                        flex: '1 1 auto',
+                                        marginBottom:1,
+                                        borderTopLeftRadius: "20px",
+                                        borderTopRightRadius: "20px",
+                                        objectFit: "cover",
+                                        width: '100%',
+                                        maxHeight: '250px',
+                                    }}
+                                    >
+                                    </video>
+                                    <Box
+                                    id="students-btn-mute-wrapper"
+                                    >
+                                        <IconButton 
+                                        onClick={()=> handleMuteAudio(peerUser)}
+                                        sx={{ color: "white", py: 0 }}>
+                                            {audioMute[peerUser] ? <MicOffIcon /> : <MicIcon />}
+                                        </IconButton>
+                                        <IconButton 
+                                        onClick={()=> handleVideoOff(peerUser)}
+                                        sx={{ color: "white",  py: 0}}>
+                                            {videoOff[peerUser] ? <VideocamOffIcon /> : <VideocamIcon />}
+                                        </IconButton>
+                                        <Typography 
+                                        color='white' 
+                                        px={2}
+                                        sx={{
+                                            fontSize: [14, 14, 16],
+                                        }}
+                                        >
+                                            {peerUser}
+                                        </Typography>
+                                    </Box>
+                                </Box>                
+                            </Grid>
+                        ))) : (
+                            <Typography
+                            color='red'
+                            sx={{
+                                mx:"auto",
+                                p:3,
+                            }}
+                            >
+                                No students joined.
+                            </Typography>
+                        )
+                    }
                 </Grid>
-            ))}
-        </Grid>
+            </Box>
+
+            <Box
+            id="instructor-video"
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: ["100%", "100%", "25%"]
+            }}
+            >
+                <video 
+                id="local-video"
+                ref={videoStreams.current[user]}
+                width={"100%"}
+                autoPlay
+                style={{
+                    marginBottom:1,
+                    backgroundColor: "gray",
+                    borderRadius: "20px",
+                    border: '3px solid gray',
+                }}
+                >
+                </video>
+                <Box
+                id="instructor-btn-mute-wrapper"
+                >
+                    <IconButton 
+                    onClick={()=> handleMuteAudio(user)}
+                    sx={{ color: "black",  p: 0}}>
+                        {audioMute[user] ? <MicOffIcon /> : <MicIcon />}
+                    </IconButton>
+                    <IconButton 
+                    onClick={()=> handleVideoOff(user)}
+                    sx={{ color: "black",  p: 0, ml:2}}>
+                        {videoOff[user] ? <VideocamOffIcon /> : <VideocamIcon />}
+                    </IconButton>
+                </Box>
+            </Box>
+        </Box>
+        <Box
+        id="question-sec"
+        sx={{
+            borderRadius: "20px",
+            border: '3px solid gray',
+            mt: 1,
+            p:1,
+            minHeight: "100px",
+            maxHeight: "400px",
+            overflowY: "auto",
+        }}
+        >
+            <Typography
+            sx={{
+                borderBottom: "2px solid gray",
+                display:"inline-block",
+                mb:1,
+            }}
+            >
+                Questions
+            </Typography>
+            <List>
+                {dcMsg.length > 0 ? (
+                    dcMsg.map((msg, idx)=>(
+                        <ListItem key={idx}>
+                            {msg}
+                        </ListItem>
+                    ))
+                ) : (
+                    <ListItem>
+                        No questions yet.
+                    </ListItem>
+                )
+                }
+            </List>
+        </Box>
     </Container>
   )
 }
