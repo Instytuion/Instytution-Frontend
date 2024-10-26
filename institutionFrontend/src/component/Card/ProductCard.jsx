@@ -33,6 +33,14 @@ import {
 } from "../../redux/slices/WishlistSlice";
 import WishlistServices from "../../services/user/Wishlist";
 import useToast from "../../hooks/useToast";
+import {
+  PriceTag,
+  ProductName,
+  StockMessage,
+  StyledArrow,
+  StyledProductCard,
+} from "../StyledComponents/StyledProductComponents";
+import Styles from "./productCardStyle";
 
 const ProductCard = ({data}) => {
   const navigate = useNavigate();
@@ -43,6 +51,7 @@ const ProductCard = ({data}) => {
   );
   const showToast = useToast();
   const location = useLocation();
+  const styles = Styles();
 
   const getDetails = (id) => {
     return data.filter((item) => item.id === id);
@@ -82,7 +91,6 @@ const ProductCard = ({data}) => {
           return getDetailsByColorAndSize(item, selectedColor, selectedSize);
         }, [item, selectedColor, selectedSize]);
 
-
         // Update wishlist state based on selected color/size combination
         useEffect(() => {
           if (updatedDetails) {
@@ -102,6 +110,10 @@ const ProductCard = ({data}) => {
           }
 
           setIsWishlisted(!isWishlisted);
+          showToast(
+            isWishlisted ? "Removed from wishlist" : "Added to wishlist",
+            "success"
+          );
 
           try {
             if (isWishlisted) {
@@ -121,6 +133,7 @@ const ProductCard = ({data}) => {
           } catch (err) {
             console.error(err);
             setIsWishlisted(isWishlisted);
+            showToast("Failed to update wishlist. Please try again.", "error");
           }
         };
 
@@ -145,39 +158,13 @@ const ProductCard = ({data}) => {
 
         return (
           <Grid item xs={6} md={6} lg={4} gap={1} key={index}>
-            <Card
-              sx={{
-                bgcolor: "white",
-                display: "flex",
-                flexDirection: "column",
-                margin: "auto",
-                cursor: "pointer",
-                boxShadow: 1,
-                maxWidth: 290,
-                overflow: "hidden",
-                height: 360,
-                position: "relative",
-              }}
+            <StyledProductCard
+              cardheight={360}
               onClick={() => handleCardClick(item)}
             >
-              <Typography
-                variant="caption"
-                component="div"
-                sx={{
-                  display: "inline-block",
-                  bgcolor: "#FFCCCB",
-                  fontSize: ["0.75rem", "0.75rem", "1rem"],
-                  color: selectedStock < 20 ? "red" : "",
-                  mb: 1,
-                  px: 2,
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  zIndex: 10,
-                }}
-              >
+              <StockMessage stock={selectedStock}>
                 {selectedStock < 20 ? "Only a few left" : ""}
-              </Typography>
+              </StockMessage>
 
               {/* Wishlist Icon */}
               <Tooltip
@@ -186,28 +173,14 @@ const ProductCard = ({data}) => {
                 }
               >
                 <Box
-                  sx={{
-                    position: "absolute",
-                    top: 15,
-                    right: 5,
-                    cursor: "pointer",
-                    color: isWishlisted ? "red" : "inherit",
-                    zIndex: 10,
-                  }}
+                  sx={styles.favorite(isWishlisted)}
                   onClick={handleWishlistToggle}
                 >
                   {isWishlisted ? <Favorite /> : <FavoriteBorder />}
                 </Box>
               </Tooltip>
 
-              <Box
-                sx={{
-                  position: "relative",
-                  "&:hover .arrow": {
-                    opacity: 1,
-                  },
-                }}
-              >
+              <Box sx={{position: "relative", "&:hover .arrow": {opacity: 1}}}>
                 <Carousel
                   showThumbs={false}
                   showArrows={true}
@@ -215,45 +188,24 @@ const ProductCard = ({data}) => {
                   autoPlay={false}
                   renderArrowPrev={(clickHandler, hasPrev) =>
                     hasPrev && (
-                      <ArrowBackIos
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent navigation on arrow click
-                          clickHandler();
-                        }}
-                        className="arrow"
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          left: "10px",
-                          zIndex: 2,
-                          cursor: "pointer",
-                          color: "#000",
-                          fontSize: "30px",
-                          opacity: 0,
-                          transition: "opacity 0.3s",
-                        }}
-                      />
-                    )
-                  }
-                  renderArrowNext={(clickHandler, hasNext) =>
-                    hasNext && (
-                      <ArrowForwardIos
+                      <StyledArrow
                         onClick={(e) => {
                           e.stopPropagation();
                           clickHandler();
                         }}
                         className="arrow"
-                        sx={{
-                          position: "absolute",
-                          top: "50%",
-                          right: "10px",
-                          zIndex: 2,
-                          cursor: "pointer",
-                          color: "#000",
-                          fontSize: "30px",
-                          opacity: 0,
-                          transition: "opacity 0.3s",
+                      />
+                    )
+                  }
+                  renderArrowNext={(clickHandler, hasNext) =>
+                    hasNext && (
+                      <StyledArrow
+                        right
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clickHandler();
                         }}
+                        className="arrow"
                       />
                     )
                   }
@@ -265,14 +217,7 @@ const ProductCard = ({data}) => {
                           component="img"
                           image={img.image}
                           alt={item.name}
-                          sx={{
-                            height: 200,
-                            objectFit: "contain",
-                            transition: "transform 0.3s",
-                            "&:hover": {
-                              transform: "scale(1.05)",
-                            },
-                          }}
+                          sx={{height: 200, objectFit: "contain"}}
                         />
                       ))
                     : [
@@ -281,57 +226,26 @@ const ProductCard = ({data}) => {
                           component="img"
                           image="https://via.placeholder.com/300"
                           alt="Default Image"
-                          sx={{
-                            objectFit: "contain",
-                            height: 200,
-                          }}
+                          sx={{objectFit: "contain", height: 200}}
                         />,
                       ]}
                 </Carousel>
               </Box>
 
-              <CardContent
-                sx={{
-                  textAlign: "center",
-                  height: "13rem",
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  component="div"
-                  sx={{
-                    fontSize: ["1rem", "1rem", "1.1rem"],
-                    fontWeight: "bold",
-                    mb: 1,
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    mx: "auto",
-                  }}
-                >
+              <CardContent sx={{textAlign: "center", height: "13rem"}}>
+                <ProductName variant="h6" component="div">
                   {item.name}
-                </Typography>
+                </ProductName>
 
-                <Typography
+                <PriceTag
                   variant="body2"
                   component="div"
-                  sx={{
-                    fontSize: ["0.75rem", "0.75rem", "1rem"],
-                    color: "text.secondary",
-                    mb: 1,
-                  }}
                 >
                   ₹ {selectedPrice || "N/A"}
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mb: 2,
-                    justifyContent: "center",
-                    flexDirection: "column",
-                    gap: 1,
-                  }}
+                </PriceTag>
+
+                <Box 
+                  sx={styles.sizeAndColorWrapper}
                 >
                   <ColorSelector
                     colors={getUniqueColors(item.images)}
@@ -346,7 +260,7 @@ const ProductCard = ({data}) => {
                   />
                 </Box>
               </CardContent>
-            </Card>
+            </StyledProductCard>
           </Grid>
         );
       })}

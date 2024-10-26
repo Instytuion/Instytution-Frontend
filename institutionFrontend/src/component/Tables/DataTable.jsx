@@ -306,7 +306,7 @@ const CustomDataTable = ({
 
   const handleCloseConfirmModal = () => setOpenConfirmModal(false);
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (name) => {
     try {
       const response = await updateUserStatus(
         selectedUser.id,
