@@ -1,5 +1,6 @@
 import React from "react";
 import {Box, Tooltip} from "@mui/material";
+import style from "./style";
 
 const ColorSelector = ({
   colors,
@@ -7,7 +8,7 @@ const ColorSelector = ({
   selectedColor,
   setSelectedColor,
 }) => {
-  console.log("colors----------", colors);
+  const styles2 = style();
 
   return (
     <Box display={"flex"}>
@@ -30,36 +31,10 @@ const ColorSelector = ({
                 setSelectedColor(color);
               }
             }}
-            sx={{
-              width: "24px",
-              height: "24px",
-              borderRadius: "50%",
-              backgroundColor: "transparent",
-              marginLeft: 1,
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor:
-                availableColors && availableColors.has(color)
-                  ? "pointer"
-                  : "not-allowed",
-              border:
-                selectedColor.toLowerCase() === color.toLowerCase()
-                  ? "2px solid black"
-                  : "2px solid transparent",
-              boxShadow:
-                availableColors && availableColors.has(color)
-                  ? "0 0 2px rgba(0, 0, 0, 0.5)"
-                  : "0 0 2px rgba(128, 128, 128, 0.5)",
-            }}
+            sx={styles2.colorBox(availableColors, color, selectedColor)}
           >
             <Box
-              sx={{
-                width: "12px",
-                height: "12px",
-                borderRadius: "50%",
-                backgroundColor: color.toLowerCase(),
-              }}
+              sx={styles2.innerDot(color)}
             />
           </Box>
         </Tooltip>

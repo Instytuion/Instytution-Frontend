@@ -3,6 +3,7 @@ import logoutService from "../services/user/LogoutService";
 import {store} from "../redux/stores/store";
 import Cookies from "js-cookie";
 import { noAuthInstance } from "./axios";
+import { clearWishlist } from "../redux/slices/WishlistSlice";
 
 
 const getExpiryTime = () => {
@@ -29,7 +30,8 @@ const logoutUser = async () => {
     console.log("error while user logout api", error);
   }
   Cookies.remove("expiryTime", {path: "/"});
-  store.dispatch(logout()); // Dispatch logout to Redux
+  store.dispatch(logout());
+  store.dispatch(clearWishlist())
 };
 
 const refreshToken = async () => {
