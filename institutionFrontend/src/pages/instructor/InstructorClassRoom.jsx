@@ -10,6 +10,8 @@ import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import useToast from '../../hooks/useToast';
 import {refreshToken} from '../../utils/axiosFunctions'
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import ConfirmationModal from '../../component/Modals/ConfirmModal'
 
 
 const TURN_USERNAME = import.meta.env.VITE_TURN_USERNAME;
@@ -51,6 +53,10 @@ const InstructorClassRoom = () => {
     const {batchName} = useParams();
     let user = useSelector((state)=> state.userAuth.email);
     let accessToken = useSelector((state)=> state.userAuth.accessToken);
+    const [actionType, setActionType] = useState(null);
+    const [selectedPeer, setSelectedPeer] = useState(null);
+    const [selectedPeerChannel, setSelectedPeerChannel] = useState(null);
+    const isPermitted = useRef(false)
     const [btnOpenClass, setBtnOpenClass] = useState("Open Class Room")
     const [isConnecting, setIsConnecting] = useState(false);
     const [videoOff, setVideoOff] = useState({[user]: false});
@@ -63,6 +69,29 @@ const InstructorClassRoom = () => {
     const webSocket = useRef(null);
     const [dcMsg, setDcMsg] = useState([])
     const showToast = useToast();
+    const [openConfirmModal, setOpenConfirmModal] = useState(false);
+
+    const openStudentRemoveModal = (peerUser)=>{
+        setSelectedPeer(peerUser)
+        setActionType("Remove")
+        setOpenConfirmModal(true);
+    }
+    const handleConfirmModalClose = ()=> {
+        setOpenConfirmModal(false);        
+        if(!isPermitted.current && actionType == "Permit"){
+            const data = {
+                "student_channel_name": selectedPeerChannel,
+                "message": "student_dissallowed"
+            }
+            const dataStr = JSON.stringify(data)
+            webSocket.current.send(dataStr)
+        }
+        isPermitted.current = false;
+        setSelectedPeer(null);
+        setSelectedPeerChannel(null);
+        setActionType(null);
+    }
+    
 
     //let localStream = new MediaStream();
     let loc = window.location;
@@ -79,7 +108,9 @@ const InstructorClassRoom = () => {
                 height: { ideal: 720, max: 1080 },
                 facingMode: "user"
             },
-            "audio": true,
+            "audio": {
+                echoCancellation: true
+            },
         };
 
         let userMedia = navigator.mediaDevices.getUserMedia(constrains)
@@ -211,28 +242,11 @@ const InstructorClassRoom = () => {
             return;
         }
         if(action == "new-peer"){
-            console.log("new peer action recieved...");
-            console.log("peerUserName recieved is...", peerUserName);
-            const allowStudent = window.confirm(`Allow ${peerUserName} to join the class.`);
-            if(allowStudent){
-                const data = {
-                    "student_channel_name": student_channel_name,
-                    "message": "student_allowed"
-                }
-                const dataStr = JSON.stringify(data)
-                webSocket.current.send(dataStr)
-                createOffer(peerUserName, student_channel_name);
-                return;
-            }
-            else{
-                const data = {
-                    "student_channel_name": student_channel_name,
-                    "message": "student_dissallowed"
-                }
-                const dataStr = JSON.stringify(data)
-                webSocket.current.send(dataStr)
-                return;
-            }
+            console.log("new peer action recieved from student...",peerUserName);
+            setActionType("Permit");
+            setSelectedPeer(peerUserName);
+            setSelectedPeerChannel(student_channel_name);
+            setOpenConfirmModal(true);
         }
         if(action == 'new-answer'){
             console.log("new answer action received...");
@@ -245,7 +259,7 @@ const InstructorClassRoom = () => {
         if(action == 'student-close'){
             console.log("student-close action received for student", peerUserName);
             setVideoList(prevList => prevList.filter(user => user !== peerUserName));
-            showToast(`${peerUserName} left or disconnected`, "error", 3000)
+            showToast(`${peerUserName} disconnected`, "error", 3000)
             return
         }
         if (action === 'ice-candidate') {
@@ -302,14 +316,30 @@ const InstructorClassRoom = () => {
             let iceCS = peer.iceConnectionState;
             if (iceCS === "failed" || iceCS === "disconnected" || iceCS === "closed") {
                 console.error('ICE connection failed/closed/disconnected for student:', peerUserName);
+                if (videoStreams.current[peerUserName] && videoStreams.current[peerUserName].current) {
+                    videoStreams.current[peerUserName].current.srcObject.getTracks().forEach(track => {
+                        track.stop(); 
+                    });
+                    videoStreams.current[peerUserName].current.srcObject = null;
+                    console.log("Media stream stopped closed for student:", peerUserName);
+                }
+                try {
+                    if (mapPeers.current[peerUserName][0]) {
+                        mapPeers.current[peerUserName][0].close();
+                        console.log("Peer closed for student:", peerUserName);
+                    }
+                    if (mapPeers.current[peerUserName][1]) {
+                        mapPeers.current[peerUserName][1].close();
+                        console.log("DC closed for student:", peerUserName);
+                    }
+                } catch (error) {
+                    console.error("Error closing connections for student:", peerUserName, error);
+                }
                 delete mapPeers.current[peerUserName];
                 delete videoStreams.current[peerUserName];
-                if(iceCS !== "closed"){
-                    console.log("peer closed for student: ", peerUserName)
-                    peer.close();
-                } 
+                 
             } else if (peer.iceConnectionState === 'connected') {
-                console.log('ICE connection established for peer:', peerUserName);
+                console.log('ICE connection established for student:', peerUserName);
             }
         };
         peer.onicecandidate = (event) => {
@@ -333,7 +363,7 @@ const InstructorClassRoom = () => {
                 return peer.setLocalDescription(o)
             })
             .then(()=>{
-                mapPeers.current[peerUserName] = [peer, dc]
+                mapPeers.current[peerUserName] = [peer, dc, student_channel_name]
                 console.log("local description set successfully");
                 const data = {
                     "action": "new-offer",
@@ -374,6 +404,29 @@ const InstructorClassRoom = () => {
         } else {
             console.log("No media stream found for the user:", peerUserName);
         }
+    }
+
+    const confirmStudentRemove = (peerUser)=>{
+        const student_channel_name = mapPeers.current[peerUser][2]
+        const data = {
+            "action": "student-removed",
+            "student_channel_name": student_channel_name,
+        }
+        const dataStr = JSON.stringify(data)
+        webSocket.current.send(dataStr)
+        console.log("student removed send for...", peerUser);
+    }
+
+    const confirmStudentPermit = (peerUserName)=>{        
+        const data = {
+            "student_email": peerUserName,
+            "student_channel_name": selectedPeerChannel,
+            "message": "student_allowed"
+        }
+        const dataStr = JSON.stringify(data)
+        webSocket.current.send(dataStr)
+        createOffer(peerUserName, selectedPeerChannel);
+        return;        
     }
 
     
@@ -418,10 +471,11 @@ const InstructorClassRoom = () => {
                                     border: '1px solid black',
                                     borderRadius: "20px",
                                     backgroundColor: "gray",
-                                    display: 'flex', // Use flexbox
+                                    display: 'flex',
                                     flexDirection: 'column',
                                     height: '300px',
                                     overflowY: 'hidden',
+                                    position: "relative",
                                 }}
                                 >
                                     <video 
@@ -462,6 +516,21 @@ const InstructorClassRoom = () => {
                                             {peerUser}
                                         </Typography>
                                     </Box>
+                                    <IconButton
+                                    onClick={()=> openStudentRemoveModal(peerUser)}
+                                    sx={{
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: "10px",
+                                    }}
+                                    >
+                                        <CloseRoundedIcon
+                                        sx={{
+                                            fontSize: "40px",
+                                            color: "grey.700",
+                                        }}
+                                        />
+                                    </IconButton>
                                 </Box>                
                             </Grid>
                         ))) : (
@@ -552,6 +621,14 @@ const InstructorClassRoom = () => {
                 }
             </List>
         </Box>
+        <ConfirmationModal 
+        open={openConfirmModal}
+        onClose={handleConfirmModalClose}
+        actionType={actionType}
+        email={selectedPeer}
+        isPermitted={isPermitted}
+        onConfirm={actionType == "Permit" ? confirmStudentPermit : confirmStudentRemove}
+        />
     </Container>
   )
 }
