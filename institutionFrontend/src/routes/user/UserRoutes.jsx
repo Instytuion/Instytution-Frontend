@@ -30,6 +30,7 @@ const VideoPage = lazy(() =>
 );
 const classRoom = lazy(() => import("../../pages/user/ClassRoom"));
 const Store = lazy(() => import("../../pages/user/Store"));
+const WihslistPage = lazy(() => import("../../pages/user/ecommerce/WishlistPage"));
 
 function App() {
   return (
@@ -71,6 +72,11 @@ function App() {
         <Route
           path={"/courses/myCourses/classRoom/:batchName"}
           element={<IsAuthenticatedRoutes element={classRoom} />}
+        />
+
+        <Route
+          path={"/Wishlist"}
+          element={<IsAuthenticatedRoutes element={WihslistPage} />}
         />
 
         <Route path={"/store"} element={<Store />} />

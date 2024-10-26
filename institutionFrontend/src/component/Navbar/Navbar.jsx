@@ -105,7 +105,7 @@ function Navbar() {
 
   return (
     <>
-      <AppBar position="sticky" sx={{ backgroundColor: "#00796b" }}>
+      <AppBar position="sticky" sx={{backgroundColor: "#00796b"}}>
         <Toolbar>
           <img width={130} src={logo1} alt="Company Logo" />
 
@@ -115,9 +115,9 @@ function Navbar() {
                 textColor="inherit"
                 value={selectedTab}
                 aria-label="Navigation Tabs"
-                sx={{ marginLeft: "auto" }}
+                sx={{marginLeft: "auto"}}
                 TabIndicatorProps={{
-                  sx: { backgroundColor: "white", height: 2 },
+                  sx: {backgroundColor: "white", height: 2},
                 }}
               >
                 {data.map((tab) => (
@@ -134,13 +134,13 @@ function Navbar() {
                   />
                 ))}
               </Tabs>
-              <IconButton sx={{ marginLeft: "auto", color: "white" }}>
+              <IconButton sx={{marginLeft: "auto", color: "white"}}>
                 <NotificationsIcon />
               </IconButton>
               {isAuthenticated ? (
                 <>
                   <IconButton
-                    sx={{ marginLeft: "10px" }}
+                    sx={{marginLeft: "10px"}}
                     onClick={handleMenuOpen}
                   >
                     {profileImage ? (
@@ -171,8 +171,8 @@ function Navbar() {
                     anchorEl={anchorEl}
                     open={isMenuOpen}
                     onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+                    transformOrigin={{vertical: "top", horizontal: "right"}}
                   >
                     <MenuItem onClick={() => navigate("/profile")}>
                       Profile
@@ -180,12 +180,15 @@ function Navbar() {
                     <MenuItem onClick={() => navigate("/courses/myCourses")}>
                       My Courses
                     </MenuItem>
+                    <MenuItem onClick={() => navigate("/wishlist")}>
+                      Wishlist
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
               ) : (
                 <IconButton
-                  sx={{ marginLeft: "10px" }}
+                  sx={{marginLeft: "10px"}}
                   component={Link}
                   to="/login"
                 >
@@ -195,13 +198,13 @@ function Navbar() {
             </>
           ) : (
             <>
-              <IconButton sx={{ marginLeft: "auto", color: "white" }}>
+              <IconButton sx={{marginLeft: "auto", color: "white"}}>
                 <NotificationsIcon />
               </IconButton>
               {isAuthenticated ? (
                 <>
                   <IconButton
-                    sx={{ marginLeft: "10px" }}
+                    sx={{marginLeft: "10px"}}
                     onClick={handleMenuOpen}
                   >
                     {profileImage ? (
@@ -232,8 +235,8 @@ function Navbar() {
                     anchorEl={anchorEl}
                     open={isMenuOpen}
                     onClose={handleMenuClose}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    anchorOrigin={{vertical: "bottom", horizontal: "right"}}
+                    transformOrigin={{vertical: "top", horizontal: "right"}}
                   >
                     <MenuItem onClick={() => navigate("/profile")}>
                       Profile
@@ -241,12 +244,15 @@ function Navbar() {
                     <MenuItem onClick={() => navigate("/courses/myCourses")}>
                       My Courses
                     </MenuItem>
+                    <MenuItem onClick={() => navigate("/wishlist")}>
+                      Wishlist
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
               ) : (
                 <IconButton
-                  sx={{ marginLeft: "10px" }}
+                  sx={{marginLeft: "10px"}}
                   component={Link}
                   to="/login"
                 >
@@ -275,7 +281,7 @@ function Navbar() {
             onChange={(event, newValue) => {
               setBottomNavValue(newValue);
             }}
-            sx={{ backgroundColor: "#00796b" }}
+            sx={{backgroundColor: "#00796b"}}
           >
             {bottomNavData.map((tab) => (
               <BottomNavigationAction

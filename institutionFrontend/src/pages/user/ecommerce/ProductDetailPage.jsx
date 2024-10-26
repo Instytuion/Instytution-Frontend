@@ -1,38 +1,33 @@
-import {
-  Box,
-  Stack,
-  Typography,
-  useMediaQuery,
-  Container,
-  Button,
-  Grid,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import {Stack, useMediaQuery, Container, Button, Grid} from "@mui/material";
 import ProductImages from "../../../component/ProductImages/ProductImage";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
-import ColorSelector from "../../../component/Products/ColorSelector";
+
 import {
   getAvailableColorsForSize,
   getDetailsByColorAndSize,
   getImagesBySelectedColor,
   getUniqueColors,
-  getUniqueSizes,
 } from "../../../utils/productUtils";
 import {useEffect, useState} from "react";
-import SizeSelector from "../../../component/Products/SizeSelector";
-import {Favorite, FavoriteBorder, Share} from "@mui/icons-material";
 import {useQuery} from "react-query";
 import CartLoader from "../../../component/Spinner/CartLoader";
 import ProductsServices from "../../../services/user/ProductServices";
 import {useDispatch, useSelector} from "react-redux";
 import WishlistServices from "../../../services/user/Wishlist";
-import { addToWishlist, removeFromWishlist } from "../../../redux/slices/WishlistSlice";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/slices/WishlistSlice";
+import ProductDetails from "../../../component/Products/ProductMainDetail";
+import {style} from "./style";
+import useToast from "../../../hooks/useToast";
 
 const ProductDetailPage = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const {id} = useParams();
+  const styles = style();
+  const showToast = useToast();
 
   const {
     data: product,
@@ -47,9 +42,8 @@ const ProductDetailPage = () => {
   const isAuthenticated = useSelector(
     (state) => state.userAuth.isAuthenticated
   );
-  const dispatch =  useDispatch();
-  const navigate = useNavigate()
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
@@ -133,6 +127,10 @@ const ProductDetailPage = () => {
     }
 
     setIsWishlisted(!isWishlisted);
+    showToast(
+      isWishlisted ? "Removed from wishlist" : "Added to wishlist",
+      "success"
+    );
 
     try {
       if (isWishlisted) {
@@ -150,111 +148,31 @@ const ProductDetailPage = () => {
     } catch (err) {
       console.error(err);
       setIsWishlisted(isWishlisted);
+      showToast("Failed to update wishlist. Please try again.", "error");
     }
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{
-        bgcolor: "#f9f9f9",
-        borderRadius: 2,
-        padding: isMobile ? 2 : 4,
-        marginTop: 4,
-      }}
-    >
+    <Container maxWidth="lg" sx={styles.container(isMobile)}>
       <Grid container spacing={2}>
         {/* Image Section */}
         <Grid item xs={12} md={6} sx={{borderRight: 1, borderColor: "divider"}}>
           <ProductImages images={colorImages} />
         </Grid>
-
         {/* Details Section */}
-        <Grid item xs={12} md={6} sx={{position: "relative"}}>
-          <Box pl={4}>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 2,
-                position: "absolute",
-                top: 25,
-                right: 5,
-              }}
-            >
-              <IconButton onClick={handleWishlistToggle}>
-                {isWishlisted ? (
-                  <Favorite sx={{color: "red"}} />
-                ) : (
-                  <FavoriteBorder />
-                )}
-              </IconButton>
-              <IconButton>
-                <Share />
-              </IconButton>
-            </Box>
-
-            <Stack spacing={2}>
-              {/* Product Name */}
-              <Typography variant="h5" fontWeight="bold">
-                {product.name}
-              </Typography>
-
-              {/* Product Price */}
-              <Typography variant="h5">₹ {selectedPrice}</Typography>
-
-              {/* Horizontal Rule */}
-              <hr style={{border: "1px solid #e0e0e0", margin: "20px 0"}} />
-
-              {/* Color and Size Selection */}
-              <Stack
-                direction="row"
-                spacing={2}
-                sx={{margin: "0px !important"}}
-              >
-                <Box sx={{width: "50%"}}>
-                  <Typography
-                    variant="subtitle1"
-                    fontWeight="bold"
-                    gutterBottom
-                  >
-                    Color
-                  </Typography>
-                  <ColorSelector
-                    colors={getUniqueColors(product?.images)}
-                    availableColors={availableColorsForSizeState}
-                    selectedColor={selectedColor}
-                    setSelectedColor={setSelectedColor}
-                  />
-                </Box>
-
-                {hasSizes && (
-                  <Box sx={{width: "50%"}}>
-                    <Typography
-                      variant="subtitle1"
-                      fontWeight="bold"
-                      gutterBottom
-                    >
-                      Size
-                    </Typography>
-                    <SizeSelector
-                      sizes={getUniqueSizes(product.details)}
-                      selectedSize={selectedSize}
-                      setSelectedSize={setSelectedSize}
-                    />
-                  </Box>
-                )}
-              </Stack>
-
-              {/* Stock Availability */}
-              <Typography variant="body1" color="textSecondary">
-                {selectedStock > 0
-                  ? `In Stock (${selectedStock} available)`
-                  : "Out of Stock"}
-              </Typography>
-            </Stack>
-          </Box>
-        </Grid>
-
+        <ProductDetails
+          product={product}
+          handleWishlistToggle={handleWishlistToggle}
+          isWishlisted={isWishlisted}
+          selectedPrice={selectedPrice}
+          selectedColor={selectedColor}
+          setSelectedColor={setSelectedColor}
+          selectedSize={selectedSize}
+          setSelectedSize={setSelectedSize}
+          hasSizes={hasSizes}
+          selectedStock={selectedStock}
+          availableColorsForSizeState={availableColorsForSizeState}
+        />
         {/* Buttons Section */}
         <Grid item xs={12} md={6}>
           <Stack direction="row" spacing={2} mt={4}>
