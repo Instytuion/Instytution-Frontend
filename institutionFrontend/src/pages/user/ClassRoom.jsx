@@ -1,5 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { Box, Button, Container, IconButton } from '@mui/material'
+import { Box, Button, Container, IconButton, List, ListItem, TextField } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -9,6 +9,7 @@ import VideocamOffIcon from '@mui/icons-material/VideocamOff';
 import MicIcon from '@mui/icons-material/Mic';
 import MicOffIcon from '@mui/icons-material/MicOff';
 import useToast from '../../hooks/useToast'
+import {refreshToken} from '../../utils/axiosFunctions'
 
 const TURN_USERNAME = import.meta.env.VITE_TURN_USERNAME;
 const TURN_SECRET = import.meta.env.VITE_TURN_SECRET;
@@ -48,7 +49,9 @@ const ClassRoom = () => {
   const theme = useTheme();
     const {batchName} = useParams();
     let user = useSelector((state)=> state.userAuth.email);
-    const accessToken = useSelector((state)=> state.userAuth.accessToken);
+    let firstName = useSelector((state)=> state.userAuth.firstName);
+    let lastName = useSelector((state)=> state.userAuth.lastName);
+    let accessToken = useSelector((state)=> state.userAuth.accessToken);
     const [btnJoinClass, setBtnJoinClass] = useState("Connect")
     const [isConnecting, setIsConnecting] = useState(false);
     const [videoOff, setVideoOff] = useState(false);
@@ -59,6 +62,8 @@ const ClassRoom = () => {
     const remoteVideo = useRef(null);
     const webSocket = useRef(null)
     const mapPeer = useRef([]);
+    const [dcMsg, setDcMsg] = useState([])
+    const [inputMsg, setInputMsg] = useState("")
     const showToast = useToast();
 
     let loc = window.location;
@@ -75,7 +80,9 @@ const ClassRoom = () => {
                 height: { ideal: 720, max: 1080 },
                 facingMode: "user"
             },
-            "audio": true,
+            "audio": {
+                echoCancellation: true
+            },
         };
 
         let userMedia = navigator.mediaDevices.getUserMedia(constrains)
@@ -92,11 +99,15 @@ const ClassRoom = () => {
 
         // Cleanup WebSocket on component unmount
         return () => {
+            console.log("cleanup function called...");
             if (webSocket.current) {
                 webSocket.current.close();
             }
             if (localStream.current) {
                 localStream.current.getTracks().forEach(track => track.stop());
+            }
+            if (remoteStream.current) {
+                remoteStream.current.getTracks().forEach(track => track.stop());
             }
         };
 
@@ -132,10 +143,15 @@ const ClassRoom = () => {
                     remoteVideo.current.srcObject = null;
                 }
                 if(mapPeer.current){
-                    mapPeer.current[0].close()
+                    if(mapPeer.current[0]){
+                        mapPeer.current[0].close()
+                    }
+                    if(mapPeer.current[1]){
+                        mapPeer.current[1].close()
+                    }
                     mapPeer.current = []
-                    console.log("Peer closed with websocket onClose while creating Answer...");
-                    
+                    setDcMsg([]);
+                    console.log("Peer and dc closed with websocket onClose at student side...");                    
                 }
             };
 
@@ -166,8 +182,12 @@ const ClassRoom = () => {
         }
         if(message == "Unautherized Entry. Try again"){
             showToast(message, "error", 3000)
-            setBtnJoinClass((prev)=>prev = "Connect")
-            setIsConnecting(false);
+            try{
+                accessToken = refreshToken();
+            }
+            catch(error){
+                console.log("error while refrshing token at student room", error);                
+            }            
         }
         if(message == "Permission granted to join class"){
             showToast(message, "success", 3000)
@@ -189,6 +209,9 @@ const ClassRoom = () => {
         if(message == "class clossed"){
             showToast("class clossed by instructor. Dissconnecting...", "error", 3000)
         }
+        if(message == "Duplicate student"){
+            showToast("Duplicate student found. Dissconnecting...", "error", 3000)
+        }
         if(action == "new-offer"){
             let offer = data["sdp"]
             const instructor_channel_name = data["instructor_channel_name"]
@@ -202,6 +225,10 @@ const ClassRoom = () => {
             mapPeer.current[0].addIceCandidate(candidate)
                 .then(() => console.log("Added ICE candidate from instructor successfully."))
                 .catch(error => console.error("Error adding received ICE candidate:", error));
+        }
+        if (action === 'student-removed') {
+            console.log("student-removed action recieved");
+            showToast("You are removed by instructor.", "error", 3000)
         }
     };
 
@@ -225,10 +252,28 @@ const ClassRoom = () => {
     
             if (remoteVideo.current) {
                 remoteVideo.current.srcObject = remoteStream.current;
-                remoteVideo.current.muted = true;
+                remoteVideo.current.muted = false;
             }
         };
 
+        peer.ondatachannel = (event) => {
+            console.log("Data channel received:", event.channel);
+            let dc = event.channel;
+            mapPeer.current.push(dc); 
+    
+            dc.onmessage = (event) => {
+                console.log(`Received message from instructor: ${event.data}`);
+                // Handle messages
+            };
+    
+            dc.onopen = () => {
+                console.log("Data channel opened at student side.");
+            };
+    
+            dc.onclose = () => {
+                console.log("Data channel closed at student side.");
+            };
+        };
 
         peer.oniceconnectionstatechange = () => {
             let iceCS = peer.iceConnectionState;
@@ -252,7 +297,7 @@ const ClassRoom = () => {
                 };
                 const dataStr = JSON.stringify(data);
                 webSocket.current.send(dataStr);
-                console.log("Ice candidate send to student...");
+                console.log("Ice candidate send to instructor...");
             }            
         };
 
@@ -292,6 +337,15 @@ const ClassRoom = () => {
         videoTrack[0].enabled = !videoTrack[0].enabled
     }
 
+    const handleMsgSend = ()=>{
+        setDcMsg(prev=> [...prev, inputMsg]);
+        const dc = mapPeer.current[1]
+        const fullName = [firstName, lastName].filter(Boolean).join(" ") || user.split("@")[0];      
+        const msg = `${fullName}:- ${inputMsg}`
+        dc.send(msg)
+        setInputMsg("");
+    }
+
     
   return (
     <Container sx={{py:3}}>
@@ -316,9 +370,7 @@ const ClassRoom = () => {
             <Box
             id="class-video-wrapper"
             sx={{ 
-                border: '1px solid black', 
-                p: 1 ,
-                backgroundColor: "gray",
+                borderRadius: "20px",
                 width: ["100%", "100%", "75%"]
             }}
             >
@@ -326,16 +378,21 @@ const ClassRoom = () => {
                 id="class-video"
                 ref={remoteVideo}
                 width={"100%"}
+                height={"100%"}
                 autoPlay
-                style={{marginBottom:10}}
+                style={{
+                    border: '3px solid gray', 
+                    borderRadius: "20px",                
+                    backgroundColor: "lightgray",
+                }}
                 >
-
                 </video>
             </Box>
             <Box
             id="self-video-sec"
             sx={{
                 display: "flex",
+                flexDirection: "column",
                 width: ["100%", "100%", "25%"]
             }}
             >
@@ -373,6 +430,60 @@ const ClassRoom = () => {
                             {videoOff ?  <VideocamOffIcon />: <VideocamIcon />}
                         </IconButton>
                     </Box>
+                </Box>
+                <Box
+                id="msg-wrapper"
+                sx={{
+                    mt:2,
+                    p:2,
+                    border: '3px solid gray',
+                    borderRadius: "20px",                    
+                }}
+                >
+                    <Box
+                    id="msg-sec"
+                    sx={{
+                        height:"200px",
+                        backgroundColor: "lightgray",
+                        mb:1,
+                        overflowY: "auto",
+                    }}
+                    >
+                        <List>
+                            {dcMsg.length > 0 ? (
+                                dcMsg.map((msg, idx)=>(
+                                    <ListItem key={idx}>
+                                        {idx+1} - {msg}
+                                    </ListItem>
+                                ))
+                            ) : (
+                                <ListItem>
+                                    No message yet.
+                                </ListItem>
+                            )
+                            }
+                        </List>
+                    </Box>
+                    <TextField                      
+                    label="Ask question" 
+                    variant="outlined"
+                    value={inputMsg}
+                    onChange={(e)=> setInputMsg(e.target.value)} 
+                    sx={{
+                        mb:1,
+                        width:"100%",
+                    }}
+                    />
+                    <Button 
+                    id="btn-msg-send"
+                    variant='contained'
+                    sx={{
+                        bgcolor: theme.palette.customColors,
+                    }}
+                    onClick={()=> handleMsgSend()}
+                    >
+                        Send
+                    </Button>
                 </Box>
             </Box>
         </Box>
