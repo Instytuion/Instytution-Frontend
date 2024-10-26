@@ -80,7 +80,9 @@ const ClassRoom = () => {
                 height: { ideal: 720, max: 1080 },
                 facingMode: "user"
             },
-            "audio": true,
+            "audio": {
+                echoCancellation: true
+            },
         };
 
         let userMedia = navigator.mediaDevices.getUserMedia(constrains)
@@ -207,6 +209,9 @@ const ClassRoom = () => {
         if(message == "class clossed"){
             showToast("class clossed by instructor. Dissconnecting...", "error", 3000)
         }
+        if(message == "Duplicate student"){
+            showToast("Duplicate student found. Dissconnecting...", "error", 3000)
+        }
         if(action == "new-offer"){
             let offer = data["sdp"]
             const instructor_channel_name = data["instructor_channel_name"]
@@ -220,6 +225,10 @@ const ClassRoom = () => {
             mapPeer.current[0].addIceCandidate(candidate)
                 .then(() => console.log("Added ICE candidate from instructor successfully."))
                 .catch(error => console.error("Error adding received ICE candidate:", error));
+        }
+        if (action === 'student-removed') {
+            console.log("student-removed action recieved");
+            showToast("You are removed by instructor.", "error", 3000)
         }
     };
 
