@@ -1,60 +1,120 @@
 import { Box, Card, Stack, Typography } from "@mui/material";
 import CounterButtons from "../Button/CounterButtons";
+import ClearIcon from "@mui/icons-material/Clear";
+import CartServices from "../../services/user/ecommerce/CartServices";
+import { useState } from "react";
+import useToast from "../../hooks/useToast";
 
-const CartItems = ({ data }) => {
-  console.log("data from item", data);
+const CartItems = ({ data, onRemoveItem }) => {
+  console.log("data is :", data);
 
-  const { product, quantity, total_price } = data;
+  const { product, quantity, id } = data;
+  const [count, setCount] = useState(quantity);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const showToast = useToast();
   const firstImage = product.product_images.find(
     (image) => image.color === product.color
   );
+  console.log(isLoading);
+
+  const handleQuantityChange = async (newCount = 1) => {
+    setIsLoading(true);
+    try {
+      console.log("product id for creating is :", product.id);
+
+      const response = await CartServices.createCart(product.id, newCount);
+      showToast(
+        `${response.product.product_name} has been updated in your cart.`,
+        "success"
+      );
+      setCount(response.quantity);
+    } catch (error) {
+      showToast(error.response, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemove = () => {
+    onRemoveItem(id, product.product_name);
+  };
 
   return (
     <Card
       sx={{
-        p: 6,
         mt: 3,
         boxShadow:
-          "5px 4px 15px rgba(223, 227, 234, 0.5), 0px 0px 20px rgba(250, 255, 255, 0.5)",
-        transition: "0.3s", // Smooth transition effect on hover
-        "&:hover": {
-          boxShadow:
-            "8px 6px 20px rgba(223, 227, 234, 0.7), 0px 0px 25px rgba(250, 255, 255, 0.7)",
-        },
+          "8px 6px 20px rgba(223, 227, 234, 0.7), 0px 0px 25px rgba(250, 255, 255, 0.7)",
+        transition: "0.3s",
+        bgcolor: "white",
+        p: { xs: 2, sm: 3 },
       }}
     >
-      <Stack direction={"row"} justifyContent={"space-between"} spacing={2}>
-        <Box sx={{ display: "flex", alignItems: "center" }} width={"40%"}>
-          {firstImage ? (
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "flex-start", sm: "center" }}
+        spacing={{ xs: 2, sm: 3 }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: { xs: "100%", sm: "auto" },
+            justifyContent: { xs: "flex-end", sm: "flex-start" },
+          }}
+        >
+          <ClearIcon
+            onClick={handleRemove}
+            sx={{ cursor: "pointer", fontSize: { xs: "1.2rem", sm: "1.5rem" } }}
+          />
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: { xs: "100%", sm: "60%" },
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          {firstImage?.image ? (
             <img
               src={firstImage.image}
-              alt="Product Image"
+              alt="Product"
               style={{
                 width: "100px",
                 height: "auto",
                 borderRadius: "8px",
-                marginRight: "16px",
+                marginBottom: { xs: "16px", sm: "0" },
               }}
             />
           ) : (
-            <Typography>No image available for this color.</Typography>
+            <Typography>No image available</Typography>
           )}
-          <Stack direction={"column"}>
-          <Typography
-  variant="h5"
-  sx={{
-    fontFamily: "'AeonikTRIAL-Bold', sans-serif", // Use the custom font
-    fontWeight: 700,                             // Ensure bold weight
-    letterSpacing: "0.02em",                     // Slight letter spacing
-    lineHeight: 1.3,                             // Adjusted line height
-    color: "#333",                               // Text color
-    textTransform: "capitalize",                 // Capitalize first letter
-  }}
->
-  {product.product_name}
-</Typography>
-
+          <Stack
+            direction="column"
+            sx={{
+              ml: { sm: 2 },
+              width: "100%",
+              textAlign: { xs: "center", sm: "left" },
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: "'AeonikTRIAL-Bold', sans-serif",
+                fontWeight: 700,
+                letterSpacing: "0.02em",
+                lineHeight: 1.3,
+                color: "#333",
+                textTransform: "capitalize",
+                fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
+              }}
+            >
+              {product.product_name}
+            </Typography>
 
             <Typography variant="body2" fontWeight={500}>
               Unit Price: ₹{product.price}
@@ -64,15 +124,29 @@ const CartItems = ({ data }) => {
             )}
           </Stack>
         </Box>
+
         <Box
-          display={"flex"}
-          alignItems={"center"}
-          width={"60%"}
-          justifyContent={"space-between"}
+          display="flex"
+          flexDirection={{ xs: "column", sm: "column", md: "row" }}
+          alignItems="center"
+          width={{ xs: "100%", sm: "45%" }}
+          justifyContent="space-between"
+          textAlign={{ xs: "center", sm: "right" }}
+          mt={{ xs: 2, sm: 0 }}
         >
-          <CounterButtons quantity={quantity} />
-          <Typography variant="h6" fontWeight={500}>
-            Total Price: {total_price}
+          <CounterButtons
+            quantity={count}
+            Loading={isLoading}
+            onQuantityChange={handleQuantityChange}
+            maxCount="12"
+            sx={{ mb: { xs: 1, sm: 0 } }}
+          />
+          <Typography
+            variant="h6"
+            fontWeight={500}
+            sx={{ whiteSpace: "nowrap" }}
+          >
+            Total: ₹{(product.price * count).toFixed(2)}
           </Typography>
         </Box>
       </Stack>

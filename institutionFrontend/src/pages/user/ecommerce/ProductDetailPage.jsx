@@ -10,7 +10,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import ProductImages from "../../../component/ProductImages/ProductImage";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
 import ColorSelector from "../../../component/Products/ColorSelector";
 import {
@@ -22,17 +22,23 @@ import {
 } from "../../../utils/productUtils";
 import { useEffect, useState } from "react";
 import SizeSelector from "../../../component/Products/SizeSelector";
-import {Favorite, FavoriteBorder, Share} from "@mui/icons-material";
-import {useQuery} from "react-query";
+import { Favorite, FavoriteBorder, Share } from "@mui/icons-material";
+import { useQuery } from "react-query";
 import CartLoader from "../../../component/Spinner/CartLoader";
 import ProductsServices from "../../../services/user/ProductServices";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import WishlistServices from "../../../services/user/Wishlist";
-import { addToWishlist, removeFromWishlist } from "../../../redux/slices/WishlistSlice";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/slices/WishlistSlice";
+import CartServices from "../../../services/user/ecommerce/CartServices";
+import useToast from "../../../hooks/useToast";
 
 const ProductDetailPage = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const {id} = useParams();
+  const { id } = useParams();
+  const showToast = useToast()
 
   const {
     data: product,
@@ -47,9 +53,8 @@ const ProductDetailPage = () => {
   const isAuthenticated = useSelector(
     (state) => state.userAuth.isAuthenticated
   );
-  const dispatch =  useDispatch();
-  const navigate = useNavigate()
-
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
@@ -58,13 +63,16 @@ const ProductDetailPage = () => {
   const [selectedStock, setSelectedStock] = useState("");
   const [hasSizes, setHasSizes] = useState(false);
   const [updatedDetails, setUpdatedDetails] = useState(null);
-  const [availableColorsForSizeState, setavailableColorsForSizeState] =
-    useState(null);
+  const [availableColorsForSizeState, setavailableColorsForSizeState] =useState(null);
 
   const handleCart = async () => {
+    console.log("try to item to cart", updatedDetails.id);
+
     try {
-      const response = await CartServices.createCart(product.id);
+      const response = await CartServices.createCart(updatedDetails.id);
+      showToast(`${response.product.product_name} has been successfully added to your cart.`,'success');
       console.log("Response from add to cart is :", response);
+      
     } catch (error) {
       console.log("Error is :", error);
     }
@@ -137,7 +145,7 @@ const ProductDetailPage = () => {
     e.stopPropagation();
     if (!isAuthenticated) {
       showToast("Login Required", "error");
-      navigate("/login", {state: {from: location.pathname}});
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
 
@@ -174,12 +182,17 @@ const ProductDetailPage = () => {
     >
       <Grid container spacing={2}>
         {/* Image Section */}
-        <Grid item xs={12} md={6} sx={{borderRight: 1, borderColor: "divider"}}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{ borderRight: 1, borderColor: "divider" }}
+        >
           <ProductImages images={colorImages} />
         </Grid>
 
         {/* Details Section */}
-        <Grid item xs={12} md={6} sx={{position: "relative"}}>
+        <Grid item xs={12} md={6} sx={{ position: "relative" }}>
           <Box pl={4}>
             <Box
               sx={{
@@ -192,7 +205,7 @@ const ProductDetailPage = () => {
             >
               <IconButton onClick={handleWishlistToggle}>
                 {isWishlisted ? (
-                  <Favorite sx={{color: "red"}} />
+                  <Favorite sx={{ color: "red" }} />
                 ) : (
                   <FavoriteBorder />
                 )}
@@ -212,15 +225,15 @@ const ProductDetailPage = () => {
               <Typography variant="h5">₹ {selectedPrice}</Typography>
 
               {/* Horizontal Rule */}
-              <hr style={{border: "1px solid #e0e0e0", margin: "20px 0"}} />
+              <hr style={{ border: "1px solid #e0e0e0", margin: "20px 0" }} />
 
               {/* Color and Size Selection */}
               <Stack
                 direction="row"
                 spacing={2}
-                sx={{margin: "0px !important"}}
+                sx={{ margin: "0px !important" }}
               >
-                <Box sx={{width: "50%"}}>
+                <Box sx={{ width: "50%" }}>
                   <Typography
                     variant="subtitle1"
                     fontWeight="bold"
@@ -237,7 +250,7 @@ const ProductDetailPage = () => {
                 </Box>
 
                 {hasSizes && (
-                  <Box sx={{width: "50%"}}>
+                  <Box sx={{ width: "50%" }}>
                     <Typography
                       variant="subtitle1"
                       fontWeight="bold"

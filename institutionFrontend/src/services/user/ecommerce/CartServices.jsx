@@ -13,6 +13,11 @@ const CartServices={
     getCart : async ()=>{
         const response = await instance.post('accounts/cart/detail/')
         return response.data
+    },
+    cartDelete: async (id)=>{
+        console.log('id is :',id);
+        
+        const response = await instance.delete(`accounts/cart/${id}/`)
     }
 }
 export default CartServices;
