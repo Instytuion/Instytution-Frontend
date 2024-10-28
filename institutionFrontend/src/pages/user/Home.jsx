@@ -9,18 +9,23 @@ import WishlistServices from "../../services/user/Wishlist";
 import {setWishlists, clearWishlist} from "../../redux/slices/WishlistSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
-import useWishlist from "../../hooks/useWishlist";
+import useCartAndWishlist from "../../hooks/useCartAndWishlist";
+import { clearCart, setCart } from "../../redux/slices/Cart";
 
 const Home = () => {
   const dispatch = useDispatch();
-  const {wishlists} = useWishlist();
+  const {wishlists,cartItems} = useCartAndWishlist();
+  console.log('cart Items are :',cartItems);
+  
 
   useEffect(() => {
     if (wishlists) {
       dispatch(clearWishlist());
+      dispatch(clearCart())
+      dispatch(setCart(cartItems))
       dispatch(setWishlists(wishlists));
     }
-  }, [wishlists, dispatch]);
+  }, [wishlists,cartItems, dispatch,]);
 
   return (
     <>

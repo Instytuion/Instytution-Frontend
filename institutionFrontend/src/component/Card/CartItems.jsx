@@ -4,35 +4,41 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CartServices from "../../services/user/ecommerce/CartServices";
 import { useState } from "react";
 import useToast from "../../hooks/useToast";
+import {  useQueryClient } from "react-query";
+import { useSelector, useDispatch } from 'react-redux'; 
+import { updateCartQuantity } from "../../redux/slices/Cart";
+
 
 const CartItems = ({ data, onRemoveItem }) => {
-  console.log("data is :", data);
-
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch()
+  const cartItems = useSelector((state) => state.cart.cartData);
   const { product, quantity, id } = data;
+
   const [count, setCount] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
 
   const showToast = useToast();
-  const firstImage = product.product_images.find(
+  const firstImage = product?.product_images.find(
     (image) => image.color === product.color
   );
-  console.log(isLoading);
-
   const handleQuantityChange = async (newCount = 1) => {
-    setIsLoading(true);
-    try {
-      console.log("product id for creating is :", product.id);
+    setIsLoading(true)
+    const previousCart = cartItems.find(item => item.product.product_id === product.product_id);
 
+    dispatch(updateCartQuantity({ id: product.id, newQuantity: newCount }));  
+    showToast(`The quantity for ${product.product_name} has been updated to ${newCount}.`, "success");
+  
+    try {
       const response = await CartServices.createCart(product.id, newCount);
-      showToast(
-        `${response.product.product_name} has been updated in your cart.`,
-        "success"
-      );
+      
       setCount(response.quantity);
+      queryClient.invalidateQueries("cartItems");
     } catch (error) {
-      showToast(error.response, "error");
-    } finally {
-      setIsLoading(false);
+      dispatch(updateCartQuantity({ id: product.id, newQuantity: previousCart.quantity }));
+      showToast("Failed to update quantity. Please try again.", "error");
+    }finally{
+      setIsLoading(false)
     }
   };
 

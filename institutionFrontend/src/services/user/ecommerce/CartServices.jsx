@@ -11,7 +11,9 @@ const CartServices={
         return response.data
     },
     getCart : async ()=>{
-        const response = await instance.post('accounts/cart/detail/')
+        const response = await instance.get('accounts/cart/detail/')
+        console.log('Get Cart Response is:',response);
+        
         return response.data
     },
     cartDelete: async (id)=>{

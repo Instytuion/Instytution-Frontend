@@ -1,5 +1,6 @@
 import { Box, Card, Typography, Button, Divider, Stack } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import bounceAnimation from "../StyledComponents/animations";
 const CartSummary = ({ subtotal, shipping = 40 }) => {
   const total = subtotal + shipping;
 
@@ -58,18 +59,7 @@ const CartSummary = ({ subtotal, shipping = 40 }) => {
           Proceed to Checkout
           <ShoppingCartCheckoutIcon
             sx={{
-              animation: "bounce 3s infinite",
-              "@keyframes bounce": {
-                "0%, 20%, 50%, 80%, 100%": {
-                  transform: "translateX(0)",
-                },
-                "40%": {
-                  transform: "translateX(-10px)",
-                },
-                "60%": {
-                  transform: "translateX(-5px)",
-                },
-              },
+              ...bounceAnimation
             }}
           />
         </Button>

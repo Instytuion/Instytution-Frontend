@@ -17,10 +17,10 @@ const WishlistPage = () => {
     dispatch(removeFromWishlist(id));
 
     try {
-      await WishlistServices.deleteWishlist(id);
       showToast(`${productName} deleted from wishlist`, "success");
+      await WishlistServices.deleteWishlist(id);
+      
     } catch (err) {
-      console.log(err);
       showToast(`Failed to delete ${productName} from wishlist`, "error");
       if (itemToDelete) {
         dispatch(addToWishlist(itemToDelete)); 
@@ -30,7 +30,7 @@ const WishlistPage = () => {
 
   return (
     <>
-      <Grid container spacing={1}>
+      <Grid container p={4} spacing={1}>
         {wishlists.length === 0 ? (
           <Stack
             sx={{
