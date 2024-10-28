@@ -2,14 +2,14 @@ import React from "react";
 import {Player} from "@lottiefiles/react-lottie-player";
 import CartLoaderJson from "../../assets/CartLoader.json";
 
-const CartLoader = () => {
+const CartLoader = ({height="100vh"}) => {
   return (
     <div
       style={{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
+        height: height,
       }}
     >
       <Player

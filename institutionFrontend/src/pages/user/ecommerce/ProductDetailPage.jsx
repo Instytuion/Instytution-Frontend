@@ -1,31 +1,34 @@
-import {Stack, useMediaQuery, Container, Button, Grid} from "@mui/material";
+import { Stack, useMediaQuery, Container, Button, Grid } from "@mui/material";
 import ProductImages from "../../../component/ProductImages/ProductImage";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
-
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {
   getAvailableColorsForSize,
   getDetailsByColorAndSize,
   getImagesBySelectedColor,
   getUniqueColors,
 } from "../../../utils/productUtils";
-import {useEffect, useState} from "react";
-import {useQuery} from "react-query";
+import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import CartLoader from "../../../component/Spinner/CartLoader";
 import ProductsServices from "../../../services/user/ProductServices";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import WishlistServices from "../../../services/user/Wishlist";
 import {
   addToWishlist,
   removeFromWishlist,
 } from "../../../redux/slices/WishlistSlice";
+import CartServices from "../../../services/user/ecommerce/CartServices";
 import ProductDetails from "../../../component/Products/ProductMainDetail";
-import {style} from "./style";
+import { style } from "./style";
 import useToast from "../../../hooks/useToast";
-
+import { addToCart } from "../../../redux/slices/Cart";
+import bounceAnimation from "../../../component/StyledComponents/animations";
 const ProductDetailPage = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
-  const {id} = useParams();
+  const { id } = useParams();
   const styles = style();
   const showToast = useToast();
 
@@ -39,6 +42,9 @@ const ProductDetailPage = () => {
   });
 
   const wishlistItems = useSelector((state) => state.wishlist.wishlists);
+  const cartItems = useSelector((state) => state.cart.cartData);
+  console.log("Cart Data From Redux is :", cartItems);
+
   const isAuthenticated = useSelector(
     (state) => state.userAuth.isAuthenticated
   );
@@ -52,8 +58,30 @@ const ProductDetailPage = () => {
   const [selectedStock, setSelectedStock] = useState("");
   const [hasSizes, setHasSizes] = useState(false);
   const [updatedDetails, setUpdatedDetails] = useState(null);
+
   const [availableColorsForSizeState, setavailableColorsForSizeState] =
     useState(null);
+  const isCart = cartItems?.some(
+    (item) => item?.product?.id == updatedDetails?.id
+  );
+  const handleCart = async () => {
+    if (isCart) {
+      navigate("/cart");
+    } else {
+      try {
+        const response = await CartServices.createCart(updatedDetails.id);
+        dispatch(addToCart(response));
+        showToast(
+          `${response.product.product_name} has been successfully added to your cart.`,
+          "success"
+        );
+        navigate("/cart");
+      } catch (error) {
+        dispatch(removeFromCart(updatedDetails.id));
+        showToast(error, "error");
+      }
+    }
+  };
 
   useEffect(() => {
     if (product) {
@@ -122,7 +150,7 @@ const ProductDetailPage = () => {
     e.stopPropagation();
     if (!isAuthenticated) {
       showToast("Login Required", "error");
-      navigate("/login", {state: {from: location.pathname}});
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
 
@@ -131,12 +159,12 @@ const ProductDetailPage = () => {
       isWishlisted ? "Removed from wishlist" : "Added to wishlist",
       "success"
     );
-
-    try {
-      if (isWishlisted) {
-        const wishlistItem = wishlistItems.find(
+const wishlistItem = wishlistItems.find(
           (wishItem) => wishItem.product.id === updatedDetails.id
         );
+    try {
+      if (isWishlisted) {
+        
         if (wishlistItem) {
           await WishlistServices.deleteWishlist(wishlistItem.id);
           dispatch(removeFromWishlist(wishlistItem.id));
@@ -147,7 +175,7 @@ const ProductDetailPage = () => {
       }
     } catch (err) {
       console.error(err);
-      setIsWishlisted(isWishlisted);
+      dispatch(addToWishlist(wishlistItem))
       showToast("Failed to update wishlist. Please try again.", "error");
     }
   };
@@ -156,7 +184,12 @@ const ProductDetailPage = () => {
     <Container maxWidth="lg" sx={styles.container(isMobile)}>
       <Grid container spacing={2}>
         {/* Image Section */}
-        <Grid item xs={12} md={6} sx={{borderRight: 1, borderColor: "divider"}}>
+        <Grid
+          item
+          xs={12}
+          md={6}
+          sx={{ borderRight: 1, borderColor: "divider" }}
+        >
           <ProductImages images={colorImages} />
         </Grid>
         {/* Details Section */}
@@ -179,6 +212,7 @@ const ProductDetailPage = () => {
             <Button
               variant="contained"
               color="primary"
+              onClick={handleCart}
               sx={{
                 width: "100%",
                 padding: "12px 0",
@@ -189,7 +223,38 @@ const ProductDetailPage = () => {
                 },
               }}
             >
-              ADD TO CART
+              {isCart ? (
+                <>
+                  Go TO CART{" "}
+                  <ShoppingCartIcon
+                    sx={{
+                      ml: 2,
+                      ...bounceAnimation
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  Add TO CART{" "}
+                  <AddShoppingCartIcon
+                    sx={{
+                      ml: 2,
+                      animation: "bounce 3s infinite",
+                      "@keyframes bounce": {
+                        "0%, 20%, 50%, 80%, 100%": {
+                          transform: "translateX(0)",
+                        },
+                        "40%": {
+                          transform: "translateX(-10px)",
+                        },
+                        "60%": {
+                          transform: "translateX(-5px)",
+                        },
+                      },
+                    }}
+                  />
+                </>
+              )}
             </Button>
             <Button
               variant="outlined"
