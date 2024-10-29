@@ -40,6 +40,9 @@ const ProductDetailPage = () => {
     enabled: !!id,
     refetchOnWindowFocus: false,
   });
+  console.log('====================================');
+  console.log('Product Data is :',product);
+  console.log('====================================');
 
   const wishlistItems = useSelector((state) => state.wishlist.wishlists);
   const cartItems = useSelector((state) => state.cart.cartData);
@@ -64,7 +67,15 @@ const ProductDetailPage = () => {
   const isCart = cartItems?.some(
     (item) => item?.product?.id == updatedDetails?.id
   );
+
+  
   const handleCart = async () => {
+    if (!isAuthenticated) {
+      showToast("Login Required", "error");
+      navigate("/login", {state: {from: location.pathname}});
+      return;
+    }
+
     if (isCart) {
       navigate("/cart");
     } else {
