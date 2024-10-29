@@ -16,11 +16,12 @@ import {
   StyledProductCard,
 } from "../StyledComponents/StyledProductComponents";
 import styles from "./productCardStyle";
+import RatingComponent from "../Rating/Rating";
 
 const WishlistCard = ({data, onDelete}) => {
-  console.log(data);
+  console.log('data from wishlitst cartd : ',data);
   const {product, id} = data;
-  const {product_name, color, size, stock, product_images, price} = product;
+  const {product_name, color, size, stock, product_images, price, average_rating, rating_count} = product;
 
   const colorImages = product_images.filter((image) => image.color === color);
   const classes = styles();
@@ -34,7 +35,7 @@ const WishlistCard = ({data, onDelete}) => {
   }
 
   return (
-    <StyledProductCard cardheight={310}>
+    <StyledProductCard cardheight={350} >
       <Box
         sx={{
           "&:hover .arrow": {
@@ -116,10 +117,12 @@ const WishlistCard = ({data, onDelete}) => {
         <ProductName variant="h6" component="div">
           {product_name}
         </ProductName>
+
         {/* Product prize */}
         <PriceTag variant="body2" component="div">
           ₹ {price || "N/A"}
         </PriceTag>
+
         <Box sx={{display: "flex", justifyContent: "center"}}>
           {/* Product color */}
           <Box sx={classes.colorStyle(color)}></Box>

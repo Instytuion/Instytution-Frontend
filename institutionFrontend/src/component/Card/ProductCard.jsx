@@ -41,8 +41,12 @@ import {
   StyledProductCard,
 } from "../StyledComponents/StyledProductComponents";
 import Styles from "./productCardStyle";
+import RatingComponent from "../Rating/Rating";
 
 const ProductCard = ({data}) => {
+  console.log('====================================');
+  console.log('data is :',data);
+  console.log('====================================');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state) => state.wishlist.wishlists);
@@ -159,7 +163,7 @@ const ProductCard = ({data}) => {
         return (
           <Grid item xs={6} md={6} lg={4} gap={1} key={index}>
             <StyledProductCard
-              cardheight={360}
+              cardheight={376}
               onClick={() => handleCardClick(item)}
             >
               <StockMessage stock={selectedStock}>
@@ -236,6 +240,7 @@ const ProductCard = ({data}) => {
                 <ProductName variant="h6" component="div">
                   {item.name}
                 </ProductName>
+                <RatingComponent value={item.average_rating} readOnly={true} count={item.rating_count} sx={{ justifyContent: 'center' }} />
 
                 <PriceTag
                   variant="body2"

@@ -7,6 +7,7 @@ import useToast from "../../hooks/useToast";
 import {  useQueryClient } from "react-query";
 import { useSelector, useDispatch } from 'react-redux'; 
 import { updateCartQuantity } from "../../redux/slices/Cart";
+import RatingComponent from "../Rating/Rating";
 
 
 const CartItems = ({ data, onRemoveItem }) => {
@@ -14,6 +15,7 @@ const CartItems = ({ data, onRemoveItem }) => {
   const dispatch = useDispatch()
   const cartItems = useSelector((state) => state.cart.cartData);
   const { product, quantity, id } = data;
+const {rating_count, average_rating} = product
 
   const [count, setCount] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,6 +127,8 @@ const CartItems = ({ data, onRemoveItem }) => {
             <Typography variant="body2" fontWeight={500}>
               Unit Price: ₹{product.price}
             </Typography>
+            <RatingComponent value={average_rating} readOnly={true} count={rating_count}/>
+
             {product.size && (
               <Typography variant="body2">Size: {product.size}</Typography>
             )}

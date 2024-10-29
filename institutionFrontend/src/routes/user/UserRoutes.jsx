@@ -5,7 +5,7 @@ import PageNotFoundPage from "../../component/ErrorPages/PageNotFound";
 import SignUpLoginProtectRoutes from "../protectedRoutes/SignUpLoginProtectRoutes";
 import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
 import SessionExpired from "../../component/ErrorPages/SessionExpired";
-import ProductsList from "../../pages/user/ProductsList";
+import ProductsList from "../../pages/user/ecommerce/ProductsList";
 import ProductDetailPage from "../../pages/user/ecommerce/ProductDetailPage";
 import Cart from "../../pages/user/ecommerce/Cart";
 
