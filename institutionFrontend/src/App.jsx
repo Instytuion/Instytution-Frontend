@@ -12,6 +12,7 @@ import { RoleBasedRoute } from "./routes/protectedRoutes/RoleBasedRoutes";
 import Unauthorized from "./component/ErrorPages/Unathorized";
 import {QueryClient, QueryClientProvider} from "react-query";
 import InstructorRoutes from "./routes/instructor/instructorRoutes";
+import ShopAdminRoutes from "./routes/ShopAdmin/shopAdminRoutes";
 
 const queryClient = new QueryClient();
 
@@ -25,36 +26,44 @@ const App = () => {
             anchorOrigin={{vertical: "top", horizontal: "center"}}
           >
             <QueryClientProvider client={queryClient}>
-            <Router>
-              <Routes>
-                <Route path="/*" element={<UserRoutes />} />
-                <Route path="/unauthorized" element={<Unauthorized />} />
-                <Route
-                  path="admin/*"
-                  element={
-                    <RoleBasedRoute allowedRole={["admin"]}>
-                      <AdminRoute />
-                    </RoleBasedRoute>
-                  }
-                />
-                <Route
-                  path="course-admin/*"
-                  element={
-                    <RoleBasedRoute allowedRole={["course_admin"]}>
-                      <CourseAdminRoutes />
-                    </RoleBasedRoute>
-                  }
-                />
-                <Route
-                  path="instructor/*"
-                  element={
-                    <RoleBasedRoute allowedRole={["instructor"]}>
-                      <InstructorRoutes />
-                    </RoleBasedRoute>
-                  }
-                />
-              </Routes>
-            </Router>
+              <Router>
+                <Routes>
+                  <Route path="/*" element={<UserRoutes />} />
+                  <Route path="/unauthorized" element={<Unauthorized />} />
+                  <Route
+                    path="admin/*"
+                    element={
+                      <RoleBasedRoute allowedRole={["admin"]}>
+                        <AdminRoute />
+                      </RoleBasedRoute>
+                    }
+                  />
+                  <Route
+                    path="course-admin/*"
+                    element={
+                      <RoleBasedRoute allowedRole={["course_admin"]}>
+                        <CourseAdminRoutes />
+                      </RoleBasedRoute>
+                    }
+                  />
+                  <Route
+                    path="instructor/*"
+                    element={
+                      <RoleBasedRoute allowedRole={["instructor"]}>
+                        <InstructorRoutes />
+                      </RoleBasedRoute>
+                    }
+                  />
+                  <Route
+                    path="shop-admin/*"
+                    element={
+                      <RoleBasedRoute allowedRole={["shop_admin"]}>
+                        <ShopAdminRoutes />
+                      </RoleBasedRoute>
+                    }
+                  />
+                </Routes>
+              </Router>
             </QueryClientProvider>
           </SnackbarProvider>
         </ThemeProvider>
