@@ -5,6 +5,7 @@ import ColorSelector from "./ColorSelector";
 import SizeSelector from "./SizeSelector";
 import {getUniqueColors, getUniqueSizes} from "../../utils/productUtils";
 import style1 from "./style";
+import RatingComponent from "../Rating/Rating";
 
 const ProductDetails = ({
   product,
@@ -43,6 +44,7 @@ const ProductDetails = ({
           <Typography variant="h5" fontWeight="bold">
             {product.name}
           </Typography>
+          <RatingComponent value={product.average_rating} readOnly={true} count={`${product.rating_count} Reviews`}/>
 
           {/* Product Price */}
           <Typography variant="h5">₹ {selectedPrice}</Typography>

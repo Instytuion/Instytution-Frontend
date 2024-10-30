@@ -5,8 +5,9 @@ import PageNotFoundPage from "../../component/ErrorPages/PageNotFound";
 import SignUpLoginProtectRoutes from "../protectedRoutes/SignUpLoginProtectRoutes";
 import IsAuthenticatedRoutes from "../protectedRoutes/IsAuthenticatedRoutes";
 import SessionExpired from "../../component/ErrorPages/SessionExpired";
-import ProductsList from "../../pages/user/ProductsList";
+import ProductsList from "../../pages/user/ecommerce/ProductsList";
 import ProductDetailPage from "../../pages/user/ecommerce/ProductDetailPage";
+import Cart from "../../pages/user/ecommerce/Cart";
 
 // Lazy load components (example)
 const Home = lazy(() => import("../../pages/user//Home"));
@@ -82,6 +83,11 @@ function App() {
         <Route path={"/store"} element={<Store />} />
         <Route path={"/products/:category"} element={<ProductsList />} />
         <Route path={"/product/:id"} element={<ProductDetailPage />} />
+        <Route
+          path={"/cart"}
+          element={<IsAuthenticatedRoutes element={Cart} />}
+        />
+
 
         <Route path="*" element={<PageNotFoundPage />} />
         <Route

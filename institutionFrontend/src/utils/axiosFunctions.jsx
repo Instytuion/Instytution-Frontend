@@ -4,6 +4,7 @@ import {store} from "../redux/stores/store";
 import Cookies from "js-cookie";
 import { noAuthInstance } from "./axios";
 import { clearWishlist } from "../redux/slices/WishlistSlice";
+import { clearCart } from "../redux/slices/Cart";
 
 
 const getExpiryTime = () => {
@@ -32,6 +33,7 @@ const logoutUser = async () => {
   Cookies.remove("expiryTime", {path: "/"});
   store.dispatch(logout());
   store.dispatch(clearWishlist())
+  store.dispatch(clearCart())
 };
 
 const refreshToken = async () => {

@@ -183,6 +183,9 @@ function Navbar() {
                     <MenuItem onClick={() => navigate("/wishlist")}>
                       Wishlist
                     </MenuItem>
+                    <MenuItem onClick={() => navigate("/cart")}>
+                      Cart
+                    </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
                 </>
@@ -246,6 +249,9 @@ function Navbar() {
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/wishlist")}>
                       Wishlist
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/cart")}>
+                      Cart
                     </MenuItem>
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                   </Menu>
