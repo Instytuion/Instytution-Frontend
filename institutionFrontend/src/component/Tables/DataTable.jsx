@@ -234,23 +234,23 @@
 
 // export default CustomDataTable;
 
-import React, { useState, useEffect } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import { TextField, Box, Typography, Button } from "@mui/material";
-import { CreateUsersByRole } from "../../services/admin/UsersCreation";
+import React, {useState, useEffect} from "react";
+import {DataGrid} from "@mui/x-data-grid";
+import {TextField, Box, Typography, Button} from "@mui/material";
+import {CreateUsersByRole} from "../../services/admin/UsersCreation";
 import UserCrudModal from "../Modals/UserCrudModal";
 import useToast from "../../hooks/useToast";
-import { ColumnsHeading } from "./TableColumns";
+import {ColumnsHeading} from "./TableColumns";
 import LitsUsersByRole from "../../services/admin/UsersLIst";
 import CustomPagination from "./CustomePagination";
-import { useTheme } from "@emotion/react";
-import { StyledTextField } from "../CustomeElements/CustomFormInputs";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { BatchColumnsHeading } from "./BatchColumnsHeading";
+import {useTheme} from "@emotion/react";
+import {StyledTextField} from "../CustomeElements/CustomFormInputs";
+import {useSelector} from "react-redux";
+import {useNavigate} from "react-router-dom";
+// import { BatchColumnsHeading } from "./BatchColumnsHeading";
 import BookLoaderJson from "../Spinner/BookLoaderJson";
 import ConfirmationModal from "../Modals/ConfirmModal";
-import { updateUserStatus } from "../../services/unblockAndBlock/UserController";
+import {updateUserStatus} from "../../services/unblockAndBlock/UserController";
 
 const CustomDataTable = ({
   title,
@@ -259,6 +259,8 @@ const CustomDataTable = ({
   row = null,
   courseName = null,
   programeName = null,
+  DynamicHeading = null,
+  handleNavigate,
 }) => {
   console.log("====================================");
   console.log("prgtms :", programeName);
@@ -322,7 +324,7 @@ const CustomDataTable = ({
       setRows((prev) =>
         prev.map((user) =>
           user.id === selectedUser.id
-            ? { ...user, is_active: actionType === "block" ? false : true }
+            ? {...user, is_active: actionType === "block" ? false : true}
             : user
         )
       );
@@ -366,8 +368,8 @@ const CustomDataTable = ({
   const handleCloseModal = () => setOpenModal(false);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewUser((prev) => ({ ...prev, [name]: value }));
+    const {name, value} = e.target;
+    setNewUser((prev) => ({...prev, [name]: value}));
   };
 
   const handleFormSubmit = async () => {
@@ -407,135 +409,122 @@ const CustomDataTable = ({
 
   return (
     <>
-     <Box sx={{ width: "77vw" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography
-          sx={{
-            fontSize: 20,
-            fontWeight: "bold",
-            marginBottom: 2,
-            color: theme.palette.text.primary,
-          }}
-        >
-          {title}
-        </Typography>
-        {buttonText && (
-          <Button
-            onClick={
-              row
-                ? () =>
-                    navigate("/course-admin/batch-form", {
-                      state: {
-                        courseName: courseName,
-                        programeName: programeName,
-                      },
-                    })
-                : handleOpenModal
-            }
+      <Box sx={{width: "77vw"}}>
+        <Box sx={{display: "flex", justifyContent: "space-between"}}>
+          <Typography
             sx={{
-              color: "white",
-              p: 2.8,
-              height: 0,
-              backgroundColor: theme.palette.customColors,
+              fontSize: 20,
+              fontWeight: "bold",
+              marginBottom: 2,
+              color: theme.palette.text.primary,
             }}
           >
-            Add New
-          </Button>
+            {title}
+          </Typography>
+          {buttonText && (
+            <Button
+              onClick={row ? handleNavigate: handleOpenModal}
+              sx={{
+                color: "white",
+                p: 2.8,
+                height: 0,
+                backgroundColor: theme.palette.customColors,
+              }}
+            >
+              Add New
+            </Button>
+          )}
+        </Box>
+        <TextField
+          label="Search"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Box sx={{overflow: "auto", maxHeight: "68.58vh"}}>
+          <DataGrid
+            rows={filteredRows}
+            columns={
+              row
+                ? DynamicHeading()
+                : ColumnsHeading(setRows, handleOpenConfirmModal)
+            }
+            sx={{
+              width: "100vw",
+              "& .MuiDataGrid-virtualScroller": {
+                overflowY: "auto",
+                overflowX: "auto",
+              },
+              "& .MuiDataGrid-footerContainer": {
+                display: "none",
+              },
+            }}
+          />
+        </Box>
+        {!row && (
+          <CustomPagination
+            page={page}
+            pageSize={pageSize}
+            rowCount={rowCount}
+            onPageChange={setPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
+        <UserCrudModal
+          open={openModal}
+          handleClose={handleCloseModal}
+          title={`Add New ${title}`}
+          handleSubmit={handleFormSubmit}
+          isLoading={loading}
+        >
+          <StyledTextField
+            fullWidth
+            margin="normal"
+            label="Email"
+            name="email"
+            value={newUser.email}
+            onChange={handleInputChange}
+            error={!!error.email}
+            helperText={error.email}
+          />
+          <StyledTextField
+            fullWidth
+            margin="normal"
+            label="Password"
+            name="password"
+            type="password"
+            value={newUser.password}
+            onChange={handleInputChange}
+            error={!!error.password}
+            helperText={error.password}
+          />
+          <StyledTextField
+            fullWidth
+            margin="normal"
+            label="First Name"
+            name="first_name"
+            value={newUser.first_name}
+            onChange={handleInputChange}
+          />
+          <StyledTextField
+            fullWidth
+            margin="normal"
+            label="Last Name"
+            name="last_name"
+            value={newUser.last_name}
+            onChange={handleInputChange}
+          />
+        </UserCrudModal>
       </Box>
-      <TextField
-        label="Search"
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <Box sx={{ overflow: "auto", maxHeight: "68.58vh" }}>
-        <DataGrid
-          rows={filteredRows}
-          columns={
-            row
-              ? BatchColumnsHeading()
-              : ColumnsHeading(setRows, handleOpenConfirmModal)
-          }
-          sx={{
-            width: "100vw",
-            "& .MuiDataGrid-virtualScroller": {
-              overflowY: "auto",
-              overflowX: "auto",
-            },
-            "& .MuiDataGrid-footerContainer": {
-              display: "none",
-            },
-          }}
-        />
-      </Box>
-      {!row && (
-        <CustomPagination
-          page={page}
-          pageSize={pageSize}
-          rowCount={rowCount}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-        />
-      )}
-      <UserCrudModal
-        open={openModal}
-        handleClose={handleCloseModal}
-        title={`Add New ${title}`}
-        handleSubmit={handleFormSubmit}
-        isLoading={loading}
-      >
-        <StyledTextField
-          fullWidth
-          margin="normal"
-          label="Email"
-          name="email"
-          value={newUser.email}
-          onChange={handleInputChange}
-          error={!!error.email}
-          helperText={error.email}
-        />
-        <StyledTextField
-          fullWidth
-          margin="normal"
-          label="Password"
-          name="password"
-          type="password"
-          value={newUser.password}
-          onChange={handleInputChange}
-          error={!!error.password}
-          helperText={error.password}
-        />
-        <StyledTextField
-          fullWidth
-          margin="normal"
-          label="First Name"
-          name="first_name"
-          value={newUser.first_name}
-          onChange={handleInputChange}
-        />
-        <StyledTextField
-          fullWidth
-          margin="normal"
-          label="Last Name"
-          name="last_name"
-          value={newUser.last_name}
-          onChange={handleInputChange}
-        />
-      </UserCrudModal>
-
-      
-    </Box>
-    <ConfirmationModal
+      <ConfirmationModal
         open={openConfirmModal}
         onClose={handleCloseConfirmModal}
         onConfirm={handleConfirm}
         actionType={actionType}
-        email= {selectedUser?.email}
+        email={selectedUser?.email}
       />
     </>
-   
   );
 };
 

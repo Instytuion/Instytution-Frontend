@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useQuery } from "react-query";
-import { useParams, useLocation } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import {useQuery} from "react-query";
+import {useParams, useLocation, useNavigate} from "react-router-dom";
 import CustomDataTable from "../../component/Tables/DataTable";
 import CourseAdminBatchServices from "../../services/courseAdmin/CourseAdminBatchServices";
 import BookLoaderJson from "../../component/Spinner/BookLoaderJson";
 import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
+import {BatchColumnsHeading} from "../../component/Tables/BatchColumnsHeading";
 
 const Batches = () => {
   const [batches, setBatches] = useState([]);
-  const { courseName } = useParams();
+  const {courseName} = useParams();
   const location = useLocation();
-  const { programeName } = location.state || {};
-  
+  const {programeName} = location.state || {};
+  const navigate = useNavigate()
 
-  const { data, error, isLoading } = useQuery(
+  const {data, error, isLoading} = useQuery(
     ["batches", courseName],
     () => CourseAdminBatchServices.getBatches(courseName),
     {
@@ -37,7 +38,7 @@ const Batches = () => {
     : programeName;
 
   const link = [
-    { path: "/course-admin/programs", label: "Programs" },
+    {path: "/course-admin/programs", label: "Programs"},
 
     {
       path: `/course-admin/programs/${programPath}`,
@@ -47,9 +48,16 @@ const Batches = () => {
       label: "Batches",
     },
   ];
-  console.log('====================================');
-  console.log('program names is ',programeName);
-  console.log('====================================');
+
+  const handleNavigate = () => {
+    navigate("/course-admin/batch-form", {
+      state: {
+        courseName: courseName,
+        programeName: programeName,
+      },
+    });
+  };
+
   return (
     <>
       <CustomeBreadCrumbs links={link} />
@@ -62,6 +70,8 @@ const Batches = () => {
         programeName={programPath}
         buttonText={"Batches"}
         courseName={courseName}
+        DynamicHeading={BatchColumnsHeading}
+        handleNavigate={handleNavigate}
       />
     </>
   );
