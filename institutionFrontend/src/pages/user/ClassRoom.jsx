@@ -78,6 +78,7 @@ const ClassRoom = () => {
             "video": {
                 width: { ideal: 1280, max: 1920 },
                 height: { ideal: 720, max: 1080 },
+                frameRate: { ideal: 15 },
                 facingMode: "user"
             },
             "audio": {
