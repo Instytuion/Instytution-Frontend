@@ -16,7 +16,7 @@ const PageNotFoundPage = () => {
         minHeight: '100vh',
       }}
     >
-      <Paper elevation={0} sx={{ padding: '2rem', textAlign: 'center' }}>
+      <Paper elevation={0}  sx={{ padding: '2rem', textAlign: 'center', bgcolor:'white' }}>
         <img src={image} alt="404 Not Found" style={{ width: '100%', maxWidth: '400px', marginBottom: '1rem' }} />
         <Typography variant="h4" gutterBottom>
           Oops! Page Not Found

@@ -1,6 +1,6 @@
 import React from "react";
 import WishlistCard from "../../../component/Card/WishlistCard";
-import {Grid, Stack} from "@mui/material";
+import {Grid, Stack, Typography} from "@mui/material";
 import WishlistServices from "../../../services/user/Wishlist";
 import {removeFromWishlist} from "../../../redux/slices/WishlistSlice";
 import {useDispatch, useSelector} from "react-redux";
@@ -29,30 +29,56 @@ const WishlistPage = () => {
   };
 
   return (
-    <>
-      <Grid container spacing={1}>
-        {wishlists.length === 0 ? (
-          <Stack
+    <Stack spacing={2} p={4}>
+    <Typography
+      variant="h4"
+      pl={3}
+      pr={3}
+      gutterBottom
+      sx={{
+        borderBottom: "3px solid #000",
+        width: "fit-content",
+        paddingBottom: "4px",
+        fontWeight: "bold",
+      }}
+    >
+      Wishlists
+    </Typography>
+    <Grid container spacing={2} sx={{ paddingLeft: 3 }}>
+      {wishlists.length === 0 ? (
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "50vh",
+          }}
+        >
+          <NoData text={"No items in Wishlist"} />
+        </Grid>
+      ) : (
+        wishlists.map((wishlist) => (
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={3}
+            lg={3}
+            key={wishlist.id}
             sx={{
-              height: "100vh",
-              width: "100vw",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
             }}
           >
-            <NoData text={"No items In Wishlist"} />
-          </Stack>
-        ) : (
-          wishlists.map((wishlist) => (
-            <Grid item xs={6} sm={4} md={3} lg={3} key={wishlist.id}>
-              <WishlistCard data={wishlist} onDelete={handleDelete} />
-            </Grid>
-          ))
-        )}
-      </Grid>
-    </>
-  );
+            <WishlistCard data={wishlist} onDelete={handleDelete} />
+          </Grid>
+        ))
+      )}
+    </Grid>
+  </Stack>
+);
 };
 
 export default WishlistPage;

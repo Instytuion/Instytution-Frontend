@@ -14,8 +14,8 @@ function SignUpLoginProtectRoutes({ element: Component, ...rest }) {
         navigate("/course-admin/dashboard");
       } else if (role === "admin") {
         navigate("/admin/dashboard");
-      } else if (role === "shope_admin") {
-        navigate("/shope-admin/dashboard");
+      } else if (role === "shop_admin") {
+        navigate("/shop-admin/");
       } else {
         navigate(redirectPath);
       }

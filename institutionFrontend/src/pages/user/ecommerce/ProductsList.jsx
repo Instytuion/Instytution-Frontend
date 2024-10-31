@@ -1,13 +1,13 @@
 import React, {useState} from "react";
 import {useParams} from "react-router-dom";
-import PageNotFoundPage from "../../component/ErrorPages/PageNotFound";
+import PageNotFoundPage from "../../../component/ErrorPages/PageNotFound";
 import {Box, Stack, Typography, useMediaQuery, IconButton} from "@mui/material";
 import {useQuery} from "react-query";
-import ProductsServices from "../../services/user/ProductServices";
-import CartLoader from "../../component/Spinner/CartLoader";
-import ProductFilter from "../../component/Drawer/ProductFilter";
+import ProductsServices from "../../../services/user/ProductServices";
+import CartLoader from "../../../component/Spinner/CartLoader";
+import ProductFilter from "../../../component/Drawer/ProductFilter";
 import {Menu as MenuIcon, Close as CloseIcon} from "@mui/icons-material";
-import ProductCard from "../../component/Card/ProductCard";
+import ProductCard from "../../../component/Card/ProductCard";
 
 const ProductsList = () => {
   const {category} = useParams();
