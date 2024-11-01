@@ -190,6 +190,12 @@ const wishlistItem = wishlistItems.find(
       showToast("Failed to update wishlist. Please try again.", "error");
     }
   };
+  console.log('====================================');
+  console.log("id is :",updatedDetails?.id);
+  console.log('====================================');
+  const handleBuyButton=()=>{
+    navigate('/checkout-page/',{state:{id:id}})
+  }
 
   return (
     <Container maxWidth="lg" sx={styles.container(isMobile)}>
@@ -281,6 +287,7 @@ const wishlistItem = wishlistItems.find(
                   color: "#fff",
                 },
               }}
+              onClick={handleBuyButton}
             >
               BUY NOW
             </Button>

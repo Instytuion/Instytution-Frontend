@@ -8,6 +8,7 @@ import SessionExpired from "../../component/ErrorPages/SessionExpired";
 import ProductsList from "../../pages/user/ecommerce/ProductsList";
 import ProductDetailPage from "../../pages/user/ecommerce/ProductDetailPage";
 import Cart from "../../pages/user/ecommerce/Cart";
+import Checkout from "../../pages/user/ecommerce/Checkout";
 
 // Lazy load components (example)
 const Home = lazy(() => import("../../pages/user//Home"));
@@ -75,6 +76,8 @@ function App() {
           element={<IsAuthenticatedRoutes element={classRoom} />}
         />
 
+        {/* Ecommerce Routes */}
+
         <Route
           path={"/Wishlist"}
           element={<IsAuthenticatedRoutes element={WihslistPage} />}
@@ -87,6 +90,11 @@ function App() {
           path={"/cart"}
           element={<IsAuthenticatedRoutes element={Cart} />}
         />
+        <Route
+          path={"/checkout-page/"}
+          element={<IsAuthenticatedRoutes element={Checkout} />}
+        />
+        
 
 
         <Route path="*" element={<PageNotFoundPage />} />
