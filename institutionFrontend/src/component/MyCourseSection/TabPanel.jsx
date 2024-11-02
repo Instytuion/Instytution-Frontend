@@ -25,7 +25,8 @@ const downloadFile = (url, filename) => {
     .catch((error) => console.error("Error downloading the file", error));
 };
 
-const CourseTabPanel = ({ lessonsData, selectedBatch }) => {
+const CourseTabPanel = ({ lessonsData, selectedBatch, endDate, startDate }) => {
+  
   const isMobile = useMediaQuery("(max-width:600px)");
   console.log("From parent to CHild ________________________", selectedBatch);
 
@@ -103,7 +104,7 @@ const CourseTabPanel = ({ lessonsData, selectedBatch }) => {
       {/* Tab 0: Sessions */}
       {selectedTab === 0 && (
         <Box sx={{ p: 3 }}>
-          <CalendarComponent />
+          <CalendarComponent batch={selectedBatch} endDate={endDate} startDate={startDate}/>
         </Box>
       )}
 
