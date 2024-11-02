@@ -48,26 +48,49 @@ import "react-calendar/dist/Calendar.css";
 import dayjs from "dayjs";
 import PlayCircleFilledIcon from "@mui/icons-material/PlayCircleFilled";
 import { Box } from "@mui/material";
+import { useQuery } from "react-query";
+import SessionVideos from "../../services/user/SessionVideos";
+import CartLoader from "../Spinner/CartLoader";
 
-const CalendarComponent = () => {
-  // Available video dates and URLs
-  const availableVideos = [
-    { date: dayjs("2024-10-11"), url: "https://youtu.be/_ktvAxDMj5k" },
-    { date: dayjs("2024-10-13"), url: "https://youtu.be/example2" },
-    { date: dayjs("2024-10-15"), url: "https://youtu.be/example3" },
-    { date: dayjs("2024-10-14"), url: "https://youtu.be/example4" },
-    { date: dayjs("2024-10-17"), url: "https://youtu.be/example5" },
-  ];
+const CalendarComponent = ({ batch, endDate, startDate }) => {
+  const [videos, setVideos] = [];
+
+  const { data, isLoading, error } = useQuery(
+    ["Session_Videos", batch],
+    () => SessionVideos(batch),
+    {
+      enabled: !!batch,
+    }
+  );
+
+  if (isLoading) <CartLoader />;
+  if (error) return <Typography color="error">Error loading videos</Typography>;
+
+  console.log("data from fetching session videos :", data);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const minDate = new Date(2024, 9, 10);
-  const maxDate = new Date(2024, 9, 20);
+  const minDate = new Date(startDate);
+  const maxDate = new Date(endDate);
+
+  const videosByDate = data?.reduce((acc, video) => {
+    const videoDate = dayjs(video.date).format("YYYY-MM-DD");
+    if (!acc[videoDate]) {
+      acc[videoDate] = [];
+    }
+    acc[videoDate].push(video);
+    acc[videoDate].sort((a, b) => a.video_serial - b.video_serial);
+    return acc;
+  }, {});
+  console.log("video By date is :", videosByDate);
 
   const navigate = useNavigate();
 
   const handleVideoClick = (url) => {
-    navigate(`/video?url=${encodeURIComponent(url)}`);
+    console.log("====================================");
+    console.log("VIdeos is :", url);
+    console.log("====================================");
+    navigate("/video", { state: { url: url } });
   };
 
   return (
@@ -78,14 +101,17 @@ const CalendarComponent = () => {
         minDate={minDate}
         maxDate={maxDate}
         tileContent={({ date }) => {
-          const video = availableVideos.find((video) =>
-            dayjs(date).isSame(video.date, "day")
-          );
+          const dateKey = dayjs(date).format("YYYY-MM-DD");
+          const videos = videosByDate?.[dateKey];
 
-          return video ? (
+          // const video = data?.find((item) =>
+          //   dayjs(date).isSame(item.date, "day")
+          // );
+
+          return videos ? (
             <PlayCircleFilledIcon
               sx={{ fontSize: 22, color: "#000", cursor: "pointer" }}
-              onClick={() => handleVideoClick(video.url)}
+              onClick={() => handleVideoClick(videos)}
             />
           ) : null;
         }}
