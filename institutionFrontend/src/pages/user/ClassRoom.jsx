@@ -71,8 +71,8 @@ const ClassRoom = () => {
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+   //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+   let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {

@@ -72,6 +72,7 @@ const InstructorClassRoom = () => {
     const showToast = useToast();
     const [openConfirmModal, setOpenConfirmModal] = useState(false);
     const [recordBtn, setRecordBtn] = useState("Record");
+    const [isRecording, setIsRecording] = useState(false)
     const videoChunkSerial = useRef(0)
     const [disableRecord, setDisableRecord] = useState(true)
 
@@ -101,8 +102,8 @@ const InstructorClassRoom = () => {
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+    //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+    let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {
@@ -165,7 +166,10 @@ const InstructorClassRoom = () => {
 
             webSocket.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
-                stopRecording(setRecordBtn, showToast);
+                if(isRecording){
+                    stopRecording(setRecordBtn, showToast);
+                    setIsRecording(false);
+                }
                 setBtnOpenClass((prev)=>prev = "Open Class Room");
                 setIsConnecting(false);
                 setDisableRecord(true);
@@ -438,10 +442,12 @@ const InstructorClassRoom = () => {
 
     const handleRecordVideo = ()=>{
         if(recordBtn == "Record"){
+            setIsRecording(true);
             setRecordBtn("Stop Recording...");
             startRecording(localStream.current, batchName, videoChunkSerial);
         }
         if(recordBtn == "Stop Recording..."){
+            setIsRecording(false);
             setRecordBtn(
                 (prev)=>prev = (
                     <>
