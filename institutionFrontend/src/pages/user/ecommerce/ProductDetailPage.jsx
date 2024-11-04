@@ -25,7 +25,7 @@ import ProductDetails from "../../../component/Products/ProductMainDetail";
 import { style } from "./style";
 import useToast from "../../../hooks/useToast";
 import { addToCart } from "../../../redux/slices/Cart";
-import bounceAnimation from "../../../component/StyledComponents/animations";
+import bounceAnimation from "../../../component/StyledComponents/Animations";
 const ProductDetailPage = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const { id } = useParams();
