@@ -1,4 +1,4 @@
-import {Box, Button, duration, Grid, Typography} from "@mui/material";
+import {Box, Button, Grid, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import CommonCard from "../Card/Card";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
