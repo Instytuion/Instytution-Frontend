@@ -1,6 +1,6 @@
 import { Box, Card, Typography, Button, Divider, Stack } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-import bounceAnimation from "../StyledComponents/animations";
+import bounceAnimation from "../StyledComponents/Animations";
 const CartSummary = ({ subtotal, shipping = 40 }) => {
   const total = subtotal + shipping;
 
