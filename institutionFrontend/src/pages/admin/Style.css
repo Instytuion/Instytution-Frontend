@@ -1,0 +1,17 @@
+.header-nowrap {
+    white-space: nowrap; /* Prevents wrapping */
+    overflow: hidden;   /* Ensures no overflow */
+    text-overflow: ellipsis; /* Prevents clipping */
+    color: aqua;
+  }
+  @media (max-width: 600px) {
+    .MuiDataGrid-columnHeaders {
+      display: flex;
+      flex-direction: column; /* Stack headers if necessary */
+    }
+  
+    .header-nowrap {
+      white-space: normal; /* Allow wrapping */
+    }
+  }
+  
