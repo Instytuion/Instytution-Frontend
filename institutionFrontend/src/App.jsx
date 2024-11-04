@@ -11,7 +11,7 @@ import CourseAdminRoutes from "./routes/CourseAdmin/CourseAdminRoutes";
 import { RoleBasedRoute } from "./routes/protectedRoutes/RoleBasedRoutes";
 import Unauthorized from "./component/ErrorPages/Unathorized";
 import {QueryClient, QueryClientProvider} from "react-query";
-import InstructorRoutes from "./routes/instructor/instructorRoutes";
+import InstructorRoutes from "./routes/instructor/InstructorRoutes";
 import ShopAdminRoutes from "./routes/ShopAdmin/shopAdminRoutes";
 
 const queryClient = new QueryClient();

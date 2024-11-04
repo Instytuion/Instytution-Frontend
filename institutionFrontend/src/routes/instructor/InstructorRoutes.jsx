@@ -3,7 +3,7 @@ import Spinner from '../../component/Spinner/Spinner'
 import { Route, Routes } from 'react-router-dom'
 import PageNotFoundPage from '../../component/ErrorPages/PageNotFound'
 
-const InstructorHome = lazy(()=> import("../../pages/instructor/instructorHomePage"))
+const InstructorHome = lazy(()=> import("../../pages/instructor/InstructorHomePage"))
 const InstructorClassRoom = lazy(()=> import("../../pages/instructor/InstructorClassRoom"))
 
 function InstructorRoutes() {
