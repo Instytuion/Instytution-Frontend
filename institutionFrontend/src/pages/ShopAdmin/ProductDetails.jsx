@@ -4,10 +4,11 @@ import {useQuery} from "react-query";
 import CustomDataTable from "../../component/Tables/DataTable";
 import CartLoader from "../../component/Spinner/CartLoader";
 import {ProductDetailColumnsHeading} from "../../component/Tables/ProductDetailTable";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import ProductsServices from "../../services/user/ProductServices";
 
 const ProductDetails = () => {
+  const navigate = useNavigate();
   const {id} = useParams();
   const {
     data: product,
@@ -26,6 +27,14 @@ const ProductDetails = () => {
     return <div>Error fetching Products data {error.data}</div>;
   }
 
+  const handleNavigate = () => {
+    navigate("/shop-admin/product-detail-form/", {
+      state: {
+        product: product,
+      },
+    });
+  };
+
   return (
     <>
       <Stack direction="row" spacing={2} justifyContent={"center"}></Stack>
@@ -36,13 +45,14 @@ const ProductDetails = () => {
           images:
             product?.images?.filter((image) => image.color === detail.color) ||
             [],
+          productId: product.id,
         }))}
         title={product?.name}
         buttonText={"Item"}
         DynamicHeading={ProductDetailColumnsHeading}
+        handleNavigate={handleNavigate}
       />
     </>
   );
 };
-
 export default ProductDetails;
