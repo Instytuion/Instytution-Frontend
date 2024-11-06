@@ -1,4 +1,4 @@
-import {instance, noAuthInstance} from "../../utils/axios";
+import instance, {noAuthInstance} from "../../utils/axios";
 
 const ClassRoomServices = {
     uploadVideoChunks: async (formData, batchName, videoChunkSerial)=>{
