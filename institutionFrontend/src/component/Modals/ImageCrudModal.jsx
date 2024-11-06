@@ -15,6 +15,7 @@ const ImageCrudModal = ({
 }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
+  const [isFile, setIsFile] = useState(false);
 
   const {
     setValue,
@@ -26,6 +27,8 @@ const ImageCrudModal = ({
   useEffect(() => {
     if (image && actionType === "view/edit") {
       setValue("color", image.color);
+      setSelectedImage(image.image);
+      setIsFile(false);
     } else {
       setSelectedImage(null);
     }
@@ -38,9 +41,9 @@ const ImageCrudModal = ({
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      setSelectedImage(file); // Store the file itself, not the object URL
+      setSelectedImage(file);
       const objectUrl = URL.createObjectURL(file);
-      // Optional: Show preview (if desired)
+      setIsFile(true);
       return () => URL.revokeObjectURL(objectUrl);
     }
   };
@@ -56,13 +59,13 @@ const ImageCrudModal = ({
       } else {
         alert("Please select an image");
       }
-    } else if (actionType === "edit") {
+    } else if (actionType === "view/edit") {
       if (selectedImage) {
         if (data.color !== image?.color) {
           formData.append("color", data.color);
         } else if (selectedImage !== data.image)
           formData.append("image", selectedImage);
-        onEdit(formData, image.id);
+        onEdit(formData, image.id, productId);
         console.log("Image edited");
       } else {
         alert("Please select an image");
@@ -72,8 +75,8 @@ const ImageCrudModal = ({
   };
 
   const handleDelete = () => {
-    if (image && actionType === "edit") {
-      onDelete(image.id);
+    if (image && actionType === "view/edit") {
+      onDelete(image.id, productId);
       setSelectedImage(null);
     } else {
       alert("No image to delete.");
@@ -131,7 +134,9 @@ const ImageCrudModal = ({
           >
             {selectedImage ? (
               <img
-                src={URL.createObjectURL(selectedImage)} // Use object URL for preview
+                src={
+                  isFile ? URL.createObjectURL(selectedImage) : selectedImage
+                }
                 alt="Preview"
                 style={{width: "100%", height: "100%", objectFit: "cover"}}
               />
@@ -169,7 +174,7 @@ const ImageCrudModal = ({
               Save
             </Button>
 
-            {actionType === "edit" && (
+            {actionType === "view/edit" && (
               <Button
                 onClick={handleDelete}
                 variant="outlined"

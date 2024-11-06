@@ -7,7 +7,7 @@ import ImageCrudModal from "../Modals/ImageCrudModal";
 import {gridColumnVisibilityModelSelector} from "@mui/x-data-grid";
 import {useQueryClient} from "react-query";
 import useToast from "../../hooks/useToast";
-import { productImgagServices } from "../../services/shopAdmin/productImageServices";
+import {productImgagServices} from "../../services/shopAdmin/productImageServices";
 
 export const ProductDetailColumnsHeading = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,12 +16,6 @@ export const ProductDetailColumnsHeading = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useToast();
-
-  const invalidateQueries = (id) => {
-    queryClient.invalidateQueries(["product", id]);
-    queryClient.invalidateQueries(["products", category, null]);
-  };
-
   const handleAddClick = () => {
     setActionType("add");
     setIsModalOpen(true);
@@ -39,32 +33,48 @@ export const ProductDetailColumnsHeading = () => {
     setActionType(null);
   };
 
-  const handleAddImage = (data, id) => {
-    console.log('imges color and id , ', image, colr, id);
-
+  const handleAddImage =  (data, productId) => {
     try {
-      productImgagServices.addImage(data , id);
-      invalidateQueries(id);
-      showToast("Product image added succussfully");
+      productImgagServices.addImage(data, productId);
+      showToast("Product image added succussfully", "success");
     } catch (error) {
       showToast("unexpected error occur", error);
-
       console.log("error ", error);
+    }
+    queryClient.invalidateQueries(["product", productId]);
+    handleCloseModal();
+    setSelectedImage(null);
+    window.location.reload();
+  };
+
+  const handleEditImage = (data, imageId) => {
+    try {
+      productImgagServices.editImage(data, imageId);
+      showToast("Product image edited succussfully", "success");
+      queryClient.invalidateQueries(["product", productId]);
+    } catch (error) {
+      showToast("unexpected error occur", "error");
+      console.log("error ", error);
+    }
+    handleCloseModal();
+    setSelectedImage(null);
+    window.location.reload();
+  };
+
+  const handleDeleteImage = (imageId, productId) => {
+    console.log("Delete Image");
+    try {
+      productImgagServices.deleteImage(imageId);
+      showToast("Image deleted succussfully", "success");
+      queryClient.invalidateQueries(["product", productId]);
+    } catch (error) {
+      showToast("unexpected error occur", "error");
+      console.log(error);
+    } finally {
       handleCloseModal();
       setSelectedImage(null);
+      window.location.reload();
     }
-  };
-
-  const handleEditImage = () => {
-    console.log("Edit Image");
-    handleCloseModal();
-    setSelectedImage(null);
-  };
-
-  const handleDeleteImage = () => {
-    console.log("Delete Image");
-    handleCloseModal();
-    setSelectedImage(null);
   };
 
   return [
@@ -160,7 +170,7 @@ export const ProductDetailColumnsHeading = () => {
       },
     },
     {
-      field:"",
+      field: "",
       hide: isModalOpen,
       flex: 0,
       renderCell: (params) => {

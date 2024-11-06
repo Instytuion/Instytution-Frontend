@@ -11,4 +11,20 @@ export const productImgagServices = {
     );
     return response.data;
   },
+  editImage: async (formData, imageId) => {
+    const response = await instance.patch(
+      `shop-admin/product-images/get-update-delete/${imageId}`,
+      formData,
+      {
+        headers: {"Content-Type": "multipart/form-data"},
+      }
+    );
+    return response.data;
+  },
+  deleteImage: async (imageId) => {
+    const response = await instance.delete(
+      `shop-admin/product-images/get-update-delete/${imageId}`
+    );
+    return response.data;
+  },
 };

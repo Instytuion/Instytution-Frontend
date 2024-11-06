@@ -88,10 +88,19 @@ const ProductDetailsForm = () => {
 
   // Form submission
   const onSubmit = async (data) => {
+
+    const filteredData = Object.keys(data).reduce((acc, key) => {
+      if (data[key] !== "") acc[key] = data[key];
+      return acc;
+    }, {});
+
+    console.log("filterd data--------------",filteredData);
+  
     setLoading(true);
     let duplicateFound = false;
 
     for (const detail of productState.details) {
+      if (mode === "edit" && detail.id === detailId) continue;
       if (detail.size) {
         const newCombination = `${data.color}-${data.size}`;
         if (newCombination === `${detail.color}-${detail.size}`) {
@@ -129,8 +138,9 @@ const ProductDetailsForm = () => {
       if (mode === "create") {
         const response = await ProductsServices.createProductDetail(
           product.id,
-          data
+          filteredData
         );
+
         showToast("Product created successfully!", "success");
         const productID = response.product_id;
 
