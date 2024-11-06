@@ -44,7 +44,8 @@ export const stopRecording = (setRecordBtn, showToast)=>{
         console.log("All chunks uploaded. Calling bindVideoChunks...");
 
         if(uploadedChunks > 0){
-            await bindVideoChunks(setRecordBtn, showToast);
+            bindVideoChunks();
+            bindingCheckPolling(setRecordBtn, showToast);
         }
         totalChunks = 0;
         uploadedChunks = 0;
@@ -71,20 +72,16 @@ export const uploadVideos = async (data, videoChunkSerial)=>{
     }
 };
 
-export const bindVideoChunks = async (setRecordBtn, showToast)=>{
+export const bindVideoChunks = ()=>{
     console.log("bindVideoChunks called...");
-    
-    try{
-        const response = await ClassRoomServices.bindVideoChunk(lessonDate, batchName);
-        setRecordBtn("Record");
-        showToast("Session video successfully created.", "success", 3000)
-        console.log("video chunk binding successfull", response);
-        
-    }
-    catch(error){
-        console.log(`error while binding video chunks of ${batchName} on ${lessonDate}`, error);
-        
-    }
+
+    ClassRoomServices.bindVideoChunk(lessonDate, batchName)
+        .then(response => {
+            console.log('Video chunks bound successfully:', response);
+        })
+        .catch(error => {
+            console.log(`error while binding video chunks of ${batchName} on ${lessonDate}`, error);
+        })
 };
 
 async function waitForUploadsToComplete() {
@@ -92,6 +89,25 @@ async function waitForUploadsToComplete() {
         await new Promise(resolve => setTimeout(resolve, 500)); 
     }
 }
+
+const bindingCheckPolling = (setRecordBtn, showToast) => {
+    const interval = setInterval(async () => {
+        const response = await ClassRoomServices.checkBindingStatus(lessonDate, batchName);
+        if (response) {
+            const status = response.status;
+            console.log('Current video binding status:', status);
+            if (status === 'completed') {
+                clearInterval(interval); 
+                setRecordBtn("Record");
+                showToast("Session video made successfully", "success", 3000);
+                console.log("Video binding completed successfully...");
+            }
+            else if (status === 'processing') {
+                console.log("Video binding is still processing...");
+            }
+        }
+    }, 5000);
+};
 
 
 // export const downloadVideo = (blob)=>{
