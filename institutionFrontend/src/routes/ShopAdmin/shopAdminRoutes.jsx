@@ -7,6 +7,7 @@ import ShopAdminSideBar from "../../layout/ShopAdmin/ShopAdminSideBar";
 import Products from "../../pages/ShopAdmin/Products";
 import ProductDetails from "../../pages/ShopAdmin/ProductDetails";
 import ProductForm from "../../pages/ShopAdmin/ProductForm";
+import ProductDetailsForm from "../../pages/ShopAdmin/ProductDetailsForm";
 const Dashboard = lazy(() => import("../../pages/ShopAdmin/Dashboard"));
 
 function ShopAdminRoutes() {
@@ -21,6 +22,7 @@ function ShopAdminRoutes() {
           <Route path="/products" element={<Products />} />
           <Route path="/product/details/:id/" element={<ProductDetails />} />
           <Route path="/product-form" element={<ProductForm />} />
+          <Route path="/product-detail-form" element={<ProductDetailsForm />} />
 
           <Route path="*" element={<PageNotFoundPage />} />
         </Route>

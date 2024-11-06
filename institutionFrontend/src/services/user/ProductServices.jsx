@@ -47,6 +47,26 @@ const ProductsServices = {
     );
     return response.data;
   },
+  getProductDetail: async (id) => {
+    const response = await instance.get(
+      `shop-admin/product-specific-detail/get-update/${id}`
+    );
+    return response.data;
+  },
+  createProductDetail: async (id, data) => {
+    const response = await instance.post(
+      `shop-admin/product-specific-detail/create/${id}`,
+      data
+    );
+    return response.data;
+  },
+  updateProductDetail: async (id, data) => {
+    const response = await instance.patch(
+      `shop-admin/product-specific-detail/get-update/${id}`,
+      data
+    );
+    return response.data;
+  },
 };
 
 export default ProductsServices;
