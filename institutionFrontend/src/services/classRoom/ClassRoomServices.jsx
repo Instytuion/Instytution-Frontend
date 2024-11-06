@@ -13,6 +13,10 @@ const ClassRoomServices = {
         const response = await instance.post(`class-room/bind-video-chunks/${batchName}/${date}/`);
         return response.data
     },
+    checkBindingStatus: async (date, batchName)=>{
+        const response = await instance.get(`class-room/bind-video-status/${batchName}/${date}/`);
+        return response.data
+    },
 
 }
 
