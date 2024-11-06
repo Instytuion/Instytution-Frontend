@@ -360,6 +360,7 @@ const InstructorClassRoom = () => {
                 } catch (error) {
                     console.error("Error closing connections for student:", peerUserName, error);
                 }
+                setVideoList(prevList => prevList.filter(user => user !== peerUserName));
                 delete mapPeers.current[peerUserName];
                 delete videoStreams.current[peerUserName];
                  
