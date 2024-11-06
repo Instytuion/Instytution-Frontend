@@ -2,7 +2,7 @@ import axios from "axios";
 import {store} from "../redux/stores/store";
 import { hasTokenExpired, refreshToken} from "./axiosFunctions";
 
-const baseUrl = "http://localhost:8000/";
+const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/";
 
 // Axios instance for regular API calls
 const instance = axios.create({

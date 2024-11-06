@@ -71,13 +71,14 @@ const ClassRoom = () => {
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+   //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+   let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {
                 width: { ideal: 1280, max: 1920 },
                 height: { ideal: 720, max: 1080 },
+                frameRate: { ideal: 15 },
                 facingMode: "user"
             },
             "audio": {

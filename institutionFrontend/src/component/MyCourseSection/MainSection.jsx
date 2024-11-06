@@ -39,7 +39,11 @@ const MainComponent = () => {
     error,
     isLoading,
   } = useQuery(["myCourse", email], MyCourseService);
+
+
+  
   console.log("BatchData is :", batchData);
+
 
   const lessonData = batchData
     ?.map((batch) =>
@@ -91,6 +95,8 @@ const MainComponent = () => {
   if (error) {
     return <div>Error fetching data</div>;
   }
+  const {start_date, end_date} = batchData[0]?.batch 
+
 
   return (
     <>
@@ -232,6 +238,8 @@ const MainComponent = () => {
             <CourseTabPanel
               lessonsData={lessonData}
               selectedBatch={selectedCourse.name}
+              startDate={start_date}
+              endDate={end_date}
             />
           </>
         ) : (

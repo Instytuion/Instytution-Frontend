@@ -11,7 +11,8 @@ import MicOffIcon from '@mui/icons-material/MicOff';
 import useToast from '../../hooks/useToast';
 import {refreshToken} from '../../utils/axiosFunctions'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import ConfirmationModal from '../../component/Modals/ConfirmModal'
+import ConfirmationModal from '../../component/Modals/ConfirmModal';
+import { startRecording, stopRecording} from '../../utils/recordVideo';
 
 
 const TURN_USERNAME = import.meta.env.VITE_TURN_USERNAME;
@@ -70,6 +71,10 @@ const InstructorClassRoom = () => {
     const [dcMsg, setDcMsg] = useState([])
     const showToast = useToast();
     const [openConfirmModal, setOpenConfirmModal] = useState(false);
+    const [recordBtn, setRecordBtn] = useState("Record");
+    const [isRecording, setIsRecording] = useState(false)
+    const videoChunkSerial = useRef(0)
+    const [disableRecord, setDisableRecord] = useState(true)
 
     const openStudentRemoveModal = (peerUser)=>{
         setSelectedPeer(peerUser)
@@ -92,20 +97,19 @@ const InstructorClassRoom = () => {
         setActionType(null);
     }
     
-
-    //let localStream = new MediaStream();
     let loc = window.location;
     let wssStart = "ws://";
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+    //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+    let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {
                 width: { ideal: 1280, max: 1920 },
                 height: { ideal: 720, max: 1080 },
+                frameRate: { ideal: 15 },
                 facingMode: "user"
             },
             "audio": {
@@ -125,7 +129,7 @@ const InstructorClassRoom = () => {
                     console.log("some error while accessing media devices - ", error);
                 });
 
-        // Cleanup WebSocket on component unmount
+        // Cleanup WebSocket and media streams on component unmount
         return () => {
             console.log("cleanup function called...");
             if (webSocket.current) {
@@ -153,6 +157,7 @@ const InstructorClassRoom = () => {
 
             webSocket.current.onopen = () => {
                 console.log('Connected to WebSocket');
+                setDisableRecord(false)
                 setBtnOpenClass((prev)=>prev = "Close Class Room")
                 setIsConnecting(false);
             };
@@ -161,8 +166,13 @@ const InstructorClassRoom = () => {
 
             webSocket.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
-                setBtnOpenClass((prev)=>prev = "Open Class Room")
+                if(isRecording){
+                    stopRecording(setRecordBtn, showToast);
+                    setIsRecording(false);
+                }
+                setBtnOpenClass((prev)=>prev = "Open Class Room");
                 setIsConnecting(false);
+                setDisableRecord(true);
                 showToast("You are disconnected.", "error", 3000);
 
                 //video stream remove 
@@ -193,6 +203,7 @@ const InstructorClassRoom = () => {
                 setVideoList(prev=> [])
                 mapPeers.current = {}
                 setDcMsg([])
+                videoChunkSerial.current = 0
             };
 
             webSocket.current.onerror = (error) => {
@@ -429,6 +440,24 @@ const InstructorClassRoom = () => {
         return;        
     }
 
+    const handleRecordVideo = ()=>{
+        if(recordBtn == "Record"){
+            setIsRecording(true);
+            setRecordBtn("Stop Recording...");
+            startRecording(localStream.current, batchName, videoChunkSerial);
+        }
+        if(recordBtn == "Stop Recording..."){
+            setIsRecording(false);
+            setRecordBtn(
+                (prev)=>prev = (
+                    <>
+                    Saving...<CircularProgress color='black' size="1rem" />
+                    </>
+                    )
+            )
+            stopRecording(setRecordBtn, showToast);
+        }
+    }
     
   return (
     <Container sx={{py:3}}>
@@ -442,6 +471,19 @@ const InstructorClassRoom = () => {
         disabled={isConnecting} 
         >
             {btnOpenClass}
+        </Button>
+
+        <Button
+        onClick={()=> handleRecordVideo()}
+        variant='outlined'
+        color='success'
+        disabled={disableRecord}
+        sx={{
+            mb:2,
+            ml:2,
+        }} 
+        >
+            {recordBtn}
         </Button>
         <Box
         sx={{
