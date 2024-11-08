@@ -1,9 +1,22 @@
 import { Box, Card, Typography, Button, Divider, Stack } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+<<<<<<< HEAD
+import { bounceAnimation } from "../StyledComponents/Animations";
+import { useNavigate } from "react-router-dom";
+const CartSummary = ({ subtotal,data, shipping = 40 }) => {
+  const navigate = useNavigate()
+=======
 import bounceAnimation from "../StyledComponents/Animations";
 const CartSummary = ({ subtotal, shipping = 40 }) => {
+>>>>>>> dev
   const total = subtotal + shipping;
+  console.log('====================================');
+  console.log('Sub Total is :',data);
+  console.log('====================================');
+  const handleNavigate=()=>{
+    navigate('/checkout-page/',{state:{product:data}})
 
+  }
   return (
     <Card
       sx={{
@@ -21,28 +34,23 @@ const CartSummary = ({ subtotal, shipping = 40 }) => {
       </Typography>
 
       <Stack spacing={2}>
-        {/* Subtotal */}
         <Box display="flex" justifyContent="space-between">
           <Typography>Subtotal:</Typography>
           <Typography>₹{subtotal.toFixed(2)}</Typography>
         </Box>
 
-        {/* Shipping */}
         <Box display="flex" justifyContent="space-between">
           <Typography>Shipping:</Typography>
           <Typography>₹{shipping.toFixed(2)}</Typography>
         </Box>
 
-        {/* Divider */}
         <Divider sx={{ my: 2 }} />
 
-        {/* Total */}
         <Box display="flex" justifyContent="space-between">
           <Typography variant="h6">Total:</Typography>
           <Typography variant="h6">₹{total.toFixed(2)}</Typography>
         </Box>
 
-        {/* Proceed to Checkout Button */}
         <Button
           variant="contained"
           sx={{
@@ -55,13 +63,14 @@ const CartSummary = ({ subtotal, shipping = 40 }) => {
             },
           }}
           fullWidth
+          onClick={handleNavigate}
         >
           Proceed to Checkout
-          <ShoppingCartCheckoutIcon
+          {/* <ShoppingCartCheckoutIcon
             sx={{
               ...bounceAnimation
             }}
-          />
+          /> */}
         </Button>
       </Stack>
     </Card>
