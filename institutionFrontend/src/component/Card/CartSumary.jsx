@@ -1,14 +1,9 @@
 import { Box, Card, Typography, Button, Divider, Stack } from "@mui/material";
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-<<<<<<< HEAD
 import { bounceAnimation } from "../StyledComponents/Animations";
 import { useNavigate } from "react-router-dom";
 const CartSummary = ({ subtotal,data, shipping = 40 }) => {
   const navigate = useNavigate()
-=======
-import bounceAnimation from "../StyledComponents/Animations";
-const CartSummary = ({ subtotal, shipping = 40 }) => {
->>>>>>> dev
   const total = subtotal + shipping;
   console.log('====================================');
   console.log('Sub Total is :',data);
