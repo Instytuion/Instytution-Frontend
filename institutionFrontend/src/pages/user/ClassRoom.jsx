@@ -20,6 +20,20 @@ const TURN_SECRET = import.meta.env.VITE_TURN_SECRET;
     //         { urls: 'stun:stun1.l.google.com:19302' }
     //     ]
     // };
+    // const iceConfiguration = {
+    //     iceServers: [
+    //         {
+    //             urls: 'turn:global.xirsys.net:3478?transport=udp',
+    //             username: TURN_USERNAME,
+    //             credential: TURN_SECRET 
+    //         },
+    //         {
+    //             urls: 'turn:global.xirsys.net:3478?transport=tcp',
+    //             username: TURN_USERNAME,
+    //             credential: TURN_SECRET 
+    //         }
+    //     ]
+    // };
 
     const iceConfiguration = {
         iceServers: [
@@ -71,8 +85,8 @@ const ClassRoom = () => {
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+   //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+   let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {

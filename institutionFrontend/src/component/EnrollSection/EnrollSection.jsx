@@ -4,7 +4,7 @@ import EnrollBatches from '../Tables/EnrollBatches'
 import Spinner from '../Spinner/Spinner';
 import FetchCourseBatches from '../../services/courses/FetchCourseBatches';
 import EnrollPaymentRadio from '../Radios/EnrollPaymentRadio';
-import EnrollBatchContext from '../../Context/enrollBatchContext';
+import EnrollBatchContext from '../../Context/EnrollBatchContext';
 
 function EnrollSection({courseName, price}) {
     const [data, setData] = useState([]);

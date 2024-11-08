@@ -24,6 +24,20 @@ const TURN_SECRET = import.meta.env.VITE_TURN_SECRET;
     //         { urls: 'stun:stun1.l.google.com:19302' }
     //     ]
     // };
+    // const iceConfiguration = {
+    //     iceServers: [
+    //         {
+    //             urls: 'turn:global.xirsys.net:3478?transport=udp',
+    //             username: TURN_USERNAME,
+    //             credential: TURN_SECRET 
+    //         },
+    //         {
+    //             urls: 'turn:global.xirsys.net:3478?transport=tcp',
+    //             username: TURN_USERNAME,
+    //             credential: TURN_SECRET 
+    //         }
+    //     ]
+    // };
 
     const iceConfiguration = {
         iceServers: [
@@ -72,6 +86,7 @@ const InstructorClassRoom = () => {
     const showToast = useToast();
     const [openConfirmModal, setOpenConfirmModal] = useState(false);
     const [recordBtn, setRecordBtn] = useState("Record");
+    const [isRecording, setIsRecording] = useState(false)
     const videoChunkSerial = useRef(0)
     const [disableRecord, setDisableRecord] = useState(true)
 
@@ -101,8 +116,8 @@ const InstructorClassRoom = () => {
     if(loc.protocol == "https:"){
         wssStart = "wss://";
     }
-    let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
-
+    //let endPoint = wssStart + `localhost:8000/class-room/${batchName}/`;
+    let endPoint = wssStart + `${import.meta.env.VITE_DOMAIN_NAME || 'localhost:8000'}/class-room/${batchName}/`;
     useEffect(()=>{
         const constrains = {
             "video": {
@@ -165,7 +180,10 @@ const InstructorClassRoom = () => {
 
             webSocket.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
-                stopRecording(setRecordBtn, showToast);
+                if(isRecording){
+                    stopRecording(setRecordBtn, showToast);
+                    setIsRecording(false);
+                }
                 setBtnOpenClass((prev)=>prev = "Open Class Room");
                 setIsConnecting(false);
                 setDisableRecord(true);
@@ -342,6 +360,7 @@ const InstructorClassRoom = () => {
                 } catch (error) {
                     console.error("Error closing connections for student:", peerUserName, error);
                 }
+                setVideoList(prevList => prevList.filter(user => user !== peerUserName));
                 delete mapPeers.current[peerUserName];
                 delete videoStreams.current[peerUserName];
                  
@@ -438,10 +457,12 @@ const InstructorClassRoom = () => {
 
     const handleRecordVideo = ()=>{
         if(recordBtn == "Record"){
+            setIsRecording(true);
             setRecordBtn("Stop Recording...");
             startRecording(localStream.current, batchName, videoChunkSerial);
         }
         if(recordBtn == "Stop Recording..."){
+            setIsRecording(false);
             setRecordBtn(
                 (prev)=>prev = (
                     <>

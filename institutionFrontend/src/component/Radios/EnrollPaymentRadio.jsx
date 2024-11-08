@@ -1,6 +1,6 @@
 import { FormControlLabel, Radio, RadioGroup, Typography, Button, Box } from '@mui/material';
 import { useContext, useState } from 'react';
-import EnrollBatchContext from '../../Context/enrollBatchContext';
+import EnrollBatchContext from '../../Context/EnrollBatchContext';
 import { CreateRazorpayOrder } from '../../services/payments/CreateRazorpayOrder';
 import Spinner from '../Spinner/Spinner';
 import useRazorpay from "react-razorpay";

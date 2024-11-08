@@ -7,7 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { Box, Radio, Typography } from '@mui/material';
 import { useContext } from 'react';
-import EnrollBatchContext from '../../Context/enrollBatchContext';
+import EnrollBatchContext from '../../Context/EnrollBatchContext';
 import { convert24To12Hour } from '../../utils/utilityFunctions';
 
 
