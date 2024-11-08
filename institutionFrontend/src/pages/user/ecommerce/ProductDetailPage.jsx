@@ -25,7 +25,7 @@ import ProductDetails from "../../../component/Products/ProductMainDetail";
 import { style } from "./style";
 import useToast from "../../../hooks/useToast";
 import { addToCart } from "../../../redux/slices/Cart";
-import bounceAnimation from "../../../component/StyledComponents/animations";
+import { bounceAnimation } from "../../../component/StyledComponents/Animations";
 const ProductDetailPage = () => {
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const { id } = useParams();
@@ -40,9 +40,7 @@ const ProductDetailPage = () => {
     enabled: !!id,
     refetchOnWindowFocus: false,
   });
-  console.log('====================================');
-  console.log('Product Data is :',product);
-  console.log('====================================');
+  
 
   const wishlistItems = useSelector((state) => state.wishlist.wishlists);
   const cartItems = useSelector((state) => state.cart.cartData);
@@ -53,6 +51,7 @@ const ProductDetailPage = () => {
   );
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [count, setCount ] = useState(1)
 
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
@@ -61,6 +60,7 @@ const ProductDetailPage = () => {
   const [selectedStock, setSelectedStock] = useState("");
   const [hasSizes, setHasSizes] = useState(false);
   const [updatedDetails, setUpdatedDetails] = useState(null);
+  
 
   const [availableColorsForSizeState, setavailableColorsForSizeState] =
     useState(null);
@@ -80,7 +80,8 @@ const ProductDetailPage = () => {
       navigate("/cart");
     } else {
       try {
-        const response = await CartServices.createCart(updatedDetails.id);
+        const response = await CartServices.createCart(updatedDetails.id,count);
+        
         dispatch(addToCart(response));
         showToast(
           `${response.product.product_name} has been successfully added to your cart.`,
@@ -170,7 +171,7 @@ const ProductDetailPage = () => {
       isWishlisted ? "Removed from wishlist" : "Added to wishlist",
       "success"
     );
-const wishlistItem = wishlistItems.find(
+    const wishlistItem = wishlistItems.find(
           (wishItem) => wishItem.product.id === updatedDetails.id
         );
     try {
@@ -190,11 +191,37 @@ const wishlistItem = wishlistItems.find(
       showToast("Failed to update wishlist. Please try again.", "error");
     }
   };
-  console.log('====================================');
-  console.log("id is :",updatedDetails?.id);
-  console.log('====================================');
+  
+  
+  //----------- This Function for Make a structure of detail for sent to checkout page -------
+  const normalizedProductitems = Array.isArray(product)
+  ? product
+  : (() => {
+      const selectedVariant = product.details.find(
+        (detail) => detail.color === selectedColor
+      );
+      console.log('====================================');
+      console.log('sletedt:',selectedVariant,product);
+      console.log('====================================');
+      return selectedVariant ? [{
+        id: product.id,
+        product: {
+          id: selectedVariant.id,
+          
+          product_name: product.name,
+          average_rating: product.average_rating,
+          color:selectedColor,
+          product_images: product.images,
+        },
+        quantity: 1,
+        total_price: parseFloat(selectedVariant.price),
+      }] : [];
+    })();
   const handleBuyButton=()=>{
-    navigate('/checkout-page/',{state:{id:id}})
+    console.log('====================================');
+    console.log('product is for from detail page is :',product,updatedDetails);
+    console.log('====================================');
+    navigate('/checkout-page/',{state:{product:normalizedProductitems}})
   }
 
   return (
@@ -211,6 +238,8 @@ const wishlistItem = wishlistItems.find(
         </Grid>
         {/* Details Section */}
         <ProductDetails
+        count={count}
+        setCount={setCount}
           product={product}
           handleWishlistToggle={handleWishlistToggle}
           isWishlisted={isWishlisted}
@@ -256,18 +285,7 @@ const wishlistItem = wishlistItems.find(
                   <AddShoppingCartIcon
                     sx={{
                       ml: 2,
-                      animation: "bounce 3s infinite",
-                      "@keyframes bounce": {
-                        "0%, 20%, 50%, 80%, 100%": {
-                          transform: "translateX(0)",
-                        },
-                        "40%": {
-                          transform: "translateX(-10px)",
-                        },
-                        "60%": {
-                          transform: "translateX(-5px)",
-                        },
-                      },
+                      ...bounceAnimation
                     }}
                   />
                 </>

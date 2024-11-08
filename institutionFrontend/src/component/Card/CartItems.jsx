@@ -127,7 +127,7 @@ const {rating_count, average_rating} = product
             <Typography variant="body2" fontWeight={500}>
               Unit Price: ₹{product.price}
             </Typography>
-            <RatingComponent value={average_rating} readOnly={true} count={rating_count}/>
+            <RatingComponent sx={{justifyContent:{sm:'start', xs:'center'}}} value={average_rating} readOnly={true} count={rating_count}/>
 
             {product.size && (
               <Typography variant="body2">Size: {product.size}</Typography>

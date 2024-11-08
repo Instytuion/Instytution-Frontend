@@ -9,6 +9,7 @@ import ProductsList from "../../pages/user/ecommerce/ProductsList";
 import ProductDetailPage from "../../pages/user/ecommerce/ProductDetailPage";
 import Cart from "../../pages/user/ecommerce/Cart";
 import Checkout from "../../pages/user/ecommerce/Checkout";
+import HistoryOfOrders from "../../pages/user/ecommerce/HistoryOfOrders";
 
 // Lazy load components (example)
 const Home = lazy(() => import("../../pages/user//Home"));
@@ -93,6 +94,10 @@ function App() {
         <Route
           path={"/checkout-page/"}
           element={<IsAuthenticatedRoutes element={Checkout} />}
+        />
+        <Route
+        path={"/order/history"}
+        element={<IsAuthenticatedRoutes element={HistoryOfOrders}/>}
         />
         
 
