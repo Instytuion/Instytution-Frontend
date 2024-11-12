@@ -38,6 +38,9 @@ const CartComponent = () => {
 
   const subtotal =
     cartItems?.reduce((acc, item) => acc + item.total_price, 0) || 0;
+   
+
+
 
   return (
     <>
@@ -64,7 +67,7 @@ const CartComponent = () => {
             // bgcolor: "#f9f9f9",
             borderRadius: "8px",
             // boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-            // height: "calc(100vh - 15vh)",
+            height: "calc(100vh - 15vh)",
             overflowY: "auto",
           }}
         >
@@ -91,7 +94,7 @@ const CartComponent = () => {
               boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
             }}
           >
-            <CartSummary subtotal={subtotal} />
+            <CartSummary subtotal={subtotal} data={cartItems} />
           </Box>
         )}
       </Stack>

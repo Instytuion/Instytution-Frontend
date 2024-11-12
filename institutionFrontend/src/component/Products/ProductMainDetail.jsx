@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {Box, Grid, IconButton, Stack, Typography} from "@mui/material";
 import {Favorite, FavoriteBorder, Share} from "@mui/icons-material";
 import ColorSelector from "./ColorSelector";
@@ -6,8 +6,11 @@ import SizeSelector from "./SizeSelector";
 import {getUniqueColors, getUniqueSizes} from "../../utils/productUtils";
 import style1 from "./style";
 import RatingComponent from "../Rating/Rating";
+import CounterButtons from "../Button/CounterButtons";
 
 const ProductDetails = ({
+  count,
+  setCount,
   product,
   selectedPrice,
   isWishlisted,
@@ -20,6 +23,8 @@ const ProductDetails = ({
   selectedStock,
   availableColorsForSizeState,
 }) => {
+  console.log('product is :',product);
+  
     const styles1 = style1();
 
   return (
@@ -86,6 +91,7 @@ const ProductDetails = ({
               ? `In Stock (${selectedStock} available)`
               : "Out of Stock"}
           </Typography>
+          <CounterButtons quantity={count} onQuantityChange={setCount}/>
         </Stack>
       </Box>
     </Grid>

@@ -1,4 +1,4 @@
-import instance from "../../utils/axios";
+import instance, {noAuthInstance} from "../../utils/axios";
 
 const ClassRoomServices = {
     uploadVideoChunks: async (formData, batchName, videoChunkSerial)=>{
@@ -11,6 +11,10 @@ const ClassRoomServices = {
     },
     bindVideoChunk: async (date, batchName)=>{
         const response = await instance.post(`class-room/bind-video-chunks/${batchName}/${date}/`);
+        return response.data
+    },
+    checkBindingStatus: async (date, batchName)=>{
+        const response = await noAuthInstance.get(`class-room/bind-video-status/${batchName}/${date}/`);
         return response.data
     },
 

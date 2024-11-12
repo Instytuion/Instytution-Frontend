@@ -20,6 +20,6 @@ const CartServices={
         console.log('id is :',id);
         
         const response = await instance.delete(`accounts/cart/${id}/`)
-    }
+    }   
 }
 export default CartServices;
