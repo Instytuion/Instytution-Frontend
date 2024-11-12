@@ -24,9 +24,14 @@ const CounterButtons = ({ quantity, onQuantityChange, maxCount, Loading }) => {
   };
 
   const handleDecrement = () => {
-    const newCount = Math.max(0, count - 1);
+    if (count <= 1){
+      showToast('Atleast select 1 quantity..','error')
+    }else{
+      const newCount = Math.max(0, count - 1);
     setCount(newCount);
     onQuantityChange(newCount);
+    }
+    
   };
   return (
     <Box

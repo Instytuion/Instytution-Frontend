@@ -3,7 +3,7 @@
 import { Box, Button } from "@mui/material";
 import emptyCart from "../../assets/emptyCart.gif";
 import { useNavigate } from "react-router-dom";
-import bounceAnimation from "../StyledComponents/Animations";
+import { bounceAnimation } from "../StyledComponents/Animations";
 const EmptyCart = () => {
     const navigate = useNavigate();
 
