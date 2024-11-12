@@ -1,15 +1,19 @@
 
+import { current } from "@reduxjs/toolkit";
 import ClassRoomServices from "../services/classRoom/ClassRoomServices";
 
 let mediaRecorder;
 let batchName;
 let totalChunks ;
 let uploadedChunks;
+let recordId;
 const lessonDate = new Date().toISOString().split('T')[0];
 
-export const startRecording = (stream, batch, videoChunkSerial)=>{
+export const startRecording = (stream, batch, videoChunkSerial, recordIdList)=>{
     console.log("startRecording called...");
     
+    recordId = `record-${Date.now()}`
+    recordIdList.current.push(recordId)
     batchName = batch;
     totalChunks = 0;
     uploadedChunks = 0;
@@ -22,7 +26,7 @@ export const startRecording = (stream, batch, videoChunkSerial)=>{
             console.log("event data found...");
             totalChunks++;
             try {
-                await uploadVideos(event.data, videoChunkSerial);
+                await uploadVideos(event.data, videoChunkSerial, recordId);
                 uploadedChunks++;
             } catch (error) {
                 uploadedChunks++;
@@ -33,7 +37,7 @@ export const startRecording = (stream, batch, videoChunkSerial)=>{
     mediaRecorder.start(10000)
 };
 
-export const stopRecording = (showToast)=>{
+export const stopRecording = (showToast, recordIdList)=>{
     console.log("stopRecording called...");
     mediaRecorder.stop();
 
@@ -44,7 +48,7 @@ export const stopRecording = (showToast)=>{
         console.log("All chunks uploaded. Calling bindVideoChunks...");
 
         if(uploadedChunks > 0){
-            bindVideoChunks();
+            bindVideoChunks(recordIdList);
             //bindingCheckPolling(showToast);
         }
         totalChunks = 0;
@@ -52,7 +56,7 @@ export const stopRecording = (showToast)=>{
     };
 };
 
-export const uploadVideos = async (data, videoChunkSerial)=>{
+export const uploadVideos = async (data, videoChunkSerial, recordId)=>{
     console.log("uploadVideos called...");
     videoChunkSerial.current++;
     
@@ -62,7 +66,7 @@ export const uploadVideos = async (data, videoChunkSerial)=>{
     formData.append("video_chunk", file);
 
     try{
-        const response = await ClassRoomServices.uploadVideoChunks(formData, batchName, videoChunkSerial);
+        const response = await ClassRoomServices.uploadVideoChunks(formData, batchName, videoChunkSerial, recordId);
         console.log("video chunk uploaded successfully");
         
     }
@@ -72,16 +76,19 @@ export const uploadVideos = async (data, videoChunkSerial)=>{
     }
 };
 
-export const bindVideoChunks = ()=>{
+export const bindVideoChunks = (recordIdList)=>{
     console.log("bindVideoChunks called...");
-
-    ClassRoomServices.bindVideoChunk(lessonDate, batchName)
+    let popValue;
+    if(recordIdList.current.length > 0){
+        popValue = recordIdList.current.shift()
+        ClassRoomServices.bindVideoChunk(lessonDate, batchName, popValue)
         .then(response => {
             console.log('Video chunks binding process accepted.', response);
         })
         .catch(error => {
             console.log(`error while accepting bind of video chunks of ${batchName} on ${lessonDate}`, error);
         })
+    }
 };
 
 async function waitForUploadsToComplete() {
