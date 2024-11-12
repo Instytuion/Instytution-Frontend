@@ -181,7 +181,8 @@ const InstructorClassRoom = () => {
             webSocket.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
                 if(isRecording){
-                    stopRecording(setRecordBtn, showToast);
+                    stopRecording(showToast);
+                    setRecordBtn("Record")
                     setIsRecording(false);
                 }
                 setBtnOpenClass((prev)=>prev = "Open Class Room");
@@ -463,14 +464,8 @@ const InstructorClassRoom = () => {
         }
         if(recordBtn == "Stop Recording..."){
             setIsRecording(false);
-            setRecordBtn(
-                (prev)=>prev = (
-                    <>
-                    Saving...<CircularProgress color='black' size="1rem" />
-                    </>
-                    )
-            )
-            stopRecording(setRecordBtn, showToast);
+            setRecordBtn("Record")
+            stopRecording(showToast);
         }
     }
     
