@@ -6,17 +6,22 @@ import {useNavigate} from "react-router-dom";
 export const ProductColumnsHeading = () => {
   const navigate = useNavigate();
 
-  const handleNavigate = (productId) => {
+  const handleNavigate = (productId, category) => {
     navigate("/shop-admin/product-form/", {
       state: {
         mode: "edit",
-        productId:productId ,
+        productId: productId,
+        category: category,
       },
     });
   };
 
-  const handleViewDetails = (productId) => {
-    navigate(`/shop-admin/product/details/${productId}/`);
+  const handleViewDetails = (productId, category) => {
+    navigate(`/shop-admin/product/details/${productId}/`, {
+      state: {
+        category,
+      },
+    });
   };
 
   return [
@@ -29,7 +34,12 @@ export const ProductColumnsHeading = () => {
       minWidth: 200,
       renderCell: (params) => (
         <div
-          onClick={() => handleNavigate(params.row.id)}
+          onClick={() =>
+            handleNavigate(
+              params.row?.id,
+              params.row?.sub_category?.category_name
+            )
+          }
           style={{
             overflow: "hidden",
             whiteSpace: "nowrap",
@@ -74,28 +84,30 @@ export const ProductColumnsHeading = () => {
       field: "Actions",
       headerName: "Actions",
       flex: 0.2,
-      renderCell: (params) => {
-        const handleEdit = () => {
-          navigate("/shop-admin/product-form/", {
-            state: {
-              mode: "edit",
-              subCategory: params.row.sub_category.name,
-              productId: params.row.id,
-            },
-          });
-        };
-
-        return (
-          <>
-            <Button onClick={() => handleViewDetails(params.row.id)}>
-              View Items
-            </Button>
-            <IconButton onClick={handleEdit}>
-              <EditIcon sx={{color: "#00aeff"}} />
-            </IconButton>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <>
+          <Button
+            onClick={() =>
+              handleViewDetails(
+                params.row.id,
+                params.row?.sub_category?.category_name
+              )
+            }
+          >
+            View Items
+          </Button>
+          <IconButton
+            onClick={() =>
+              handleNavigate(
+                params.row.id,
+                params.row?.sub_category?.category_name
+              )
+            }
+          >
+            <EditIcon sx={{color: "#00aeff"}} />
+          </IconButton>
+        </>
+      ),
     },
   ];
 };

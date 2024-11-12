@@ -35,6 +35,7 @@ export const ProductDetailColumnsHeading = () => {
 
   const handleAddImage =  (data, productId) => {
     try {
+      console.log("entered in Adding Image", data , productId)
       productImgagServices.addImage(data, productId);
       showToast("Product image added succussfully", "success");
     } catch (error) {
@@ -44,10 +45,9 @@ export const ProductDetailColumnsHeading = () => {
     queryClient.invalidateQueries(["product", productId]);
     handleCloseModal();
     setSelectedImage(null);
-    window.location.reload();
   };
 
-  const handleEditImage = (data, imageId) => {
+  const handleEditImage = (data, imageId, productId) => {
     try {
       productImgagServices.editImage(data, imageId);
       showToast("Product image edited succussfully", "success");
@@ -58,7 +58,6 @@ export const ProductDetailColumnsHeading = () => {
     }
     handleCloseModal();
     setSelectedImage(null);
-    window.location.reload();
   };
 
   const handleDeleteImage = (imageId, productId) => {
@@ -73,7 +72,6 @@ export const ProductDetailColumnsHeading = () => {
     } finally {
       handleCloseModal();
       setSelectedImage(null);
-      window.location.reload();
     }
   };
 
@@ -149,6 +147,7 @@ export const ProductDetailColumnsHeading = () => {
               mode: "edit",
               detailId: params.row.id,
               productId: params.row.productId,
+              category: params.row.productCategory
             },
           });
         };
