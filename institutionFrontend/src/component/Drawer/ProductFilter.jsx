@@ -43,6 +43,7 @@ const ProductFilter = ({
   handleToggleDrawer,
   isMobile,
   openDrawer,
+  category
 }) => {
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
@@ -52,7 +53,7 @@ const ProductFilter = ({
   const drawerWidth = isMobile ? 240 : "20%";
 
   const {data, error, isLoading} = useQuery(["subCategory"], () =>
-    ProductsServices.getSubcategories()
+    ProductsServices.getSubcategories(category)
   );
 
   if (error)
