@@ -199,7 +199,7 @@ const ProductFormFields = ({
             <Grid item xs={12}>
               <Button
                 onClick={() =>
-                  appendDetail({color: "", size: "", price: 0, stock: 0})
+                  appendDetail({color: "", size: null, price: 0, stock: 0})
                 }
                 variant="outlined"
               >

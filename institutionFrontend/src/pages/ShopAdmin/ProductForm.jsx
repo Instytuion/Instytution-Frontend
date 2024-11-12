@@ -9,6 +9,8 @@ import {useQuery, useQueryClient} from "react-query";
 import ProductsServices from "../../services/user/ProductServices";
 import CartLoader from "../../component/Spinner/CartLoader";
 import ProductFormFields from "../../component/Forms/ProductFormFields";
+import FormActionButtons from "../../component/Button/FormActionButton";
+import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
 
 const ProductForm = () => {
   const [hasChanges, setHasChanges] = useState(false);
@@ -174,8 +176,20 @@ const ProductForm = () => {
   if (isLoading) return <CartLoader />;
   if (error) return <div>Error fetching product: {error.message}</div>;
 
+  const links = [
+    {
+      path: "/shop-admin/products",
+      label: category,
+      state: {categoryName: category},
+    },
+    {
+      label: mode === "create" ? "Create Product" : product.name,
+    },
+  ];
+
   return (
     <Container maxWidth={"md"}>
+      <CustomeBreadCrumbs links={links} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <ProductFormFields
           control={control}
@@ -188,41 +202,11 @@ const ProductForm = () => {
           trigger={trigger}
           setHasChanges={setHasChanges}
         />
-        <Stack justifyContent="flex-end" gap={1} direction={"row"} mt={2}>
-          <Tooltip
-            title={mode === "edit" && !hasChanges ? "No changes made" : ""}
-            arrow
-          >
-            <span>
-              <Button
-                type="submit"
-                sx={{
-                  color: "white",
-                  bgcolor:
-                    mode === "edit" && !hasChanges
-                      ? "grey.200"
-                      : theme.palette.customColors,
-                }}
-                disabled={mode === "edit" && !hasChanges}
-              >
-                {loading ? (
-                  <CircularProgress size={20} color="white" />
-                ) : mode === "create" ? (
-                  "Create"
-                ) : (
-                  "Update"
-                )}
-              </Button>
-            </span>
-          </Tooltip>
-          <Button
-            sx={{bgcolor: "red", color: "white"}}
-            onClick={() => navigate(-1)}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
-        </Stack>
+        <FormActionButtons
+          mode={mode}
+          hasChanges={hasChanges}
+          loading={loading}
+        />
       </form>
     </Container>
   );
