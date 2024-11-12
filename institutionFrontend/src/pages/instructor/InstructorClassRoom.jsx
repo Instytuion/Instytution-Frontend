@@ -88,6 +88,7 @@ const InstructorClassRoom = () => {
     const [recordBtn, setRecordBtn] = useState("Record");
     const [isRecording, setIsRecording] = useState(false)
     const videoChunkSerial = useRef(0)
+    const recordIdList = useRef([])
     const [disableRecord, setDisableRecord] = useState(true)
 
     const openStudentRemoveModal = (peerUser)=>{
@@ -181,7 +182,7 @@ const InstructorClassRoom = () => {
             webSocket.current.onclose = () => {
                 console.log('Disconnected from WebSocket');
                 if(isRecording){
-                    stopRecording(showToast);
+                    stopRecording(showToast, recordIdList);
                     setRecordBtn("Record")
                     setIsRecording(false);
                 }
@@ -460,12 +461,12 @@ const InstructorClassRoom = () => {
         if(recordBtn == "Record"){
             setIsRecording(true);
             setRecordBtn("Stop Recording...");
-            startRecording(localStream.current, batchName, videoChunkSerial);
+            startRecording(localStream.current, batchName, videoChunkSerial, recordIdList);
         }
         if(recordBtn == "Stop Recording..."){
             setIsRecording(false);
             setRecordBtn("Record")
-            stopRecording(showToast);
+            stopRecording(showToast, recordIdList);
         }
     }
     
