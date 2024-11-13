@@ -23,7 +23,7 @@ const ShopAdminSideBar = () => {
     {
       label: "Categories",
       icon: <Category />,
-      path: "/shop-admin/categories",
+      path: "/shop-admin/sub-categories",
     },
     {
       label: "Banner",

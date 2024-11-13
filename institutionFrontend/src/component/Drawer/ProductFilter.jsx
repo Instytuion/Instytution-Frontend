@@ -52,7 +52,7 @@ const ProductFilter = ({
   const [selectedColor, setSelectedColor] = useState(null);
   const drawerWidth = isMobile ? 240 : "20%";
 
-  const {data, error, isLoading} = useQuery(["subCategory"], () =>
+  const {data, error, isLoading} = useQuery(["subCategories", category], () =>
     ProductsServices.getSubcategories(category)
   );
 
