@@ -1,15 +1,19 @@
 
+import { current } from "@reduxjs/toolkit";
 import ClassRoomServices from "../services/classRoom/ClassRoomServices";
 
 let mediaRecorder;
 let batchName;
 let totalChunks ;
 let uploadedChunks;
+let recordId;
 const lessonDate = new Date().toISOString().split('T')[0];
 
-export const startRecording = (stream, batch, videoChunkSerial)=>{
+export const startRecording = (stream, batch, videoChunkSerial, recordIdList)=>{
     console.log("startRecording called...");
     
+    recordId = `record-${Date.now()}`
+    recordIdList.current.push(recordId)
     batchName = batch;
     totalChunks = 0;
     uploadedChunks = 0;
@@ -22,7 +26,7 @@ export const startRecording = (stream, batch, videoChunkSerial)=>{
             console.log("event data found...");
             totalChunks++;
             try {
-                await uploadVideos(event.data, videoChunkSerial);
+                await uploadVideos(event.data, videoChunkSerial, recordId);
                 uploadedChunks++;
             } catch (error) {
                 uploadedChunks++;
@@ -33,7 +37,7 @@ export const startRecording = (stream, batch, videoChunkSerial)=>{
     mediaRecorder.start(10000)
 };
 
-export const stopRecording = (setRecordBtn, showToast)=>{
+export const stopRecording = (showToast, recordIdList)=>{
     console.log("stopRecording called...");
     mediaRecorder.stop();
 
@@ -44,15 +48,15 @@ export const stopRecording = (setRecordBtn, showToast)=>{
         console.log("All chunks uploaded. Calling bindVideoChunks...");
 
         if(uploadedChunks > 0){
-            bindVideoChunks();
-            bindingCheckPolling(setRecordBtn, showToast);
+            bindVideoChunks(recordIdList);
+            //bindingCheckPolling(showToast);
         }
         totalChunks = 0;
         uploadedChunks = 0;
     };
 };
 
-export const uploadVideos = async (data, videoChunkSerial)=>{
+export const uploadVideos = async (data, videoChunkSerial, recordId)=>{
     console.log("uploadVideos called...");
     videoChunkSerial.current++;
     
@@ -62,7 +66,7 @@ export const uploadVideos = async (data, videoChunkSerial)=>{
     formData.append("video_chunk", file);
 
     try{
-        const response = await ClassRoomServices.uploadVideoChunks(formData, batchName, videoChunkSerial);
+        const response = await ClassRoomServices.uploadVideoChunks(formData, batchName, videoChunkSerial, recordId);
         console.log("video chunk uploaded successfully");
         
     }
@@ -72,16 +76,19 @@ export const uploadVideos = async (data, videoChunkSerial)=>{
     }
 };
 
-export const bindVideoChunks = ()=>{
+export const bindVideoChunks = (recordIdList)=>{
     console.log("bindVideoChunks called...");
-
-    ClassRoomServices.bindVideoChunk(lessonDate, batchName)
+    let popValue;
+    if(recordIdList.current.length > 0){
+        popValue = recordIdList.current.shift()
+        ClassRoomServices.bindVideoChunk(lessonDate, batchName, popValue)
         .then(response => {
-            console.log('Video chunks bound successfully:', response);
+            console.log('Video chunks binding process accepted.', response);
         })
         .catch(error => {
-            console.log(`error while binding video chunks of ${batchName} on ${lessonDate}`, error);
+            console.log(`error while accepting bind of video chunks of ${batchName} on ${lessonDate}`, error);
         })
+    }
 };
 
 async function waitForUploadsToComplete() {
@@ -90,24 +97,23 @@ async function waitForUploadsToComplete() {
     }
 }
 
-const bindingCheckPolling = (setRecordBtn, showToast) => {
-    const interval = setInterval(async () => {
-        const response = await ClassRoomServices.checkBindingStatus(lessonDate, batchName);
-        if (response) {
-            const status = response.status;
-            console.log('Current video binding status:', status);
-            if (status === 'completed') {
-                clearInterval(interval); 
-                setRecordBtn("Record");
-                showToast("Session video made successfully", "success", 3000);
-                console.log("Video binding completed successfully...");
-            }
-            else if (status === 'processing') {
-                console.log("Video binding is still processing...");
-            }
-        }
-    }, 5000);
-};
+// const bindingCheckPolling = (showToast) => {
+//     const interval = setInterval(async () => {
+//         const response = await ClassRoomServices.checkBindingStatus(lessonDate, batchName);
+//         if (response) {
+//             const status = response.status;
+//             console.log('Current video binding status:', status);
+//             if (status === 'completed') {
+//                 clearInterval(interval); 
+//                 showToast("Session video made successfully", "success", 3000);
+//                 console.log("Video binding completed successfully...");
+//             }
+//             else if (status === 'processing') {
+//                 console.log("Video binding is still processing...");
+//             }
+//         }
+//     }, 5000);
+// };
 
 
 // export const downloadVideo = (blob)=>{
