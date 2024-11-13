@@ -7,13 +7,15 @@ import {ProductColumnsHeading} from "../../component/Tables/ProductTable";
 import {Button, Stack} from "@mui/material";
 import {useLocation, useNavigate} from "react-router-dom";
 import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
+import CategoryButton from "../../component/Button/CategoryButton";
 
 const Products = () => {
-  const [category, setCategory] = useState("LifeStyles");
+  const [category, setCategory] = useState("Lifestyles");
   const navigate = useNavigate();
-  const location = useLocation()
+  const location = useLocation();
 
   const {categoryName} = location.state || {};
+
   useEffect(() => {
     if (categoryName) {
       setCategory(categoryName);
@@ -43,16 +45,19 @@ const Products = () => {
     });
   };
 
-  const links = [{path: "/shop-admin/products", label: category}];
-
   return (
     <>
-      {/* change this when it component availabe */}
-
-      <CustomeBreadCrumbs links={links} />
-      <Stack direction="row" spacing={2} justifyContent={"center"}>
-        <Button onClick={() => setCategory("LifeStyles")}>LifeStyles</Button>
-        <Button onClick={() => setCategory("Gadgets")}>Gadgets</Button>
+      <Stack direction="row" spacing={2} justifyContent={"center"} mb={3}>
+        <CategoryButton
+          label={"Lifestyles"}
+          selectedCategory={category}
+          onSelect={() => setCategory("Lifestyles")}
+        />
+        <CategoryButton
+          label={"Gadgets"}
+          selectedCategory={category}
+          onSelect={() => setCategory("Gadgets")}
+        />
       </Stack>
       <CustomDataTable
         row={data?.map((value, idx) => ({

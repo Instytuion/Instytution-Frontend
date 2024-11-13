@@ -8,6 +8,8 @@ import Products from "../../pages/ShopAdmin/Products";
 import ProductDetails from "../../pages/ShopAdmin/ProductDetails";
 import ProductForm from "../../pages/ShopAdmin/ProductForm";
 import ProductDetailsForm from "../../pages/ShopAdmin/ProductDetailsForm";
+import SubCategories from "../../pages/ShopAdmin/SubCategories";
+import SubCategoryForm from "../../pages/ShopAdmin/SubCategoryForm";
 const Dashboard = lazy(() => import("../../pages/ShopAdmin/Dashboard"));
 
 function ShopAdminRoutes() {
@@ -23,6 +25,8 @@ function ShopAdminRoutes() {
           <Route path="/product/details/:id/" element={<ProductDetails />} />
           <Route path="/product-form" element={<ProductForm />} />
           <Route path="/product-detail-form" element={<ProductDetailsForm />} />
+          <Route path="/sub-categories" element={<SubCategories />} />
+          <Route path="/sub-category-form" element={<SubCategoryForm />} />
 
           <Route path="*" element={<PageNotFoundPage />} />
         </Route>

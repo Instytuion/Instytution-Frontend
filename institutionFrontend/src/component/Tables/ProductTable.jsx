@@ -87,6 +87,7 @@ export const ProductColumnsHeading = () => {
       renderCell: (params) => (
         <>
           <Button
+            sx={{color: "#00aeff"}}
             onClick={() =>
               handleViewDetails(
                 params.row.id,
