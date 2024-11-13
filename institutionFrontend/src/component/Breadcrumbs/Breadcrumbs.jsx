@@ -11,17 +11,23 @@ const CustomeBreadCrumbs = ({ links }) => {
         return (
           <span
             key={index}
-            style={{ cursor: isLast ? "default" : "pointer", textDecoration: isLast ? "none" : "underline" }} 
+            style={{
+              cursor: isLast ? "default" : "pointer",
+              textDecoration: isLast ? "none" : "underline",
+            }}
           >
             {!isLast ? (
               <Link
-                to={link.path}
-                style={{ textDecoration: "none" }}
+                to={{
+                  pathname: link.path,
+                  state: link.state, 
+                }}
+                style={{textDecoration: "none"}}
               >
                 <Typography color="text.primary">{link.label}</Typography>
               </Link>
             ) : (
-              <Typography color="inherit">{link.label}</Typography> 
+              <Typography color="inherit">{link.label}</Typography>
             )}
           </span>
         );

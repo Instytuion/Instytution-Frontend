@@ -8,19 +8,25 @@ import {useQuery, useQueryClient} from "react-query";
 import ProductsServices from "../../services/user/ProductServices";
 import CartLoader from "../../component/Spinner/CartLoader";
 import ProductDetailFormFields from "../../component/Forms/ProductDetailFormFields";
-import FormActionButtons from "./FormActionButton";
+import FormActionButtons from "../../component/Button/FormActionButton";
+import CustomeBreadCrumbs from "../../component/Breadcrumbs/Breadcrumbs";
 
 const ProductDetailsForm = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [productState, setProductState] = useState({});
-
   const [loading, setLoading] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const showToast = useToast();
 
-  const {mode = "create", detailId, product, productId} = location.state || {};
+  const {
+    mode = "create",
+    detailId,
+    product,
+    productId,
+    category,
+  } = location.state || {};
 
   console.log(
     "mode",
@@ -65,7 +71,7 @@ const ProductDetailsForm = () => {
     }
   );
 
-  console.log("productData ----------", productData);
+  console.log("productstate ----------", productState);
 
   const {
     control,
@@ -88,14 +94,13 @@ const ProductDetailsForm = () => {
 
   // Form submission
   const onSubmit = async (data) => {
-
     const filteredData = Object.keys(data).reduce((acc, key) => {
       if (data[key] !== "") acc[key] = data[key];
       return acc;
     }, {});
 
-    console.log("filterd data--------------",filteredData);
-  
+    console.log("filterd data--------------", filteredData);
+
     setLoading(true);
     let duplicateFound = false;
 
@@ -148,7 +153,9 @@ const ProductDetailsForm = () => {
         queryClient.invalidateQueries(["products"]);
         queryClient.invalidateQueries(["product", productID]);
 
-        navigate(`/shop-admin/product/details/${productID}`);
+        navigate(`/shop-admin/product/details/${productID}`, {
+          state: {category: category},
+        });
       } else {
         const updatedData = {};
         const cleanValue = (value) => value?.toString().trim() || "";
@@ -172,7 +179,9 @@ const ProductDetailsForm = () => {
           queryClient.invalidateQueries(["products"]);
           queryClient.invalidateQueries(["product", productID]);
 
-          navigate(`/shop-admin/product/details/${productID}`);
+          navigate(`/shop-admin/product/details/${productID}`, {
+            state: {category: category},
+          });
         } else {
           showToast("No changes detected.", "info");
           return;
@@ -189,28 +198,47 @@ const ProductDetailsForm = () => {
   if (isLoading || isProductDataIsLoading) return <CartLoader />;
   if (error || isProductDataError) return <div>Error fetching datas: </div>;
 
-  return (
-    <Container maxWidth={"md"}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <ProductDetailFormFields
-          control={control}
-          errors={errors}
-          mode={mode}
-          productDetailData={productDetail || {}}
-          setValue={setValue}
-          getValues={getValues}
-          watch={watch}
-          trigger={trigger}
-          setHasChanges={setHasChanges}
-        />
+  const links = [
+    {
+      path: "/shop-admin/products",
+      label: category,
+      state: {categoryName: category},
+    },
+    {
+      path: `/shop-admin/product/details/${productId ? productId : product.id}`,
+      label: productState?.name,
+      state: {category: category},
+    },
+    {
+      label: mode === "edit" ? "Edit" : "Create",
+    },
+  ];
 
-        <FormActionButtons
-          mode={mode}
-          hasChanges={hasChanges}
-          loading={loading}
-        />
-      </form>
-    </Container>
+  return (
+    <>
+      <CustomeBreadCrumbs links={links} />
+      <Container maxWidth={"md"}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <ProductDetailFormFields
+            control={control}
+            errors={errors}
+            mode={mode}
+            productDetailData={productDetail || {}}
+            setValue={setValue}
+            getValues={getValues}
+            watch={watch}
+            trigger={trigger}
+            setHasChanges={setHasChanges}
+          />
+
+          <FormActionButtons
+            mode={mode}
+            hasChanges={hasChanges}
+            loading={loading}
+          />
+        </form>
+      </Container>
+    </>
   );
 };
 
