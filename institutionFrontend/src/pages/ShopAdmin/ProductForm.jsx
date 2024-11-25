@@ -125,9 +125,14 @@ const ProductForm = () => {
         await ProductsServices.createProduct(formData, category);
         showToast("Product created successfully!", "success");
         queryClient.invalidateQueries(["products", category]);
-        navigate("/shop-admin/products");
+
+        navigate("/shop-admin/products",{
+          state:{
+            categoryName:category
+          }
+        });
       } else {
-        // For "edit" mode, only send updated fields
+        // For "edit" 
         const updatedData = {};
         const cleanValue = (value) => value?.toString().trim() || "";
         Object.keys(data).forEach((key) => {
@@ -152,7 +157,11 @@ const ProductForm = () => {
           queryClient.invalidateQueries(["product", productId]);
           queryClient.invalidateQueries(["products", category, null]);
 
-          navigate(`/shop-admin/products`);
+           navigate("/shop-admin/products", {
+             state: {
+               categoryName: category,
+             },
+           });
         } else {
           showToast("No changes detected.", "info");
           return;
@@ -196,6 +205,7 @@ const ProductForm = () => {
           errors={errors}
           mode={mode}
           productData={product || {}}
+          category={category}
           setValue={setValue}
           getValues={getValues}
           watch={watch}

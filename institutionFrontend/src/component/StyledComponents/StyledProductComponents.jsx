@@ -13,7 +13,7 @@ const StyledProductCard = styled(Card)(({theme, cardheight}) => ({
   overflow: "hidden",
   height: cardheight || 360,
   position: "relative",
-  boxShadow: "5px 5px 5px #dfe3ea, 5px 5px 5px #faffff",
+  boxShadow: "5px 5px 5px rgba(0, 0, 0, 0.1), -5px 5px 5px rgba(0, 0, 0, 0.1)",
   borderRadius: theme.shape.borderRadius,
 }));
 

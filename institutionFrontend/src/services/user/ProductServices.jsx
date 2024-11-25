@@ -21,8 +21,8 @@ const ProductsServices = {
     );
     return response.data;
   },
-  getSubcategories: async () => {
-    const response = await noAuthInstance.get("store/list-sub-categories");
+  getSubcategories: async (category) => {
+    const response = await noAuthInstance.get(`store/list-sub-categories/${category}`);
     return response.data;
   },
   getProduct: async (id) => {

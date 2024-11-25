@@ -15,6 +15,7 @@ const ProductFormFields = ({
   watch,
   setHasChanges,
   productData,
+  category
 }) => {
   const [subCategories, setSubCategories] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
@@ -48,7 +49,7 @@ const ProductFormFields = ({
   // Fetch subcategories for the select field
   const fetchSubCategories = async () => {
     try {
-      const response = await ProductsServices.getSubcategories();
+      const response = await ProductsServices.getSubcategories(category);
       setSubCategories(response);
     } catch (error) {
       console.error(error);

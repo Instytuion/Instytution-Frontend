@@ -67,6 +67,7 @@ const ProductsList = () => {
             handleToggleDrawer={handleClickDrawer}
             isMobile={isMobile}
             onFilterChange={handleFilterChange}
+            category={category}
           />
         </Box>
 
