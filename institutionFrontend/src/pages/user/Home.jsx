@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect} from "react";
 import useCartAndWishlist from "../../hooks/useCartAndWishlist";
 import { clearCart, setCart } from "../../redux/slices/Cart";
+import ChatBot from "../../utils/ChatBot";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const Home = () => {
       <NewCourse />
       <Popularcourse />
       <Footer />
+      <ChatBot/>
     </>
   );
 };
