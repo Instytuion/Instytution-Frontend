@@ -8,16 +8,16 @@ const SummaryCard = ({ title, count, icon: IconComponent }) => {
   return (
     <Card
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
         p: 2,
         mb: 2,
-        ml: 2,
-        mr: 2,
-        bgcolor: theme.palette.background.paper,
-        boxShadow: 3,
+        mx: 2,
+        boxShadow: theme.palette.shadow,
         borderRadius: 2,
+        widht: "220px",
+        height: 1,
       }}
     >
       <CardContent>
@@ -26,8 +26,20 @@ const SummaryCard = ({ title, count, icon: IconComponent }) => {
           {count}
         </Typography>
       </CardContent>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 60, height: 60, borderRadius: '50%', bgcolor: "#009688", color: '#fff', mr: 2 }}>
-        <IconComponent fontSize="large" sx={{ color: '#fff' }} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 60,
+          height: 60,
+          borderRadius: "50%",
+          bgcolor: "#009688",
+          color: "#fff",
+          mr: 2,
+        }}
+      >
+        <IconComponent fontSize="large" sx={{color: "#fff"}} />
       </Box>
     </Card>
   );

@@ -83,7 +83,7 @@ export const ProductColumnsHeading = () => {
     {
       field: "Actions",
       headerName: "Actions",
-      flex: 0.2,
+      flex: 0.3,
       renderCell: (params) => (
         <>
           <Button
