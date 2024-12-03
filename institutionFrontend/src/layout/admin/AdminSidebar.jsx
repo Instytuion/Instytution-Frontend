@@ -29,10 +29,8 @@ const AdminSidebar = () => {
       label: "Reports",
       icon: <ReportIcon />,
       subItems: [
-        { label: "User Reports", icon: <UserIcon />, path: "/admin/user" },
-        { label: "Course Reports", icon: <CourseIcon />, path: "/admin/course" },
-        { label: "Shop Reports", icon: <ShopIcon />, path: "/admin/shop" },
-        { label: "Instructor Reports", icon: <PersonIcon />, path: "/admin/instructorr" },
+        { label: "Course Reports", icon: <CourseIcon />, path: "/admin/report/course" },
+        { label: "Shop Reports", icon: <ShopIcon />, path: "/admin/report/shop" },
       ],
     },
   ];

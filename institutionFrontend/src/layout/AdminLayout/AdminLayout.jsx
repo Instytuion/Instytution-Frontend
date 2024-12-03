@@ -39,14 +39,14 @@ const Layout = ({ SidebarComponent }) => {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
           p: 3,
           bgcolor: "background.default",
           display: "flex",
           flexDirection: "column",
           ml: isMobile ? "0px" : "238px",
           transition: "margin 0.3s",
-          height:'fit-content'
+          height:'fit-content',
+          width:isMobile ? '100%' : 'calc(100% - 238px)',
         }}
       >
         <Outlet />

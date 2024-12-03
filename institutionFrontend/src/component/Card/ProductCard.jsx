@@ -161,7 +161,7 @@ const ProductCard = ({data}) => {
         ]);
 
         return (
-          <Grid item xs={6} md={6} lg={4} gap={1} key={index}>
+          <Grid item xs={6} md={4} lg={3} gap={1} key={index}>
             <StyledProductCard
               cardheight={376}
               onClick={() => handleCardClick(item)}
