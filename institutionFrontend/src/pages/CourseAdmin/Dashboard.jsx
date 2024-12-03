@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import AdminSidebar from "../../layout/admin/AdminSidebar";
 import DashboardSummary from "../../component/Dashboard/admin/DashboarAdmin";
 import {useQuery} from "react-query";
 import reportServices from "../../services/reports/reportServices";
@@ -23,7 +22,6 @@ const Dashboard = () => {
       <DashboardSummary />
       <MonthYearSelector setMonth={setMonth} setYear={setYear} year={year} />
       <CourseReport reportData={data?.purchase_report} title={'Course Report'} />
-      
     </>
   );
 };
